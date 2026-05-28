@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600&family=Syncopate:wght@400;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #070B10;
+  color: #E8EEF4;
+  font-family: 'Outfit', sans-serif;
+  /* Architectural Drafting Grid */
+  background-image: 
+    linear-gradient(rgba(30, 42, 56, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 42, 56, 0.4) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-attachment: fixed;
+}
+
+* { box-sizing: border-box; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1E2A38; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #00C9FF; }
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(14, 20, 27, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(30, 42, 56, 0.8);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 201, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 201, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.glass-nav {
+  background: rgba(7, 11, 16, 0.85);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(30, 42, 56, 0.8);
+}
+
+/* Typography Hierarchy */
+.syncopate { font-family: 'Syncopate', sans-serif; text-transform: uppercase; letter-spacing: 2px; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Cinematic Animations */
+.splash-container {
+  position: fixed; inset: 0; background: #070B10; z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: fadeOut 0.5s ease 2.2s forwards;
+}
+
+.splash-logo {
+  width: 80px; height: 80px;
+  border: 2px solid #00C9FF; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 201, 255, 0.2);
+  animation: pulseGlow 1.5s infinite;
+}
+
+.loading-track {
+  width: 200px; height: 2px; background: #1E2A38; margin-top: 40px; border-radius: 2px; overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%; background: #00C9FF; width: 0%;
+  animation: sweep 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 201, 255, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 201, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 201, 255, 0); }
+}
+@keyframes sweep { to { width: 100%; } }
+@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+.animate-in { animation: slideUp 0.5s ease forwards; }
