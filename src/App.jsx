@@ -32,7 +32,7 @@ const THEMES = {
 };
 
 // ==========================================
-// 3. FLUID CSS ENGINE (DARK MODE DEFEATER)
+// 3. FLUID CSS ENGINE (CACHE BUSTED)
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
@@ -60,8 +60,8 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS 🌟 */
-.liquid-bg {
+/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS (CACHE BUSTED) 🌟 */
+.liquid-canvas {
   position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background-size: 300% 300%;
   animation: liquidBreathe 15s ease-in-out infinite;
@@ -69,8 +69,8 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 }
 @keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-/* 🌟 BRIGHT WHITE FLOWING DASHED LINES 🌟 */
-.flowing-lines-layer {
+/* 🌟 BRIGHT WHITE FLOWING DASHED LINES (CACHE BUSTED) 🌟 */
+.flow-vectors {
   position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: -1; pointer-events: none;
   background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.85) 20px, rgba(255,255,255,0.85) 24px);
   transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -487,11 +487,11 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 PERFECTED BACKGROUNDS: Fading Opacity instead of Glitchy Gradients 🌟 */}
+      {/* 🌟 PERFECTED BACKGROUNDS: Fading Opacity instead of Glitchy Gradients (CACHE BUSTED) 🌟 */}
       {Object.entries(THEMES).map(([key, theme]) => (
         <div 
           key={key}
-          className="liquid-bg" 
+          className="liquid-canvas" 
           style={{ 
             backgroundImage: `linear-gradient(135deg, ${theme.c1} 0%, ${theme.c2} 50%, ${theme.c1} 100%)`,
             opacity: tab === key ? 1 : 0
@@ -501,7 +501,7 @@ export default function App() {
       
       {/* WHITE FLOWING LINES */}
       <div 
-        className="flowing-lines-layer" 
+        className="flow-vectors" 
         style={{ transform: `rotate(${activeTheme.angle}deg)` }}
       />
 
