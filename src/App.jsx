@@ -19,20 +19,20 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. MONOCHROMATIC THEMES & ANGLES
+// 2. LIQUID PASTEL THEMES & ANGLES
 // ==========================================
 const THEMES = {
-  core: { c1: "#A3B1C6", c2: "#E0E5EC", angle: 45 },      
-  crew: { c1: "#C5B9A5", c2: "#F2EBE1", angle: -30 },     
-  funds: { c1: "#A1B59C", c2: "#E0E8DC", angle: 60 },      
-  archive: { c1: "#9AA9C2", c2: "#D9E2EC", angle: -45 },   
-  gallery: { c1: "#BBA8CC", c2: "#EAE0F0", angle: 15 },    
-  news: { c1: "#ADADAD", c2: "#E8E8E8", angle: 90 },       
-  hq: { c1: "#9C9E9C", c2: "#D8DAD8", angle: 0 }           
+  core: { c1: "#E0C3FC", c2: "#8EC5FC", angle: 45 },      
+  crew: { c1: "#FDFBFB", c2: "#EBEDEE", angle: -30 },     
+  funds: { c1: "#F6D365", c2: "#FDA085", angle: 60 },      
+  archive: { c1: "#CFD9DF", c2: "#E2EBF0", angle: -45 },   
+  gallery: { c1: "#FFECD2", c2: "#FCB69F", angle: 15 },    
+  news: { c1: "#A1C4FD", c2: "#C2E9FB", angle: 90 },       
+  hq: { c1: "#D4FC79", c2: "#96E6A1", angle: 0 }           
 };
 
 // ==========================================
-// 3. FLUID CSS ENGINE (DARK MODE DEFEATER & ACCELERATION)
+// 3. FLUID CSS ENGINE (Z-INDEX RE-ENGINEERED)
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
@@ -48,40 +48,48 @@ const GLOBAL_STYLES = `
   --success: #2A7249 !important;
 }
 
-body, html { 
+body, html, #root { 
   margin: 0; padding: 0; height: 100dvh; overflow: hidden; 
-  color: #1A1A1A !important; background-color: #E0E5EC !important;
+  color: #1A1A1A !important; 
+  background-color: #F0F2F5 !important;
+  background-image: none !important; /* Force kill default StackBlitz grids */
   font-family: 'Plus Jakarta Sans', sans-serif; 
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 
-input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; color: #111 !important; background-color: #FFF !important;}
+input, textarea, select { -webkit-user-select: auto; user-select: auto; color: #111 !important; background-color: #FFF !important; }
+.selectable-text { -webkit-user-select: auto; user-select: auto; background-color: transparent !important; }
 * { box-sizing: border-box; }
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS 🌟 */
+/* 🌟 TITANIUM BASE LAYER: Z-Index 1 guarantees it paves over ANY background bugs 🌟 */
+.titanium-base-layer {
+  position: fixed; inset: 0; z-index: 1; background-color: #F8F9FA !important; pointer-events: none;
+}
+
+/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS: Z-Index 2 🌟 */
 .liquid-bg-layer {
-  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
   background-size: 300% 300%;
   animation: liquidBreathe 15s ease-in-out infinite;
-  transition: opacity 1.2s ease-in-out;
-  will-change: opacity; /* GPU Acceleration */
+  transition: opacity 1.5s ease-in-out;
+  will-change: opacity;
 }
 @keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-/* 🌟 BRIGHT WHITE FLOWING DASHED LINES 🌟 */
+/* 🌟 BRIGHT WHITE FLOWING DASHED LINES: Z-Index 3 🌟 */
 .flowing-lines-vector {
-  position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: -1; pointer-events: none;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.85) 20px, rgba(255,255,255,0.85) 24px) !important;
+  position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: 3; pointer-events: none;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255,255,255,0.6) 35px, rgba(255,255,255,0.6) 38px) !important;
   transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: streamLines 40s linear infinite;
-  will-change: transform; /* GPU Acceleration */
+  will-change: transform; 
 }
 @keyframes streamLines { 0% { background-position: 0px 0px; } 100% { background-position: 0px 1000px; } }
 
-/* 🌟 PERFECT DESKTOP CENTERING 🌟 */
-.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; overflow: hidden;}
+/* 🌟 APP LAYOUT: Z-Index 10 ensures content sits perfectly on top of the backgrounds 🌟 */
+.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; overflow: hidden; z-index: 10; }
 .main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; width: 100%; -webkit-overflow-scrolling: touch; }
 .content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; } 
 
@@ -100,15 +108,14 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 .panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9) !important; border: 1px solid var(--border-light); color: #111 !important; padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
 .panel-toggle:hover { border-color: #111 !important; }
 
-/* Formatting Fixes: word-break added to prevent email/link overflows */
-.arch-card { background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; word-wrap: break-word; overflow: hidden; }
+.arch-card { background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.8); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; word-wrap: break-word; overflow: hidden; }
 .arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: rgba(255,255,255,0.7) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; word-wrap: break-word;}
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.7) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; word-wrap: break-word;}
 .gallery-card:hover { transform: translateY(-4px); }
 .gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: #555 !important; background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
 .badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; white-space: nowrap; }
-.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(0,0,0,0.06) !important; color: #111 !important; border: 1px solid var(--border-light); }
+.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(255,255,255,0.8) !important; color: #111 !important; border: 1px solid var(--border-light); }
 
 .action-btn { background: #111 !important; color: #FFF !important; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; white-space: nowrap; }
 .action-btn:hover { background: #000 !important; transform: scale(1.02); }
@@ -166,7 +173,6 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
   .content-wrapper { padding: 0; }
   .rsa-dropdown { display: none; }
   
-  /* Flex wrap fixes for headers on narrow screens */
   .mobile-header-wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 32px; }
   
   .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.96) !important; color: #111 !important; }
@@ -524,7 +530,10 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 FORCE-INJECTED BACKGROUNDS (Z-INDEX 0 BURIED OVER GHOST GRIDS) 🌟 */}
+      {/* 🌟 TITANIUM BASE LAYER: Z-Index 1 completely blocks index.css bugs 🌟 */}
+      <div className="titanium-base-layer"></div>
+
+      {/* 🌟 FORCE-INJECTED BACKGROUNDS (Z-INDEX 2) 🌟 */}
       {Object.entries(THEMES).map(([key, theme]) => (
         <div 
           key={key}
@@ -536,7 +545,7 @@ export default function App() {
         />
       ))}
       
-      {/* WHITE FLOWING LINES */}
+      {/* WHITE FLOWING LINES (Z-INDEX 3) */}
       <div 
         className="flowing-lines-vector" 
         style={{ transform: `rotate(${activeTheme.angle}deg)` }}
@@ -574,7 +583,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* MAIN VIEWPORT */}
+      {/* MAIN VIEWPORT (Z-INDEX 10) */}
       <div className="app-layout">
         <div className="main-content" style={{ paddingRight: isPanelOpen && window.innerWidth > 768 ? 420 : 0 }} onClick={() => { isMenuOpen && setIsMenuOpen(false); }}>
           {tab === "core" && renderCore()}
