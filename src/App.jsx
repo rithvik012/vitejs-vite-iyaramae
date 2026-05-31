@@ -19,43 +19,43 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. MONOCHROMATIC THEMES & ANGLES (Deepened for White Lines)
+// 2. MONOCHROMATIC THEMES & ANGLES
 // ==========================================
 const THEMES = {
-  core: { c1: "#A6B1C2", c2: "#E1E6EC", angle: 45 },      // Deep Slate
-  crew: { c1: "#CBBFA9", c2: "#F1EBE4", angle: -30 },     // Deep Sandstone
-  funds: { c1: "#AABCA3", c2: "#E3EAE0", angle: 60 },      // Deep Sage
-  archive: { c1: "#A3B1C6", c2: "#DFE5ED", angle: -45 },   // Deep Steel
-  gallery: { c1: "#C3B1D2", c2: "#EDE6F2", angle: 15 },    // Deep Lavender
-  news: { c1: "#B5B5B5", c2: "#EAEAEA", angle: 90 },       // Deep Silver
-  hq: { c1: "#A4A6A4", c2: "#DCDEDC", angle: 0 }           // Deep Charcoal
+  core: { c1: "#A3B1C6", c2: "#E0E5EC", angle: 45 },      // Deep Slate
+  crew: { c1: "#C5B9A5", c2: "#F2EBE1", angle: -30 },     // Deep Sandstone
+  funds: { c1: "#A1B59C", c2: "#E0E8DC", angle: 60 },      // Deep Sage
+  archive: { c1: "#9AA9C2", c2: "#D9E2EC", angle: -45 },   // Deep Steel
+  gallery: { c1: "#BBA8CC", c2: "#EAE0F0", angle: 15 },    // Deep Lavender
+  news: { c1: "#ADADAD", c2: "#E8E8E8", angle: 90 },       // Deep Silver
+  hq: { c1: "#9C9E9C", c2: "#D8DAD8", angle: 0 }           // Deep Charcoal
 };
 
 // ==========================================
-// 3. FLUID CSS ENGINE & LIGHT MODE ENFORCER
+// 3. FLUID CSS ENGINE (DARK MODE DEFEATER)
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
-  color-scheme: light only !important; /* Stops Samsung Dark Mode Glitches */
-  --bg-card: rgba(255, 255, 255, 0.65); 
-  --text-main: #1A1A1A; 
-  --text-muted: #4A4A4A;
-  --border-light: rgba(0, 0, 0, 0.08); 
-  --accent-primary: #111111;
-  --accent-secondary: rgba(0,0,0,0.04); 
-  --success: #2A7249;
+  color-scheme: light only !important; /* Force Light Mode */
+  --bg-card: rgba(255, 255, 255, 0.7) !important; 
+  --text-main: #1A1A1A !important; 
+  --text-muted: #5A5A5A !important;
+  --border-light: rgba(0, 0, 0, 0.08) !important; 
+  --accent-primary: #111111 !important;
+  --accent-secondary: rgba(0,0,0,0.05) !important; 
+  --success: #2A7249 !important;
 }
 
 body, html { 
   margin: 0; padding: 0; height: 100dvh; overflow: hidden; 
-  color: var(--text-main) !important; background-color: #E1E6EC !important;
+  color: #1A1A1A !important; background-color: #E0E5EC !important;
   font-family: 'Plus Jakarta Sans', sans-serif; 
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 
-input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; color: #111 !important; }
+input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; color: #111 !important; background-color: #FFF !important;}
 * { box-sizing: border-box; }
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
@@ -69,39 +69,38 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 }
 @keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-/* 🌟 WHITE FLOWING LINES 🌟 */
+/* 🌟 BRIGHT WHITE FLOWING DASHED LINES 🌟 */
 .flowing-lines-layer {
   position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: -1; pointer-events: none;
-  /* Pure White lines at 70% opacity */
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(255,255,255,0.7) 15px, rgba(255,255,255,0.7) 17px);
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.85) 20px, rgba(255,255,255,0.85) 24px);
   transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: streamLines 40s linear infinite;
 }
 @keyframes streamLines { 0% { background-position: 0px 0px; } 100% { background-position: 0px 1000px; } }
 
-/* UI Alignment */
-.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; }
-.main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-.content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; }
+/* 🌟 PERFECT DESKTOP CENTERING 🌟 */
+.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; }
+.main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; width: 100%; }
+.content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; } /* Keeps cards from stretching too wide */
 
-.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
+.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.6) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
 .rsa-menu-container { position: relative; display: inline-block; }
 .rsa-trigger { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer; color: #111 !important; }
 .rsa-trigger:hover { background: var(--accent-secondary); }
-.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; cursor: pointer; }
-.menu-item:hover { background: var(--accent-secondary); color: var(--text-main); }
-.menu-item.active { background: var(--accent-primary); color: #FFF !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: #555 !important; transition: all 0.2s; border: 1px solid transparent; cursor: pointer; }
+.menu-item:hover { background: var(--accent-secondary); color: #111 !important; }
+.menu-item.active { background: #111 !important; color: #FFF !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
 /* Panels & Cards */
-.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 420px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 420px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .nasa-panel.closed { transform: translateX(100%); } .nasa-panel.open { transform: translateX(0); }
 .panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9) !important; border: 1px solid var(--border-light); color: #111 !important; padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
-.panel-toggle:hover { border-color: var(--text-main); }
+.panel-toggle:hover { border-color: #111 !important; }
 
-.arch-card { background: rgba(255,255,255,0.55) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; }
+.arch-card { background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; }
 .arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: rgba(255,255,255,0.55) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; }
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: rgba(255,255,255,0.7) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; }
 .gallery-card:hover { transform: translateY(-4px); }
 .gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: #555 !important; background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
@@ -119,20 +118,26 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 .input-field { width: 100%; background: #F8F9FA !important; border: 1px solid #E9ECEF; padding: 12px 16px; color: #111 !important; border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
 .input-field:focus { border-color: #111; background: #FFF !important; }
 
-/* 🌟 CINEMATIC SPLASH SCREEN 🌟 */
-.splash-overlay { position: fixed; inset: 0; z-index: 999999; background: #050505 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s; }
+/* 🌟 HIGH-END ORBITAL LOADING SPLASH SCREEN 🌟 */
+.splash-overlay { position: fixed; inset: 0; z-index: 999999; background: #050505 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; }
 .splash-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.splash-progress-line { width: 0%; height: 2px; background: #FFFFFF; box-shadow: 0 0 15px rgba(255,255,255,0.8); animation: loadStrike 1.5s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
-@keyframes loadStrike { 0% { width: 0%; opacity: 0; } 20% { opacity: 1; } 100% { width: 400px; opacity: 0; } }
-.splash-logo-text { position: absolute; color: #FFFFFF !important; font-size: 60px; font-weight: 800; letter-spacing: 24px; text-indent: 24px; opacity: 0; filter: blur(12px); transform: scale(0.95); animation: logoCinematic 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.2s; }
-@keyframes logoCinematic { to { opacity: 1; filter: blur(0); transform: scale(1); } }
+.loader-core { width: 80px; height: 80px; border: 2px solid rgba(255,255,255,0.05); border-top-color: #FFF; border-radius: 50%; animation: spin 1.2s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite; display: flex; align-items: center; justify-content: center; position: relative; }
+.loader-inner { position: absolute; width: 50px; height: 50px; border: 2px solid rgba(255,255,255,0.05); border-bottom-color: var(--success); border-radius: 50%; animation: spinReverse 1.5s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spinReverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+.splash-logo-text { color: #FFFFFF !important; font-size: 32px; font-weight: 800; letter-spacing: 16px; margin-top: 40px; text-indent: 16px; opacity: 0; animation: fadeUp 1s ease forwards 0.5s; }
+.splash-sub { color: #666 !important; margin-top: 16px; letter-spacing: 6px; font-size: 10px; font-weight: 600; opacity: 0; animation: fadeUp 1s ease forwards 1s; }
+@keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
 
 /* 📱 MOBILE DEEP SCROLL + SWIPEABLE NAV DOCK */
 @media (max-width: 768px) {
   .top-nav { padding: 0 16px; height: 60px; } 
   .app-layout { padding-top: 60px; } 
+  
+  /* MASSIVE BOTTOM PADDING so Samsung Browsers don't hide data behind the dock */
   .main-content { padding: 24px 16px 150px 16px !important; }
   .content-wrapper { padding: 0 4px; }
+  
   .rsa-dropdown { display: none; }
   
   .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.96) !important; color: #111 !important; }
@@ -142,18 +147,19 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
   /* Swipeable Horizontal Dock */
   .mobile-bottom-nav { 
     display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 84px; 
-    background: rgba(255,255,255,0.94) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+    background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
     border-top: 1px solid var(--border-light); z-index: 60; 
-    align-items: center; padding: 0 8px 20px 8px; padding-bottom: env(safe-area-inset-bottom);
+    align-items: center; padding: 0 16px 20px 16px; padding-bottom: env(safe-area-inset-bottom);
     overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; 
+    scrollbar-width: none; gap: 8px; justify-content: flex-start;
   }
   .mobile-bottom-nav::-webkit-scrollbar { display: none; } 
   
   .mobile-nav-item { 
     display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    gap: 4px; color: #555 !important; padding: 8px 4px; cursor: pointer; 
-    flex: 0 0 22%; scroll-snap-align: start; transition: color 0.2s; 
+    gap: 6px; color: #666 !important; padding: 8px 4px; cursor: pointer; 
+    flex: 0 0 20%; /* Shows 5 icons, leaving the rest slightly hidden to encourage swiping */
+    scroll-snap-align: start; transition: color 0.2s; 
   }
   .mobile-nav-item.active { color: #111 !important; } 
   .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
@@ -208,7 +214,7 @@ export default function App() {
   const [modalFormData, setModalFormData] = useState({});
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 3500);
+    setTimeout(() => setIsBooting(false), 3000);
 
     const unsubHQ = onSnapshot(doc(db, "unit", "hq"), (docSnap) => { if (docSnap.exists()) setLeadership(docSnap.data()); });
     const unsubCrew = onSnapshot(collection(db, "crew"), (snap) => setDelegates(snap.docs.map(d => ({id: d.id, ...d.data()}))));
@@ -381,7 +387,7 @@ export default function App() {
               {f.type === 'COLLECTION' && (
                 <div style={{ marginTop: 12, maxWidth: '400px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, marginBottom: 4 }}><span>Progress</span><span>₹{Number(f.current || 0).toLocaleString()} / ₹{Number(f.target || 0).toLocaleString()}</span></div>
-                  <div style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px', overflow: 'hidden' }}><div style={{ width: `${Math.min(100, (Number(f.current || 0) / Number(f.target || 1)) * 100)}%`, height: '100%', background: 'var(--text-main)' }}></div></div>
+                  <div style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px', overflow: 'hidden' }}><div style={{ width: `${Math.min(100, (Number(f.current || 0) / Number(f.target || 1)) * 100)}%`, height: '100%', background: '#111' }}></div></div>
                 </div>
               )}
             </div>
@@ -499,10 +505,11 @@ export default function App() {
         style={{ transform: `rotate(${activeTheme.angle}deg)` }}
       />
 
-      {/* 🌟 GLITCH-FREE CINEMATIC SPLASH SCREEN 🌟 */}
+      {/* 🌟 GLITCH-FREE CINEMATIC ORBITAL SPLASH SCREEN 🌟 */}
       <div className={`splash-overlay ${!isBooting ? 'hidden' : ''}`}>
-        <div className="splash-progress-line"></div>
+        <div className="loader-core"><div className="loader-inner"></div></div>
         <div className="splash-logo-text">{leadership.unitCode || 'Z649'}</div>
+        <div className="splash-sub">ESTABLISHING CLOUD UPLINK</div>
       </div>
 
       {/* TOP NAVIGATION */}
@@ -611,7 +618,7 @@ export default function App() {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
                   <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('campaigns')}>Just Sync to App</button>
-                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : 'var(--success)' }} onClick={handleSaveAndEmailCampaign}>
+                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : '#111' }} onClick={handleSaveAndEmailCampaign}>
                     {isSendingEmail ? "Sending..." : "Sync & Email Delegates"}
                   </button>
                 </div>
@@ -654,7 +661,7 @@ export default function App() {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
                   <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('news')}>Just Sync to App</button>
-                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : 'var(--success)' }} onClick={handleSaveAndEmailNews}>
+                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : '#111' }} onClick={handleSaveAndEmailNews}>
                     {isSendingEmail ? "Sending..." : "Broadcast & Email Unit"}
                   </button>
                 </div>
