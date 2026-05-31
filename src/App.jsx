@@ -22,23 +22,23 @@ const db = getFirestore(app);
 // 2. MONOCHROMATIC THEMES & ANGLES
 // ==========================================
 const THEMES = {
-  core: { c1: "#A3B1C6", c2: "#E0E5EC", angle: 45 },      // Deep Slate
-  crew: { c1: "#C5B9A5", c2: "#F2EBE1", angle: -30 },     // Deep Sandstone
-  funds: { c1: "#A1B59C", c2: "#E0E8DC", angle: 60 },      // Deep Sage
-  archive: { c1: "#9AA9C2", c2: "#D9E2EC", angle: -45 },   // Deep Steel
-  gallery: { c1: "#BBA8CC", c2: "#EAE0F0", angle: 15 },    // Deep Lavender
-  news: { c1: "#ADADAD", c2: "#E8E8E8", angle: 90 },       // Deep Silver
-  hq: { c1: "#9C9E9C", c2: "#D8DAD8", angle: 0 }           // Deep Charcoal
+  core: { c1: "#A3B1C6", c2: "#E0E5EC", angle: 45 },      
+  crew: { c1: "#C5B9A5", c2: "#F2EBE1", angle: -30 },     
+  funds: { c1: "#A1B59C", c2: "#E0E8DC", angle: 60 },      
+  archive: { c1: "#9AA9C2", c2: "#D9E2EC", angle: -45 },   
+  gallery: { c1: "#BBA8CC", c2: "#EAE0F0", angle: 15 },    
+  news: { c1: "#ADADAD", c2: "#E8E8E8", angle: 90 },       
+  hq: { c1: "#9C9E9C", c2: "#D8DAD8", angle: 0 }           
 };
 
 // ==========================================
-// 3. FLUID CSS ENGINE (CACHE BUSTED)
+// 3. FLUID CSS ENGINE (DARK MODE DEFEATER)
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
-  color-scheme: light only !important; /* Force Light Mode */
+  color-scheme: light only !important; 
   --bg-card: rgba(255, 255, 255, 0.7) !important; 
   --text-main: #1A1A1A !important; 
   --text-muted: #5A5A5A !important;
@@ -60,8 +60,8 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS (CACHE BUSTED) 🌟 */
-.liquid-canvas {
+/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS 🌟 */
+.liquid-bg-layer {
   position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background-size: 300% 300%;
   animation: liquidBreathe 15s ease-in-out infinite;
@@ -69,10 +69,10 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 }
 @keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-/* 🌟 BRIGHT WHITE FLOWING DASHED LINES (CACHE BUSTED) 🌟 */
-.flow-vectors {
+/* 🌟 BRIGHT WHITE FLOWING DASHED LINES 🌟 */
+.flowing-lines-vector {
   position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: -1; pointer-events: none;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.85) 20px, rgba(255,255,255,0.85) 24px);
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.85) 20px, rgba(255,255,255,0.85) 24px) !important;
   transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: streamLines 40s linear infinite;
 }
@@ -81,7 +81,7 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 /* 🌟 PERFECT DESKTOP CENTERING 🌟 */
 .app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; }
 .main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; width: 100%; }
-.content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; } /* Keeps cards from stretching too wide */
+.content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; } 
 
 .top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.6) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
 .rsa-menu-container { position: relative; display: inline-block; }
@@ -133,11 +133,8 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 @media (max-width: 768px) {
   .top-nav { padding: 0 16px; height: 60px; } 
   .app-layout { padding-top: 60px; } 
-  
-  /* MASSIVE BOTTOM PADDING so Samsung Browsers don't hide data behind the dock */
   .main-content { padding: 24px 16px 150px 16px !important; }
   .content-wrapper { padding: 0 4px; }
-  
   .rsa-dropdown { display: none; }
   
   .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.96) !important; color: #111 !important; }
@@ -158,7 +155,7 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
   .mobile-nav-item { 
     display: flex; flex-direction: column; align-items: center; justify-content: center; 
     gap: 6px; color: #666 !important; padding: 8px 4px; cursor: pointer; 
-    flex: 0 0 20%; /* Shows 5 icons, leaving the rest slightly hidden to encourage swiping */
+    flex: 0 0 20%; 
     scroll-snap-align: start; transition: color 0.2s; 
   }
   .mobile-nav-item.active { color: #111 !important; } 
@@ -197,10 +194,8 @@ export default function App() {
   const [isBooting, setIsBooting] = useState(true);
   const [isSendingEmail, setIsSendingEmail] = useState(false); 
 
-  // Security Simulation
   const [isLeadership, setIsLeadership] = useState(false);
 
-  // Firebase Cloud States
   const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "z649@nasaindia.co.in" });
   const [delegates, setDelegates] = useState([]);
   const [finances, setFinances] = useState([]);
@@ -209,7 +204,6 @@ export default function App() {
   const [gallery, setGallery] = useState([]);
   const [unitNews, setUnitNews] = useState([]);
 
-  // Modals
   const [modalType, setModalType] = useState(null); 
   const [modalFormData, setModalFormData] = useState({});
 
@@ -252,7 +246,6 @@ export default function App() {
     } catch (e) { alert("Error saving to cloud."); }
   };
 
-  // ✉️ EMAILJS AUTOMATION - MANUAL BROADCAST
   const handleSaveAndEmailNews = async () => {
     setIsSendingEmail(true);
     await handleSaveToCloud('news'); 
@@ -282,7 +275,6 @@ export default function App() {
     setIsSendingEmail(false);
   };
 
-  // ✉️ EMAILJS AUTOMATION - CAMPAIGNS/TROPHIES
   const handleSaveAndEmailCampaign = async () => {
     setIsSendingEmail(true);
     await handleSaveToCloud('campaigns');
@@ -318,9 +310,6 @@ export default function App() {
 
   const activeTheme = THEMES[tab] || THEMES.core;
 
-  // ==========================================
-  // VIEW RENDER MATRIX
-  // ==========================================
   const renderCore = () => (
     <div className="fade-in content-wrapper">
       <div style={{ marginBottom: 40 }}>
@@ -487,11 +476,11 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 PERFECTED BACKGROUNDS: Fading Opacity instead of Glitchy Gradients (CACHE BUSTED) 🌟 */}
+      {/* 🌟 FORCE-INJECTED BACKGROUNDS (Cannot be cached by CSS) 🌟 */}
       {Object.entries(THEMES).map(([key, theme]) => (
         <div 
           key={key}
-          className="liquid-canvas" 
+          className="liquid-bg-layer" 
           style={{ 
             backgroundImage: `linear-gradient(135deg, ${theme.c1} 0%, ${theme.c2} 50%, ${theme.c1} 100%)`,
             opacity: tab === key ? 1 : 0
@@ -501,7 +490,7 @@ export default function App() {
       
       {/* WHITE FLOWING LINES */}
       <div 
-        className="flow-vectors" 
+        className="flowing-lines-vector" 
         style={{ transform: `rotate(${activeTheme.angle}deg)` }}
       />
 
