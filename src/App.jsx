@@ -18,80 +18,97 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. AESTHETICS & SEASONAL CSS
+// 2. AESTHETICS, ANIMATIONS & CSS
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
-  /* Softer, Anti-Glare Base Colors */
-  --bg-card: #FCFCFA; 
-  --text-main: #2C2C2C; 
-  --text-muted: #7A7A7A;
-  --border-light: #E0E0D8; 
-  --accent-primary: #1A1A1A;
-  --accent-secondary: #F0F0EB; 
-  --success: #3C8861;
+  --bg-card: rgba(255, 255, 255, 0.6); 
+  --text-main: #1C1C1C; 
+  --text-muted: #5C5C5C;
+  --border-light: rgba(0, 0, 0, 0.08); 
+  --accent-primary: #111111;
+  --accent-secondary: rgba(0,0,0,0.04); 
+  --success: #2E7A55;
 }
 
 body, html { 
   margin: 0; padding: 0; height: 100vh; overflow: hidden; 
   color: var(--text-main); 
   font-family: 'Plus Jakarta Sans', sans-serif; 
+  /* Prevent annoying text-cursor blinking on clicks */
+  -webkit-user-select: none; user-select: none;
 }
+
+/* Allow text selection only in inputs and text areas */
+input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; }
 
 * { box-sizing: border-box; }
-::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* SEASONAL BACKGROUND THEMES */
+/* 🌟 DYNAMIC BLENDED BACKGROUND ANIMATION 🌟 */
 .app-layout { 
   display: flex; height: 100vh; width: 100vw; padding-top: 70px; position: relative; 
-  transition: background 0.8s ease-in-out;
+  background: linear-gradient(120deg, #FDFBFB 0%, #EBEDEE 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  transition: background 1s ease;
 }
-.theme-core { background: linear-gradient(135deg, #F4F9F4 0%, #E8F0E8 100%); } /* Spring Mint */
-.theme-crew { background: linear-gradient(135deg, #FFF8F0 0%, #F5EAE0 100%); } /* Summer Dawn */
-.theme-funds { background: linear-gradient(135deg, #F9F6F0 0%, #EBE5DA 100%); } /* Autumn Gold */
-.theme-archive { background: linear-gradient(135deg, #F0F4F8 0%, #E2E8F0 100%); } /* Winter Frost */
-.theme-gallery { background: linear-gradient(135deg, #F5F0F6 0%, #EAE0EB 100%); } /* Creative Twilight */
-.theme-hq { background: linear-gradient(135deg, #EEEDF0 0%, #DEDCE2 100%); } /* Neutral Monolith */
 
-.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(252, 252, 250, 0.6); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
+/* Seasonal Theme Shifts (Controlled by Active Tab) */
+.theme-core { background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); background-size: 400% 400%; }
+.theme-crew { background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); background-size: 400% 400%; }
+.theme-funds { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); background-size: 400% 400%; }
+.theme-archive { background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); background-size: 400% 400%; }
+.theme-gallery { background: linear-gradient(120deg, #ffecd2 0%, #fcb69f 100%); background-size: 400% 400%; }
+.theme-news { background: linear-gradient(120deg, #cfd9df 0%, #e2ebf0 100%); background-size: 400% 400%; }
+.theme-hq { background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); background-size: 400% 400%; }
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* UI Elements */
+.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
 .rsa-menu-container { position: relative; display: inline-block; }
 .rsa-trigger { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer; }
 .rsa-trigger:hover { background: var(--accent-secondary); }
-.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; cursor: pointer; }
 .menu-item:hover { background: var(--accent-secondary); color: var(--text-main); }
 .menu-item.active { background: var(--accent-primary); color: #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
 .main-content { flex: 1; overflow-y: auto; padding: 40px 60px; transition: padding-right 0.4s ease; }
-.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 400px; border-left: 1px solid var(--border-light); background: rgba(252, 252, 250, 0.85); backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 400px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .nasa-panel.closed { transform: translateX(100%); } .nasa-panel.open { transform: translateX(0); }
-.panel-toggle { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
+.panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.8); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; backdrop-filter: blur(10px); }
 .panel-toggle:hover { border-color: var(--text-main); }
 
-.arch-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.02); }
-.arch-card:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(0,0,0,0.05); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease; }
+.arch-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05); }
+.arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(31, 38, 135, 0.08); }
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(16px); }
 .gallery-card:hover { transform: translateY(-4px); }
-.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #EBEBEB 0%, #DEDEDE 100%); color: var(--text-muted); background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
+.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); color: var(--text-muted); background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
 .badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 .badge-dark { background: var(--text-main); color: #FFF; } .badge-light { background: var(--accent-secondary); color: var(--text-main); border: 1px solid var(--border-light); }
 
 .action-btn { background: var(--text-main); color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; }
 .action-btn:hover { background: #000; transform: scale(1.02); }
-.delete-btn { background: #FDF2F2; color: #C53030; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.delete-btn { background: rgba(253, 242, 242, 0.8); color: #C53030; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .delete-btn:hover { background: #C53030; color: #FFF; }
 
 .modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.4); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
-.modal-box { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
-.input-field { width: 100%; background: var(--accent-secondary); border: 1px solid var(--border-light); padding: 12px 16px; color: var(--text-main); border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
+.modal-box { background: #FFF; border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+.input-field { width: 100%; background: #F8F9FA; border: 1px solid #E9ECEF; padding: 12px 16px; color: var(--text-main); border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
 .input-field:focus { border-color: var(--text-main); background: #FFF; }
 
 /* CINEMATIC SPLASH SCREEN */
-.splash-wrapper { position: fixed; inset: 0; background: #1A1A1A; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; }
+.splash-wrapper { position: fixed; inset: 0; background: #111; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; }
 .splash-wrapper.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .splash-text { 
   color: #FFFFFF; font-size: 80px; font-weight: 800; margin: 0; letter-spacing: 12px;
@@ -105,12 +122,13 @@ body, html {
 @keyframes cinematicReveal { 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
 @keyframes fadeSub { 100% { opacity: 1; } }
 
+/* Mobile Optimizations */
 @media (max-width: 768px) {
   .top-nav { padding: 0 16px; height: 60px; } .app-layout { padding-top: 60px; } .main-content { padding: 24px 16px 120px 16px !important; }
   .rsa-dropdown { display: none; }
-  .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(252, 252, 250, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 60; justify-content: space-around; align-items: center; padding: 0 8px; }
-  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; }
-  .mobile-nav-item.active { color: var(--text-main); } .mobile-nav-label { font-size: 10px; font-weight: 700; font-family: 'Syne', sans-serif; }
+  .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 60; justify-content: space-around; align-items: center; padding: 0 4px; }
+  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); padding: 8px 4px; border-radius: 8px; cursor: pointer; flex: 1; }
+  .mobile-nav-item.active { color: var(--text-main); } .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
   .nasa-panel { width: 100%; top: 60px; bottom: 70px; }
 }
 @media (min-width: 769px) { .mobile-bottom-nav { display: none; } }
@@ -127,6 +145,7 @@ const Icons = {
   Funds: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>,
   Archive: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>,
   Gallery: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>,
+  News: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path></svg>,
   HQ: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>,
   Plus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>,
   Close: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
@@ -142,6 +161,9 @@ export default function App() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
 
+  // Security Simulation State
+  const [userRole, setUserRole] = useState("Delegate"); // Can be "Delegate", "UD", or "USEC"
+
   // Database States
   const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "" });
   const [delegates, setDelegates] = useState([]);
@@ -149,7 +171,7 @@ export default function App() {
   const [vault, setVault] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [gallery, setGallery] = useState([]);
-  const [nasaNews, setNasaNews] = useState([]);
+  const [unitNews, setUnitNews] = useState([]); // Custom Manual News
 
   // Modal States
   const [modalType, setModalType] = useState(null); 
@@ -165,7 +187,7 @@ export default function App() {
     const unsubVault = onSnapshot(collection(db, "vault"), (snap) => setVault(snap.docs.map(d => ({id: d.id, ...d.data()}))));
     const unsubCampaigns = onSnapshot(collection(db, "campaigns"), (snap) => setCampaigns(snap.docs.map(d => ({id: d.id, ...d.data()}))));
     const unsubGallery = onSnapshot(collection(db, "gallery"), (snap) => setGallery(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-    const unsubNews = onSnapshot(collection(db, "news"), (snap) => setNasaNews(snap.docs.map(d => ({id: d.id, ...d.data()}))));
+    const unsubNews = onSnapshot(collection(db, "news"), (snap) => setUnitNews(snap.docs.map(d => ({id: d.id, ...d.data()}))));
 
     return () => { 
       unsubHQ(); unsubCrew(); unsubFunds(); unsubVault(); unsubCampaigns(); unsubGallery(); unsubNews(); 
@@ -201,6 +223,8 @@ export default function App() {
     }
   };
 
+  const isLeadership = userRole === "UD" || userRole === "USEC";
+
   // ==========================================
   // VIEWS
   // ==========================================
@@ -208,7 +232,7 @@ export default function App() {
     <div className="fade-in">
       <div style={{ marginBottom: 40 }}>
         <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode || 'Z649'} COMMAND CENTER</div>
-        <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1>
+        <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 40 }}>
         <div className="arch-card">
@@ -225,8 +249,8 @@ export default function App() {
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
-        <h2 className="syne" style={{ fontSize: 18, margin: 0 }}>CURRENT CAMPAIGNS</h2>
-        <button className="panel-toggle" onClick={() => openModal('campaigns')}>+ Sync Campaign</button>
+        <h2 className="syne selectable-text" style={{ fontSize: 18, margin: 0 }}>CURRENT CAMPAIGNS</h2>
+        {isLeadership && <button className="panel-toggle" onClick={() => openModal('campaigns')}>+ Sync Campaign</button>}
       </div>
       <div style={{ display: 'grid', gap: 16 }}>
         {campaigns.map(camp => (
@@ -237,7 +261,7 @@ export default function App() {
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               {camp.abstractsClosed === 'true' ? <span className="badge badge-dark">Abstracts Closed</span> : <span className="badge badge-light">Open</span>}
-              <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('campaigns', camp.id)}>✕</button>
+              {isLeadership && <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('campaigns', camp.id)}>✕</button>}
             </div>
           </div>
         ))}
@@ -251,8 +275,9 @@ export default function App() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PERSONNEL DATABASE</div>
-          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT CREW</h1>
+          <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT CREW</h1>
         </div>
+        {/* Anyone can add/edit delegates based on your request */}
         <button className="action-btn" onClick={() => openModal('crew')}><Icons.Plus /> ADD DELEGATE</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
@@ -266,9 +291,9 @@ export default function App() {
               </div>
             </div>
             <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{d.name}</div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>{d.email} | {d.phone}</div>
+            <div className="mono selectable-text" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>{d.email} | {d.phone}</div>
             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Proficient Skills:</div>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>{d.skills || "N/A"}</p>
+            <p className="selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>{d.skills || "N/A"}</p>
           </div>
         ))}
         {delegates.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No crew members synced.</p>}
@@ -281,9 +306,10 @@ export default function App() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>FINANCIAL LEDGER</div>
-          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT FUNDS</h1>
+          <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT FUNDS</h1>
         </div>
-        <button className="action-btn" onClick={() => openModal('finances')}><Icons.Plus /> ADD TRANSACTION</button>
+        {/* Only Leadership can manage funds */}
+        {isLeadership && <button className="action-btn" onClick={() => openModal('finances')}><Icons.Plus /> ADD TRANSACTION</button>}
       </div>
       <div style={{ display: 'grid', gap: 16 }}>
         {finances.map(f => (
@@ -297,16 +323,20 @@ export default function App() {
                     <span>Progress</span>
                     <span>₹{Number(f.current || 0).toLocaleString()} / ₹{Number(f.target || 0).toLocaleString()}</span>
                   </div>
-                  <div className="progress-track"><div className="progress-fill" style={{ width: `${(Number(f.current || 0) / Number(f.target || 1)) * 100}%` }}></div></div>
+                  <div className="progress-track" style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px' }}>
+                    <div className="progress-fill" style={{ width: `${(Number(f.current || 0) / Number(f.target || 1)) * 100}%`, height: '100%', background: 'var(--text-main)', borderRadius: '4px' }}></div>
+                  </div>
                 </div>
               )}
             </div>
             <div style={{ textAlign: 'right', display: 'flex', gap: 12, alignItems: 'center' }}>
               <div className="mono" style={{ fontSize: 24, fontWeight: 700 }}>₹{f.type === 'EXPENSE' ? Number(f.amount || 0).toLocaleString() : Number(f.target || 0).toLocaleString()}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px', justifyContent: 'center' }} onClick={() => openModal('finances', f)}>Edit</button>
-                <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('finances', f.id)}>✕</button>
-              </div>
+              {isLeadership && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px', justifyContent: 'center' }} onClick={() => openModal('finances', f)}>Edit</button>
+                  <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('finances', f.id)}>✕</button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -320,7 +350,7 @@ export default function App() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>KNOWLEDGE VAULT</div>
-          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT ARCHIVE</h1>
+          <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT ARCHIVE</h1>
         </div>
         <button className="action-btn" onClick={() => openModal('vault')}><Icons.Plus /> UPLOAD FILE</button>
       </div>
@@ -351,7 +381,7 @@ export default function App() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PORTFOLIO SHOWCASE</div>
-          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>BEST WORKS GALLERY</h1>
+          <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>BEST WORKS GALLERY</h1>
         </div>
         <button className="action-btn" onClick={() => openModal('gallery')}><Icons.Plus /> ADD DRIVE/PDF LINK</button>
       </div>
@@ -371,7 +401,7 @@ export default function App() {
                 </div>
               </div>
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{g.title}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{g.description}</div>
+              <div className="selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{g.description}</div>
               <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="mono" style={{ fontSize: 10, fontWeight: 700 }}>BY: {g.authorName?.toUpperCase() || 'UNIT MEMBER'}</div>
                 {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="action-btn" style={{ padding: '6px 12px', fontSize: 10 }}>OPEN FILE ↗</a>}
@@ -384,35 +414,70 @@ export default function App() {
     </div>
   );
 
+  const renderNews = () => (
+    <div className="fade-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+        <div>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT COMMUNICATION</div>
+          <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>MANUAL BROADCASTS</h1>
+        </div>
+        {/* Only Leadership can broadcast news */}
+        {isLeadership && <button className="action-btn" onClick={() => openModal('news')}><Icons.Plus /> CREATE BROADCAST</button>}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, maxWidth: '800px' }}>
+        {unitNews.length === 0 ? <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No broadcasts found.</p> : null}
+        {unitNews.sort((a,b) => b.timestamp - a.timestamp).map(news => (
+          <div key={news.id} className="arch-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div className="badge badge-dark">{news.tag}</div>
+              {isLeadership && (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('news', news)}>Edit</button>
+                  <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('news', news.id)}>✕</button>
+                </div>
+              )}
+            </div>
+            <h3 className="syne selectable-text" style={{ fontSize: 20, margin: '0 0 12px 0' }}>{news.title}</h3>
+            <p className="selectable-text" style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.8, margin: 0, whiteSpace: 'pre-wrap' }}>{news.content}</p>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 24, paddingTop: 16, borderTop: '1px solid var(--border-light)' }}>
+              BROADCAST LOGGED: {new Date(news.timestamp).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const renderHQ = () => (
     <div className="fade-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>ADMINISTRATION</div>
-          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT HQ ({leadership.unitCode || 'Z649'})</h1>
+          <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT HQ ({leadership.unitCode || 'Z649'})</h1>
         </div>
-        <button className="action-btn" onClick={() => openModal('hq', leadership)}><Icons.HQ/> EDIT HQ DETAILS</button>
+        {isLeadership && <button className="action-btn" onClick={() => openModal('hq', leadership)}><Icons.HQ/> EDIT HQ DETAILS</button>}
       </div>
 
       <div className="arch-card" style={{ marginBottom: 24 }}>
         <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>OFFICIAL INSTITUTION</div>
         <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>UNIT {leadership.unitCode || 'Z649'}</div>
         <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>OFFICIAL NASA MAILBOX</div>
-        <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--success)' }}>{leadership.officialEmail || 'Not configured'}</div>
+        <div className="selectable-text" style={{ fontSize: 16, fontWeight: 600, color: 'var(--success)' }}>{leadership.officialEmail || 'Not configured'}</div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
         <div className="arch-card">
           <div className="badge badge-dark" style={{ marginBottom: 16 }}>UNIT DESIGNEE (UD)</div>
           <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.udName || 'Not configured'}</div>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.udPhone || 'N/A'}</div>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.udEmail || 'N/A'}</div>
+          <div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.udPhone || 'N/A'}</div>
+          <div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.udEmail || 'N/A'}</div>
         </div>
         <div className="arch-card">
           <div className="badge badge-light" style={{ marginBottom: 16 }}>UNIT SECRETARY (USEC)</div>
           <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.useName || 'Not configured'}</div>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.usePhone || 'N/A'}</div>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.useEmail || 'N/A'}</div>
+          <div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.usePhone || 'N/A'}</div>
+          <div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.useEmail || 'N/A'}</div>
         </div>
       </div>
     </div>
@@ -443,6 +508,7 @@ export default function App() {
                 { id: 'funds', name: 'Financial Ledger', icon: <Icons.Funds /> },
                 { id: 'archive', name: 'Unit Archive', icon: <Icons.Archive /> },
                 { id: 'gallery', name: 'Work Gallery', icon: <Icons.Gallery /> },
+                { id: 'news', name: 'Unit Broadcasts', icon: <Icons.News /> },
                 { id: 'hq', name: 'HQ Operations', icon: <Icons.HQ /> }
               ].map(item => (
                 <div key={item.id} className={`menu-item ${tab === item.id ? 'active' : ''}`} onClick={() => { setTab(item.id); setIsMenuOpen(false); }}>
@@ -452,12 +518,25 @@ export default function App() {
             </div>
           )}
         </div>
-        <button className="panel-toggle" onClick={() => setIsPanelOpen(!isPanelOpen)}>
-          NASA SYNC FEED <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--success)' }}></div>
-        </button>
+        
+        {/* Developer Tool: Role Switcher (For testing permissions visually) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <select 
+            value={userRole} 
+            onChange={e => setUserRole(e.target.value)}
+            style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-light)', fontSize: '10px', fontFamily: 'Space Mono' }}
+          >
+            <option value="Delegate">View as: Delegate</option>
+            <option value="UD">View as: UD/USEC</option>
+          </select>
+
+          <button className="panel-toggle" onClick={() => setIsPanelOpen(!isPanelOpen)}>
+            OFFICIAL NASA FEED <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--success)' }}></div>
+          </button>
+        </div>
       </div>
 
-      {/* APPLICATION LAYOUT (WITH SEASONAL CLASSES) */}
+      {/* APPLICATION LAYOUT (DYNAMIC ANIMATED BACKGROUND) */}
       <div className={`app-layout theme-${tab}`}>
         <div className="main-content" style={{ paddingRight: isPanelOpen ? (window.innerWidth > 768 ? 460 : 0) : (window.innerWidth > 768 ? 60 : 16) }} onClick={() => isMenuOpen && setIsMenuOpen(false)}>
           {tab === "core" && renderCore()}
@@ -465,30 +544,29 @@ export default function App() {
           {tab === "funds" && renderFunds()}
           {tab === "archive" && renderVault()}
           {tab === "gallery" && renderGallery()}
+          {tab === "news" && renderNews()}
           {tab === "hq" && renderHQ()}
         </div>
 
-        {/* FUNCTIONAL NASA PANEL */}
+        {/* OFFICIAL NASA FEED PANEL (Read-Only static structure as requested for aesthetics) */}
         <div className={`nasa-panel ${isPanelOpen ? 'open' : 'closed'}`}>
-          <div style={{ padding: '32px 32px 24px', borderBottom: '1px solid var(--border-light)', background: 'var(--bg-card)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div className="syne" style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>NASA INDIA FEED</div>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>HQ BROADCASTS</div>
-              </div>
-              <button className="action-btn" style={{ padding: '6px 12px', fontSize: 10 }} onClick={() => openModal('news')}>+ ADD NEWS</button>
+          <div style={{ padding: '32px 32px 24px', borderBottom: '1px solid var(--border-light)', background: 'rgba(255,255,255,0.8)' }}>
+            <div>
+              <div className="syne" style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>NASA INDIA OFFICIAL</div>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>68th YEAR UPDATES</div>
             </div>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: 32 }}>
-            {nasaNews.length === 0 ? <p className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>No recent email broadcasts synced.</p> : null}
-            {nasaNews.sort((a,b) => b.timestamp - a.timestamp).map(news => (
+             {[
+              { id: 1, tag: "THEME 2026", title: "CATALYSE", date: "68th Year", desc: "A catalyst doesn't wait for change. It creates movement, breaks inertia, and opens new paths." },
+              { id: 2, tag: "TROPHY BRIEF", title: "Louis I. Kahn Trophy", date: "Brief Available", desc: "Understanding the interrelations among the five elemental forces and the building envelope." },
+              { id: 3, tag: "COMPETITION", title: "HUDCO Trophy", date: "Prize: ₹7,00,000", desc: "Designing for the informal sector and giving design alternatives for Sustainable Urban Development." }
+            ].map(news => (
               <div key={news.id} style={{ marginBottom: 32 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div className="badge badge-light" style={{ marginBottom: 12 }}>{news.tag}</div>
-                  <button className="delete-btn" style={{ padding: '2px 6px', fontSize: 8 }} onClick={() => handleDeleteFromCloud('news', news.id)}>✕</button>
-                </div>
-                <h3 className="syne" style={{ fontSize: 16, margin: '0 0 6px 0', lineHeight: 1.3 }}>{news.title}</h3>
-                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>{news.content}</p>
+                <div className="badge badge-light" style={{ marginBottom: 12 }}>{news.tag}</div>
+                <h3 className="syne selectable-text" style={{ fontSize: 16, margin: '0 0 6px 0', lineHeight: 1.3 }}>{news.title}</h3>
+                <div className="mono selectable-text" style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 12 }}>{news.date}</div>
+                <p className="selectable-text" style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>{news.desc}</p>
               </div>
             ))}
           </div>
@@ -501,8 +579,8 @@ export default function App() {
           { id: 'core', name: 'Dash', icon: <Icons.Core /> },
           { id: 'crew', name: 'Crew', icon: <Icons.Crew /> },
           { id: 'funds', name: 'Funds', icon: <Icons.Funds /> },
-          { id: 'archive', name: 'Vault', icon: <Icons.Archive /> },
-          { id: 'hq', name: 'HQ', icon: <Icons.HQ /> }
+          { id: 'news', name: 'News', icon: <Icons.News /> },
+          { id: 'gallery', name: 'Gallery', icon: <Icons.Gallery /> }
         ].map(item => (
           <div key={item.id} className={`mobile-nav-item ${tab === item.id ? 'active' : ''}`} onClick={() => { setTab(item.id); setIsPanelOpen(false); }}>
             {item.icon}
@@ -631,7 +709,7 @@ export default function App() {
               <>
                 <input className="input-field" placeholder="Tag (e.g. URGENT, TROPHY BRIEF)" value={modalFormData.tag || ''} onChange={e => setModalFormData({...modalFormData, tag: e.target.value})} />
                 <input className="input-field" placeholder="Email Subject / Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
-                <textarea className="input-field" placeholder="Paste email contents here..." rows="5" value={modalFormData.content || ''} onChange={e => setModalFormData({...modalFormData, content: e.target.value})} style={{ resize: 'none' }} />
+                <textarea className="input-field" placeholder="Paste broadcast contents here..." rows="5" value={modalFormData.content || ''} onChange={e => setModalFormData({...modalFormData, content: e.target.value})} style={{ resize: 'none' }} />
                 <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('news')}>Broadcast to all Unit Panels</button>
               </>
             )}
