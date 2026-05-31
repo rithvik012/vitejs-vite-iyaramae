@@ -18,121 +18,135 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. LIQUID AESTHETICS & CSS
+// 2. MONOCHROMATIC LIQUID + DASHED CSS
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
-  --bg-card: rgba(255, 255, 255, 0.55); 
+  --bg-card: rgba(255, 255, 255, 0.65); 
   --text-main: #1A1A1A; 
-  --text-muted: #666666;
-  --border-light: rgba(0, 0, 0, 0.06); 
+  --text-muted: #5A5A5A;
+  --border-light: rgba(0, 0, 0, 0.08); 
   --accent-primary: #111111;
-  --accent-secondary: rgba(0,0,0,0.03); 
-  --success: #278051;
+  --accent-secondary: rgba(0,0,0,0.04); 
+  --success: #2A7249;
 }
 
 body, html { 
-  margin: 0; padding: 0; height: 100vh; overflow: hidden; 
+  margin: 0; padding: 0; height: 100dvh; overflow: hidden; 
   color: var(--text-main); 
   font-family: 'Plus Jakarta Sans', sans-serif; 
-  -webkit-user-select: none; user-select: none; /* Stops blinking cursors */
+  -webkit-user-select: none; user-select: none; 
   -webkit-tap-highlight-color: transparent;
 }
 
 input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; }
-
 * { box-sizing: border-box; }
-::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 DYNAMIC LIQUID PASTEL BACKGROUNDS 🌟 */
-.app-layout { 
-  display: flex; height: 100vh; width: 100vw; padding-top: 70px; position: relative; 
-  background-size: 300% 300%;
-  animation: liquidGradient 18s ease infinite;
-  transition: background-image 1.5s ease-in-out;
+/* 🌟 MONOCHROMATIC LIQUID UNDERLAY 🌟 */
+.bg-layer {
+  position: fixed; inset: 0; z-index: -2;
+  background-size: 200% 200%;
+  animation: liquidMonochrome 18s ease-in-out infinite;
+  transition: background-image 1.2s ease-in-out;
 }
 
-/* Subtle, light-shade animated blends for each section */
-.theme-core { background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); }
-.theme-crew { background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); }
-.theme-funds { background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
-.theme-archive { background-image: linear-gradient(120deg, #e2ebf0 0%, #cfd9df 100%); }
-.theme-gallery { background-image: linear-gradient(120deg, #ffecd2 0%, #fcb69f 100%); }
-.theme-news { background-image: linear-gradient(120deg, #fdfbfb 0%, #e2ebf0 100%); }
-.theme-hq { background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%); }
+.theme-core .bg-layer { background-image: linear-gradient(120deg, #F0F2F5 0%, #DCE1E6 100%); } /* Slate Gray */
+.theme-crew .bg-layer { background-image: linear-gradient(120deg, #F5F3F0 0%, #EAE6DF 100%); } /* Warm Sandstone */
+.theme-funds .bg-layer { background-image: linear-gradient(120deg, #EFF2ED 0%, #D8E0D5 100%); } /* Sage Olive */
+.theme-archive .bg-layer { background-image: linear-gradient(120deg, #EDF0F5 0%, #D5DCE6 100%); } /* Cool Steel */
+.theme-gallery .bg-layer { background-image: linear-gradient(120deg, #F3EFF5 0%, #E4DAE8 100%); } /* Muted Lavender */
+.theme-news .bg-layer { background-image: linear-gradient(120deg, #F5F5F5 0%, #E0E0E0 100%); } /* Crisp Silver */
+.theme-hq .bg-layer { background-image: linear-gradient(120deg, #EAEBEA 0%, #C4C6C4 100%); } /* Monolith Charcoal */
 
-@keyframes liquidGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes liquidMonochrome { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+/* 🌟 FLOWING DASHED OVERLAY 🌟 */
+.dashed-overlay {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: repeating-linear-gradient( -45deg, transparent, transparent 6px, rgba(0,0,0,0.035) 6px, rgba(0,0,0,0.035) 12px );
+  background-size: 200% 200%;
+  animation: slideDashes 40s linear infinite;
+  opacity: 0.8;
+}
+@keyframes slideDashes { 100% { background-position: 100% 100%; } }
 
 /* UI Elements */
+.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; }
+.main-content { 
+  flex: 1; overflow-y: auto; padding: 40px; 
+  display: flex; flex-direction: column; align-items: center; 
+}
+
+/* CENTERING WRAPPER FOR DESKTOP */
+.content-wrapper { width: 100%; max-width: 1100px; margin: 0 auto; }
+
 .top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
 .rsa-menu-container { position: relative; display: inline-block; }
 .rsa-trigger { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer; }
 .rsa-trigger:hover { background: var(--accent-secondary); }
-.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; cursor: pointer; }
 .menu-item:hover { background: var(--accent-secondary); color: var(--text-main); }
 .menu-item.active { background: var(--accent-primary); color: #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-.main-content { flex: 1; overflow-y: auto; padding: 40px 60px; transition: padding-right 0.4s ease; }
-
-/* Desktop NASA Panel */
+/* NASA Panel */
 .nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 420px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .nasa-panel.closed { transform: translateX(100%); } .nasa-panel.open { transform: translateX(0); }
-.panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.8); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; backdrop-filter: blur(10px); }
-.panel-toggle:hover { border-color: var(--text-main); }
+.panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; backdrop-filter: blur(10px); }
+.panel-toggle:hover { border-color: var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-.arch-card { background: var(--bg-card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03); }
-.arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+/* Cards & Buttons */
+.arch-card { background: var(--bg-card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); }
+.arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
 .gallery-card:hover { transform: translateY(-4px); }
-.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); color: var(--text-muted); background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
+.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: var(--text-muted); background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
 .badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 .badge-dark { background: var(--text-main); color: #FFF; } .badge-light { background: var(--accent-secondary); color: var(--text-main); border: 1px solid var(--border-light); }
 
 .action-btn { background: var(--text-main); color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; }
-.action-btn:hover { background: #000; transform: scale(1.02); }
-.delete-btn { background: rgba(253, 242, 242, 0.8); color: #C53030; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.action-btn:hover { background: #000; transform: scale(1.02); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+.delete-btn { background: rgba(253, 242, 242, 0.9); color: #C53030; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .delete-btn:hover { background: #C53030; color: #FFF; }
 
 /* Modals */
-.modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
-.modal-box { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+.modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
+.modal-box { background: #FFF; border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
 .input-field { width: 100%; background: #F8F9FA; border: 1px solid #E9ECEF; padding: 12px 16px; color: var(--text-main); border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
 .input-field:focus { border-color: var(--text-main); background: #FFF; }
 
 /* Cinematic Splash Screen */
 .splash-wrapper { position: fixed; inset: 0; background: #111; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; }
 .splash-wrapper.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.splash-text { color: #FFFFFF; font-size: 80px; font-weight: 800; margin: 0; letter-spacing: 12px; opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(20px); animation: cinematicReveal 2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.splash-sub { color: #888; margin-top: 24px; letter-spacing: 6px; font-size: 11px; opacity: 0; animation: fadeSub 1s ease forwards 1s; }
+.splash-text { color: #FFFFFF; font-size: 80px; font-weight: 800; margin: 0; letter-spacing: 12px; opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(20px); animation: cinematicReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.splash-sub { color: #888; margin-top: 24px; letter-spacing: 6px; font-size: 11px; opacity: 0; animation: fadeSub 1s ease forwards 0.8s; }
 @keyframes cinematicReveal { 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
 @keyframes fadeSub { 100% { opacity: 1; } }
 
-/* 📱 MOBILE OPTIMIZATIONS (Complete overhaul for NASA Feed readability) */
+/* 📱 MASSIVE MOBILE OPTIMIZATIONS */
 @media (max-width: 768px) {
   .top-nav { padding: 0 16px; height: 60px; } 
   .app-layout { padding-top: 60px; } 
-  .main-content { padding: 24px 16px 120px 16px !important; }
+  
+  /* Critical Scroll Fix: 140px bottom padding protects against Safari/Chrome URL bars and the bottom nav */
+  .main-content { padding: 24px 16px 140px 16px !important; }
+  
   .rsa-dropdown { display: none; }
   
-  /* Full-Screen Mobile NASA Panel */
-  .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(30px); }
-  .nasa-panel.closed { transform: translateY(100%); } 
-  .nasa-panel.open { transform: translateY(0); }
+  .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+  .nasa-panel.closed { transform: translateY(100%); } .nasa-panel.open { transform: translateY(0); }
   .mobile-close-feed { display: flex; justify-content: space-between; align-items: center; padding: 24px 24px 16px 24px; border-bottom: 1px solid var(--border-light); background: #FFF; }
 
-  .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 60; justify-content: space-around; align-items: center; padding: 0 4px; padding-bottom: env(safe-area-inset-bottom); }
-  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); padding: 8px 4px; border-radius: 8px; cursor: pointer; flex: 1; }
+  .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 60; justify-content: space-around; align-items: center; padding: 0 4px; padding-bottom: env(safe-area-inset-bottom); }
+  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); padding: 8px 4px; border-radius: 8px; cursor: pointer; flex: 1; transition: color 0.2s; }
   .mobile-nav-item.active { color: var(--text-main); } .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
 }
-@media (min-width: 769px) { 
-  .mobile-bottom-nav { display: none; } 
-  .mobile-close-feed { display: none; } 
-}
+@media (min-width: 769px) { .mobile-bottom-nav { display: none; } .mobile-close-feed { display: none; } }
 @keyframes menuPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 .fade-in { animation: fadeIn 0.4s ease forwards; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 `;
@@ -164,7 +178,7 @@ export default function App() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
 
-  // Hardcoded Security Logic
+  // Security Simulation State
   const [isLeadership, setIsLeadership] = useState(false);
 
   // Database States
@@ -200,11 +214,7 @@ export default function App() {
       setIsLeadership(false);
     } else {
       const passcode = prompt("Enter UD/USEC Passcode to unlock Administration Tools:");
-      if (passcode === "Z649") { // Secret code!
-        setIsLeadership(true);
-      } else if (passcode !== null) {
-        alert("Incorrect passcode.");
-      }
+      if (passcode === "Z649") { setIsLeadership(true); } else if (passcode !== null) { alert("Incorrect passcode."); }
     }
   };
 
@@ -236,30 +246,21 @@ export default function App() {
     }
   };
 
-  // ✉️ EMAIL AUTOMATION BRIDGE
+  // Email Bridge
   const handleSaveAndEmail = async () => {
     await handleSaveToCloud('news');
-    
-    // Grab all delegate emails, filter out empty ones, and join with commas
     const emailList = delegates.map(d => d.email).filter(e => e && e.includes('@')).join(',');
-    
-    if (emailList.length === 0) {
-      alert("Broadcast saved to cloud, but no valid delegate emails were found in the Crew database to send an email.");
-      return;
-    }
-
+    if (emailList.length === 0) { alert("Saved! No delegate emails found to send to."); return; }
     const subject = encodeURIComponent(`[UNIT ${leadership.unitCode}] ${modalFormData.tag}: ${modalFormData.title}`);
     const body = encodeURIComponent(`${modalFormData.content}\n\n--\nSent via RSA Unit Command Center`);
-    
-    // Opens default mail app with Bcc filled out
     window.location.href = `mailto:?bcc=${emailList}&subject=${subject}&body=${body}`;
   };
 
   // ==========================================
-  // VIEWS
+  // VIEWS (Wrapped in centering content-wrapper)
   // ==========================================
   const renderCore = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ marginBottom: 40 }}>
         <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode || 'Z649'} COMMAND CENTER</div>
         <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1>
@@ -301,13 +302,12 @@ export default function App() {
   );
 
   const renderCrew = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PERSONNEL DATABASE</div>
           <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT CREW</h1>
         </div>
-        {/* Open to everyone */}
         <button className="action-btn" onClick={() => openModal('crew')}><Icons.Plus /> ADD DELEGATE</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
@@ -332,13 +332,12 @@ export default function App() {
   );
 
   const renderFunds = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>FINANCIAL LEDGER</div>
           <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT FUNDS</h1>
         </div>
-        {/* Locked to Leadership */}
         {isLeadership && <button className="action-btn" onClick={() => openModal('finances')}><Icons.Plus /> ADD TRANSACTION</button>}
       </div>
       <div style={{ display: 'grid', gap: 16 }}>
@@ -376,13 +375,12 @@ export default function App() {
   );
 
   const renderVault = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>KNOWLEDGE VAULT</div>
           <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT ARCHIVE</h1>
         </div>
-        {/* Open to everyone */}
         <button className="action-btn" onClick={() => openModal('vault')}><Icons.Plus /> UPLOAD FILE</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
@@ -408,13 +406,12 @@ export default function App() {
   );
 
   const renderGallery = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PORTFOLIO SHOWCASE</div>
           <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>BEST WORKS GALLERY</h1>
         </div>
-        {/* Open to everyone */}
         <button className="action-btn" onClick={() => openModal('gallery')}><Icons.Plus /> ADD DRIVE/PDF LINK</button>
       </div>
 
@@ -447,17 +444,16 @@ export default function App() {
   );
 
   const renderNews = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT COMMUNICATION</div>
           <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>MANUAL BROADCASTS</h1>
         </div>
-        {/* Locked to Leadership */}
         {isLeadership && <button className="action-btn" onClick={() => openModal('news')}><Icons.Plus /> CREATE BROADCAST</button>}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, maxWidth: '800px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}>
         {unitNews.length === 0 ? <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No broadcasts found.</p> : null}
         {unitNews.sort((a,b) => b.timestamp - a.timestamp).map(news => (
           <div key={news.id} className="arch-card">
@@ -482,13 +478,12 @@ export default function App() {
   );
 
   const renderHQ = () => (
-    <div className="fade-in">
+    <div className="fade-in content-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>ADMINISTRATION</div>
           <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT HQ ({leadership.unitCode || 'Z649'})</h1>
         </div>
-        {/* Locked to Leadership */}
         {isLeadership && <button className="action-btn" onClick={() => openModal('hq', leadership)}><Icons.HQ/> EDIT HQ DETAILS</button>}
       </div>
 
@@ -520,6 +515,12 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
+      {/* 🌟 TWO-LAYER BACKGROUND SYSTEM 🌟 */}
+      <div className={`theme-${tab}`}>
+        <div className="bg-layer"></div>
+      </div>
+      <div className="dashed-overlay"></div>
+
       {/* CINEMATIC SPLASH SCREEN */}
       <div className={`splash-wrapper ${!isBooting ? 'hidden' : ''}`}>
         <h1 className="syne splash-text">{leadership.unitCode || 'Z649'}</h1>
@@ -564,8 +565,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* APPLICATION LAYOUT (DYNAMIC ANIMATED BACKGROUND) */}
-      <div className={`app-layout theme-${tab}`}>
+      {/* APPLICATION LAYOUT */}
+      <div className="app-layout">
         <div className="main-content" style={{ paddingRight: isPanelOpen && window.innerWidth > 768 ? 420 : 0 }} onClick={() => { isMenuOpen && setIsMenuOpen(false); }}>
           {tab === "core" && renderCore()}
           {tab === "crew" && renderCrew()}
@@ -588,7 +589,7 @@ export default function App() {
               <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>68th YEAR UPDATES</div>
             </div>
           </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: 32 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: 32, paddingBottom: 140 }}>
              {[
               { id: 1, tag: "THEME 2026", title: "CATALYSE", date: "68th Year", desc: "A catalyst doesn't wait for change. It creates movement, breaks inertia, and opens new paths." },
               { id: 2, tag: "TROPHY BRIEF", title: "Louis I. Kahn Trophy", date: "Brief Available", desc: "Understanding the interrelations among the five elemental forces and the building envelope." },
