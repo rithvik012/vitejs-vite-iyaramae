@@ -19,27 +19,27 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. LIQUID PASTEL THEMES & ANGLES
+// 2. MONOCHROMATIC THEMES & ANGLES
 // ==========================================
 const THEMES = {
-  core: { c1: "#E0C3FC", c2: "#8EC5FC", angle: 45 },      // Lavender to Soft Blue
-  crew: { c1: "#FDFBFB", c2: "#EBEDEE", angle: -30 },     // Cloud White to Soft Gray
-  funds: { c1: "#F6D365", c2: "#FDA085", angle: 60 },     // Warm Sun
-  archive: { c1: "#CFD9DF", c2: "#E2EBF0", angle: -45 },  // Cool Steel
-  gallery: { c1: "#FFECD2", c2: "#FCB69F", angle: 15 },   // Peach Sunset
-  news: { c1: "#A1C4FD", c2: "#C2E9FB", angle: 90 },      // Winter Sky
-  hq: { c1: "#D4FC79", c2: "#96E6A1", angle: 0 }          // Fresh Mint
+  core: { c1: "#A3B1C6", c2: "#E0E5EC", angle: 45 },      
+  crew: { c1: "#C5B9A5", c2: "#F2EBE1", angle: -30 },     
+  funds: { c1: "#A1B59C", c2: "#E0E8DC", angle: 60 },      
+  archive: { c1: "#9AA9C2", c2: "#D9E2EC", angle: -45 },   
+  gallery: { c1: "#BBA8CC", c2: "#EAE0F0", angle: 15 },    
+  news: { c1: "#ADADAD", c2: "#E8E8E8", angle: 90 },       
+  hq: { c1: "#9C9E9C", c2: "#D8DAD8", angle: 0 }           
 };
 
 // ==========================================
-// 3. FLUID CSS ENGINE (GHOST-GRID DEFEATER)
+// 3. FLUID CSS ENGINE (DARK MODE DEFEATER & ACCELERATION)
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
   color-scheme: light only !important; 
-  --bg-card: rgba(255, 255, 255, 0.6) !important; 
+  --bg-card: rgba(255, 255, 255, 0.7) !important; 
   --text-main: #1A1A1A !important; 
   --text-muted: #5A5A5A !important;
   --border-light: rgba(0, 0, 0, 0.08) !important; 
@@ -50,7 +50,7 @@ const GLOBAL_STYLES = `
 
 body, html { 
   margin: 0; padding: 0; height: 100dvh; overflow: hidden; 
-  color: #1A1A1A !important; background-color: #FFFFFF !important;
+  color: #1A1A1A !important; background-color: #E0E5EC !important;
   font-family: 'Plus Jakarta Sans', sans-serif; 
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
@@ -60,27 +60,29 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 Z-INDEX NUKE: Forces Liquid Backgrounds ON TOP of any old CSS grid files 🌟 */
+/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS 🌟 */
 .liquid-bg-layer {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background-size: 300% 300%;
   animation: liquidBreathe 15s ease-in-out infinite;
-  transition: opacity 1.5s ease-in-out;
+  transition: opacity 1.2s ease-in-out;
+  will-change: opacity; /* GPU Acceleration */
 }
 @keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
 /* 🌟 BRIGHT WHITE FLOWING DASHED LINES 🌟 */
 .flowing-lines-vector {
-  position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: 1; pointer-events: none;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255,255,255,0.6) 35px, rgba(255,255,255,0.6) 38px) !important;
+  position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: -1; pointer-events: none;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.85) 20px, rgba(255,255,255,0.85) 24px) !important;
   transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: streamLines 40s linear infinite;
+  will-change: transform; /* GPU Acceleration */
 }
 @keyframes streamLines { 0% { background-position: 0px 0px; } 100% { background-position: 0px 1000px; } }
 
-/* 🌟 PERFECT DESKTOP CENTERING (Sits above backgrounds) 🌟 */
-.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; z-index: 10; }
-.main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; width: 100%; }
+/* 🌟 PERFECT DESKTOP CENTERING 🌟 */
+.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; overflow: hidden;}
+.main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; width: 100%; -webkit-overflow-scrolling: touch; }
 .content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; } 
 
 .top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.6) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
@@ -98,19 +100,20 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 .panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9) !important; border: 1px solid var(--border-light); color: #111 !important; padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
 .panel-toggle:hover { border-color: #111 !important; }
 
-.arch-card { background: rgba(255,255,255,0.5) !important; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.8); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; }
+/* Formatting Fixes: word-break added to prevent email/link overflows */
+.arch-card { background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; word-wrap: break-word; overflow: hidden; }
 .arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.5) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); color: #111 !important; }
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: rgba(255,255,255,0.7) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; word-wrap: break-word;}
 .gallery-card:hover { transform: translateY(-4px); }
 .gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: #555 !important; background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
-.badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
-.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(255,255,255,0.6) !important; color: #111 !important; border: 1px solid var(--border-light); }
+.badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; white-space: nowrap; }
+.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(0,0,0,0.06) !important; color: #111 !important; border: 1px solid var(--border-light); }
 
-.action-btn { background: #111 !important; color: #FFF !important; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; }
+.action-btn { background: #111 !important; color: #FFF !important; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; white-space: nowrap; }
 .action-btn:hover { background: #000 !important; transform: scale(1.02); }
 .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.delete-btn { background: rgba(253, 242, 242, 0.9) !important; color: #C53030 !important; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.delete-btn { background: rgba(253, 242, 242, 0.9) !important; color: #C53030 !important; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
 .delete-btn:hover { background: #C53030 !important; color: #FFF !important; }
 
 .modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
@@ -118,30 +121,53 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 .input-field { width: 100%; background: #F8F9FA !important; border: 1px solid #E9ECEF; padding: 12px 16px; color: #111 !important; border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
 .input-field:focus { border-color: #111; background: #FFF !important; }
 
-/* 🌟 ULTIMATE CINEMATIC ORBITAL LOADER 🌟 */
-.splash-overlay { position: fixed; inset: 0; z-index: 999999; background: #050505 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; }
+/* 🌟 NEW SUPERNOVA SPLASH SCREEN 🌟 */
+.splash-overlay { position: fixed; inset: 0; z-index: 999999; background: #050505 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out, visibility 0.8s; overflow: hidden; }
 .splash-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-.orbital-container { position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
-.orbit-ring-1 { position: absolute; width: 100%; height: 100%; border: 2px solid rgba(255,255,255,0.05); border-top-color: var(--success); border-radius: 50%; animation: spin 1.5s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite; }
-.orbit-ring-2 { position: absolute; width: 70%; height: 70%; border: 2px solid rgba(255,255,255,0.05); border-bottom-color: #FFF; border-radius: 50%; animation: spinReverse 2s linear infinite; }
-.orbit-core { width: 25%; height: 25%; background: #FFF; border-radius: 50%; box-shadow: 0 0 25px rgba(255,255,255,0.8); animation: pulseCore 1s ease-in-out infinite alternate; }
+.supernova-container { position: relative; display: flex; align-items: center; justify-content: center; }
 
-@keyframes spin { 100% { transform: rotate(360deg); } }
-@keyframes spinReverse { 100% { transform: rotate(-360deg); } }
-@keyframes pulseCore { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(1.2); opacity: 1; } }
+/* The Expanding Orb */
+.supernova-orb {
+  position: absolute; width: 10px; height: 10px; background: #FFFFFF; border-radius: 50%;
+  box-shadow: 0 0 60px 30px #FFFFFF; opacity: 0; z-index: 1;
+  animation: explodeOrb 2.6s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+}
 
-.splash-logo-text { color: #FFFFFF !important; font-size: 36px; font-weight: 800; letter-spacing: 16px; margin-top: 40px; text-indent: 16px; opacity: 0; animation: fadeUp 1s ease forwards 0.5s; }
-.splash-sub { color: #666 !important; margin-top: 16px; letter-spacing: 6px; font-size: 10px; font-weight: 600; opacity: 0; animation: fadeUp 1s ease forwards 1s; }
-@keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+/* The Z649 Text */
+.splash-logo-text { 
+  position: relative; color: #FFFFFF !important; font-size: 56px; font-weight: 800; letter-spacing: 20px; text-indent: 20px; z-index: 10;
+  animation: textMaterialize 2s ease-in-out forwards;
+}
+.splash-sub { color: #888 !important; margin-top: 40px; letter-spacing: 8px; font-size: 10px; font-weight: 600; opacity: 0; z-index: 10; animation: fadeUp 1s ease forwards 0.5s; text-transform: uppercase; }
 
-/* 📱 MOBILE DEEP SCROLL + SWIPEABLE NAV DOCK */
+@keyframes textMaterialize {
+  0% { opacity: 0; filter: blur(12px); transform: scale(0.9); }
+  30% { opacity: 1; filter: blur(0px); transform: scale(1); }
+  80% { opacity: 1; filter: blur(0px); transform: scale(1); }
+  100% { opacity: 0; filter: blur(8px); transform: scale(1.1); }
+}
+
+@keyframes explodeOrb {
+  0% { transform: scale(0); opacity: 0; }
+  45% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(2); opacity: 0.8; }
+  90% { transform: scale(200); opacity: 1; } /* Completely envelops screen */
+  100% { transform: scale(200); opacity: 0; }
+}
+
+@keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-10px); } }
+
+/* 📱 MOBILE DEEP SCROLL + SWIPEABLE NAV DOCK + FLEX FIXES */
 @media (max-width: 768px) {
   .top-nav { padding: 0 16px; height: 60px; } 
   .app-layout { padding-top: 60px; } 
   .main-content { padding: 24px 16px 150px 16px !important; }
-  .content-wrapper { padding: 0 4px; }
+  .content-wrapper { padding: 0; }
   .rsa-dropdown { display: none; }
+  
+  /* Flex wrap fixes for headers on narrow screens */
+  .mobile-header-wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 32px; }
   
   .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.96) !important; color: #111 !important; }
   .nasa-panel.closed { transform: translateY(100%); } .nasa-panel.open { transform: translateY(0); }
@@ -167,7 +193,11 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
   .mobile-nav-item.active { color: #111 !important; } 
   .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
 }
-@media (min-width: 769px) { .mobile-bottom-nav { display: none; } .mobile-close-feed { display: none; } }
+@media (min-width: 769px) { 
+  .mobile-bottom-nav { display: none; } 
+  .mobile-close-feed { display: none; } 
+  .mobile-header-wrap { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+}
 @keyframes menuPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 .fade-in { animation: fadeIn 0.4s ease forwards; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 `;
@@ -200,10 +230,10 @@ export default function App() {
   const [isBooting, setIsBooting] = useState(true);
   const [isSendingEmail, setIsSendingEmail] = useState(false); 
 
-  // Security Simulation
+  // Security Verification
   const [isLeadership, setIsLeadership] = useState(false);
 
-  // Firebase Cloud States
+  // Firebase Realtime
   const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "z649@nasaindia.co.in" });
   const [delegates, setDelegates] = useState([]);
   const [finances, setFinances] = useState([]);
@@ -217,7 +247,8 @@ export default function App() {
   const [modalFormData, setModalFormData] = useState({});
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 3000);
+    // Timed exactly to match the Supernova splash CSS animation
+    setTimeout(() => setIsBooting(false), 2700);
 
     const unsubHQ = onSnapshot(doc(db, "unit", "hq"), (docSnap) => { if (docSnap.exists()) setLeadership(docSnap.data()); });
     const unsubCrew = onSnapshot(collection(db, "crew"), (snap) => setDelegates(snap.docs.map(d => ({id: d.id, ...d.data()}))));
@@ -255,6 +286,7 @@ export default function App() {
     } catch (e) { alert("Error saving to cloud."); }
   };
 
+  // ✉️ EMAILJS AUTOMATION - MANUAL BROADCAST
   const handleSaveAndEmailNews = async () => {
     setIsSendingEmail(true);
     await handleSaveToCloud('news'); 
@@ -278,12 +310,12 @@ export default function App() {
       await emailjs.send('service_2007', 'template_a63y975', templateParams, 'PE32og5tBpVl8pzhT');
       alert("Success! Broadcast synced and silent email blasted to all delegates.");
     } catch (error) {
-      console.error("EmailJS Error:", error);
       alert("Saved to cloud, but background email failed to send.");
     }
     setIsSendingEmail(false);
   };
 
+  // ✉️ EMAILJS AUTOMATION - CAMPAIGNS/TROPHIES
   const handleSaveAndEmailCampaign = async () => {
     setIsSendingEmail(true);
     await handleSaveToCloud('campaigns');
@@ -307,7 +339,6 @@ export default function App() {
       await emailjs.send('service_2007', 'template_a63y975', templateParams, 'PE32og5tBpVl8pzhT');
       alert("Success! Trophy synced and notification email blasted to all delegates.");
     } catch (error) {
-      console.error("EmailJS Error:", error);
       alert("Saved to cloud, but background email failed to send.");
     }
     setIsSendingEmail(false);
@@ -321,9 +352,8 @@ export default function App() {
 
   const renderCore = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ marginBottom: 40 }}>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode || 'Z649'} COMMAND CENTER</div>
-        <h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1>
+      <div className="mobile-header-wrap">
+        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode || 'Z649'} COMMAND CENTER</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1></div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 40 }}>
         <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE DELEGATES</div><div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{delegates.length}</div></div>
@@ -336,11 +366,11 @@ export default function App() {
       </div>
       <div style={{ display: 'grid', gap: 16 }}>
         {campaigns.map(camp => (
-          <div key={camp.id} className="arch-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px' }}>
+          <div key={camp.id} className="arch-card" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px' }}>
             <div><div style={{ fontSize: 16, fontWeight: 600 }}>{camp.title} <span className="mono" style={{ fontSize: 10, color: 'var(--text-muted)' }}>({camp.year})</span></div><p className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Prize Pool: {camp.prize}</p></div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               {camp.abstractsClosed === 'true' ? <span className="badge badge-dark">Abstracts Closed</span> : <span className="badge badge-light">Open</span>}
-              {isLeadership && <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('campaigns', camp.id)}>✕</button>}
+              {isLeadership && <button className="delete-btn" style={{ padding: '6px' }} onClick={() => handleDeleteFromCloud('campaigns', camp.id)}><Icons.Close /></button>}
             </div>
           </div>
         ))}
@@ -351,16 +381,25 @@ export default function App() {
 
   const renderCrew = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="mobile-header-wrap">
         <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PERSONNEL DATABASE</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT CREW</h1></div>
         <button className="action-btn" onClick={() => openModal('crew')}><Icons.Plus /> ADD DELEGATE</button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
         {delegates.map(d => (
           <div key={d.id} className="arch-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}><div className={d.role === 'Unit Designee' ? 'badge badge-dark' : 'badge badge-light'}>{d.role}</div><div style={{ display: 'flex', gap: 8 }}><button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('crew', d)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('crew', d.id)}>✕</button></div></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+              <div className={d.role === 'Unit Designee' ? 'badge badge-dark' : 'badge badge-light'}>{d.role}</div>
+              {/* RESTRICTED TO LEADERSHIP */}
+              {isLeadership && (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('crew', d)}>Edit</button>
+                  <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('crew', d.id)}>✕</button>
+                </div>
+              )}
+            </div>
             <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{d.name}</div>
-            <div className="mono selectable-text" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>{d.email} | {d.phone}</div>
+            <div className="mono selectable-text" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16, wordBreak: 'break-all' }}>{d.email}<br/>{d.phone}</div>
             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Proficient Skills:</div>
             <p className="selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>{d.skills || "N/A"}</p>
           </div>
@@ -372,18 +411,18 @@ export default function App() {
 
   const renderFunds = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="mobile-header-wrap">
         <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>FINANCIAL LEDGER</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT FUNDS</h1></div>
         {isLeadership && <button className="action-btn" onClick={() => openModal('finances')}><Icons.Plus /> ADD TRANSACTION</button>}
       </div>
       <div style={{ display: 'grid', gap: 16 }}>
         {finances.map(f => (
-          <div key={f.id} className="arch-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
+          <div key={f.id} className="arch-card" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ flex: '1 1 250px' }}>
               <span className={f.type === 'COLLECTION' ? 'badge badge-dark' : 'badge badge-light'} style={{ marginBottom: 12 }}>{f.type}</span>
               <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{f.desc} <span className="mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>({f.campaign})</span></div>
               {f.type === 'COLLECTION' && (
-                <div style={{ marginTop: 12, maxWidth: '400px' }}>
+                <div style={{ marginTop: 12, width: '100%' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, marginBottom: 4 }}><span>Progress</span><span>₹{Number(f.current || 0).toLocaleString()} / ₹{Number(f.target || 0).toLocaleString()}</span></div>
                   <div style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px', overflow: 'hidden' }}><div style={{ width: `${Math.min(100, (Number(f.current || 0) / Number(f.target || 1)) * 100)}%`, height: '100%', background: '#111' }}></div></div>
                 </div>
@@ -404,11 +443,11 @@ export default function App() {
 
   const renderVault = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="mobile-header-wrap">
         <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>KNOWLEDGE VAULT</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT ARCHIVE</h1></div>
         <button className="action-btn" onClick={() => openModal('vault')}><Icons.Plus /> UPLOAD FILE</button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
         {vault.map(v => (
           <div key={v.id} className="arch-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}><div className={v.type === 'Design' ? 'badge badge-dark' : 'badge badge-light'}>{v.type} | {v.year}</div><div style={{ display: 'flex', gap: 8 }}><button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('vault', v)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('vault', v.id)}>✕</button></div></div>
@@ -423,9 +462,9 @@ export default function App() {
 
   const renderGallery = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="mobile-header-wrap">
         <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PORTFOLIO SHOWCASE</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>BEST WORKS GALLERY</h1></div>
-        <button className="action-btn" onClick={() => openModal('gallery')}><Icons.Plus /> ADD DRIVE/PDF LINK</button>
+        <button className="action-btn" onClick={() => openModal('gallery')}><Icons.Plus /> ADD LINK</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
         {gallery.map(g => (
@@ -436,7 +475,7 @@ export default function App() {
             <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}><div className="badge badge-light">{g.category}</div><div style={{ display: 'flex', gap: 8 }}><button className="panel-toggle" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => openModal('gallery', g)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => handleDeleteFromCloud('gallery', g.id)}>✕</button></div></div>
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{g.title}</div><div className="selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{g.description}</div>
-              <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div className="mono" style={{ fontSize: 10, fontWeight: 700 }}>BY: {g.authorName?.toUpperCase() || 'UNIT MEMBER'}</div>{g.link && <a href={g.link} target="_blank" rel="noreferrer" className="action-btn" style={{ padding: '6px 12px', fontSize: 10 }}>OPEN FILE ↗</a>}</div>
+              <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', alignItems: 'center' }}><div className="mono" style={{ fontSize: 10, fontWeight: 700 }}>BY: {g.authorName?.toUpperCase() || 'UNIT MEMBER'}</div>{g.link && <a href={g.link} target="_blank" rel="noreferrer" className="action-btn" style={{ padding: '6px 12px', fontSize: 10 }}>OPEN ↗</a>}</div>
             </div>
           </div>
         ))}
@@ -447,7 +486,7 @@ export default function App() {
 
   const renderNews = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="mobile-header-wrap">
         <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT COMMUNICATION</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>MANUAL BROADCASTS</h1></div>
         {isLeadership && <button className="action-btn" onClick={() => openModal('news')}><Icons.Plus /> CREATE BROADCAST</button>}
       </div>
@@ -469,14 +508,14 @@ export default function App() {
 
   const renderHQ = () => (
     <div className="fade-in content-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="mobile-header-wrap">
         <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>ADMINISTRATION</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT HQ ({leadership.unitCode || 'Z649'})</h1></div>
         {isLeadership && <button className="action-btn" onClick={() => openModal('hq', leadership)}><Icons.HQ/> EDIT HQ DETAILS</button>}
       </div>
-      <div className="arch-card" style={{ marginBottom: 24 }}><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>OFFICIAL INSTITUTION</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>UNIT {leadership.unitCode || 'Z649'}</div><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>OFFICIAL NASA MAILBOX</div><div className="selectable-text" style={{ fontSize: 16, fontWeight: 600, color: 'var(--success)' }}>{leadership.officialEmail || 'Not configured'}</div></div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
-        <div className="arch-card"><div className="badge badge-dark" style={{ marginBottom: 16 }}>UNIT DESIGNEE (UD)</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.udName || 'Not configured'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.udPhone || 'N/A'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.udEmail || 'N/A'}</div></div>
-        <div className="arch-card"><div className="badge badge-light" style={{ marginBottom: 16 }}>UNIT SECRETARY (USEC)</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.useName || 'Not configured'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.usePhone || 'N/A'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.useEmail || 'N/A'}</div></div>
+      <div className="arch-card" style={{ marginBottom: 24 }}><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>OFFICIAL INSTITUTION</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>UNIT {leadership.unitCode || 'Z649'}</div><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>OFFICIAL NASA MAILBOX</div><div className="selectable-text" style={{ fontSize: 16, fontWeight: 600, color: 'var(--success)', wordBreak: 'break-all' }}>{leadership.officialEmail || 'Not configured'}</div></div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+        <div className="arch-card"><div className="badge badge-dark" style={{ marginBottom: 16 }}>UNIT DESIGNEE (UD)</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.udName || 'Not configured'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.udPhone || 'N/A'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', wordBreak: 'break-all' }}>Email: {leadership.udEmail || 'N/A'}</div></div>
+        <div className="arch-card"><div className="badge badge-light" style={{ marginBottom: 16 }}>UNIT SECRETARY (USEC)</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.useName || 'Not configured'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.usePhone || 'N/A'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', wordBreak: 'break-all' }}>Email: {leadership.useEmail || 'N/A'}</div></div>
       </div>
     </div>
   );
@@ -503,14 +542,12 @@ export default function App() {
         style={{ transform: `rotate(${activeTheme.angle}deg)` }}
       />
 
-      {/* 🌟 ULTIMATE CINEMATIC ORBITAL SPLASH SCREEN 🌟 */}
+      {/* 🌟 SUPERNOVA SPLASH SCREEN 🌟 */}
       <div className={`splash-overlay ${!isBooting ? 'hidden' : ''}`}>
-        <div className="orbital-container">
-          <div className="orbit-ring-1"></div>
-          <div className="orbit-ring-2"></div>
-          <div className="orbit-core"></div>
+        <div className="supernova-container">
+          <div className="supernova-orb"></div>
+          <div className="splash-logo-text">{leadership.unitCode || 'Z649'}</div>
         </div>
-        <div className="splash-logo-text">{leadership.unitCode || 'Z649'}</div>
         <div className="splash-sub">ESTABLISHING CLOUD UPLINK</div>
       </div>
 
