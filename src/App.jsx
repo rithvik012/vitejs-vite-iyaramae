@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
+import emailjs from '@emailjs/browser'; // NEW: Email Automation Engine
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION
@@ -106,6 +107,7 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 
 .action-btn { background: var(--text-main); color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; }
 .action-btn:hover { background: #000; transform: scale(1.02); }
+.action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .delete-btn { background: rgba(253, 242, 242, 0.9); color: #C53030; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .delete-btn:hover { background: #C53030; color: #FFF; }
 
@@ -185,12 +187,13 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
+  const [isSendingEmail, setIsSendingEmail] = useState(false); // Tracks email loading state
 
   // Security Simulation
   const [isLeadership, setIsLeadership] = useState(false);
 
   // Firebase Cloud States
-  const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "" });
+  const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "z649@nasaindia.co.in" });
   const [delegates, setDelegates] = useState([]);
   const [finances, setFinances] = useState([]);
   const [vault, setVault] = useState([]);
@@ -203,7 +206,6 @@ export default function App() {
   const [modalFormData, setModalFormData] = useState({});
 
   useEffect(() => {
-    // 3.5 second boot to allow the full cinematic animation to play out safely
     setTimeout(() => setIsBooting(false), 3500);
 
     const unsubHQ = onSnapshot(doc(db, "unit", "hq"), (docSnap) => { if (docSnap.exists()) setLeadership(docSnap.data()); });
@@ -242,17 +244,68 @@ export default function App() {
     } catch (e) { alert("Error saving to cloud."); }
   };
 
-  const handleDeleteFromCloud = async (collectionName, id) => {
-    if(window.confirm("Permanently delete this entry?")) await deleteDoc(doc(db, collectionName, id));
+  // ✉️ EMAILJS AUTOMATION - MANUAL BROADCAST
+  const handleSaveAndEmailNews = async () => {
+    setIsSendingEmail(true);
+    await handleSaveToCloud('news'); // Save to DB first
+
+    const emailList = delegates.map(d => d.email).filter(e => e && e.includes('@')).join(',');
+    if (emailList.length === 0) { 
+      alert("Broadcast saved to cloud, but no delegate emails found in Crew to send to."); 
+      setIsSendingEmail(false);
+      return; 
+    }
+
+    const templateParams = {
+      subject: `[UNIT ${leadership.unitCode}] ${modalFormData.tag}: ${modalFormData.title}`,
+      message: `${modalFormData.content}\n\n--\nSent via RSA Unit Command Center`,
+      to_email: leadership.officialEmail || "z649@nasaindia.co.in", 
+      email: leadership.officialEmail || "z649@nasaindia.co.in", 
+      bcc_list: emailList
+    };
+
+    try {
+      await emailjs.send('service_2007', 'template_a63y975', templateParams, 'PE32og5tBpVl8pzhT');
+      alert("Success! Broadcast synced and silent email blasted to all delegates.");
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      alert("Saved to cloud, but background email failed to send.");
+    }
+    setIsSendingEmail(false);
   };
 
-  const handleSaveAndEmail = async () => {
-    await handleSaveToCloud('news');
+  // ✉️ EMAILJS AUTOMATION - CAMPAIGNS/TROPHIES
+  const handleSaveAndEmailCampaign = async () => {
+    setIsSendingEmail(true);
+    await handleSaveToCloud('campaigns');
+
     const emailList = delegates.map(d => d.email).filter(e => e && e.includes('@')).join(',');
-    if (emailList.length === 0) { alert("Saved! No delegate emails found to send to."); return; }
-    const subject = encodeURIComponent(`[UNIT ${leadership.unitCode}] ${modalFormData.tag}: ${modalFormData.title}`);
-    const body = encodeURIComponent(`${modalFormData.content}\n\n--\nSent via RSA Unit Command Center`);
-    window.location.href = `mailto:?bcc=${emailList}&subject=${subject}&body=${body}`;
+    if (emailList.length === 0) { 
+      alert("Campaign saved, but no delegate emails found in Crew to send to."); 
+      setIsSendingEmail(false);
+      return; 
+    }
+
+    const templateParams = {
+      subject: `[UNIT ${leadership.unitCode}] NEW TROPHY LAUNCH: ${modalFormData.title}`,
+      message: `A new Campaign/Trophy has been synced to the database.\n\nTrophy: ${modalFormData.title}\nYear: ${modalFormData.year}\nPrize Pool: ${modalFormData.prize}\nAbstracts Closed: ${modalFormData.abstractsClosed === 'true' ? 'Yes' : 'No'}\n\nPlease check the Unit Command Center website for details.\n\n--\nSent via RSA Unit Command Center`,
+      to_email: leadership.officialEmail || "z649@nasaindia.co.in",
+      email: leadership.officialEmail || "z649@nasaindia.co.in", 
+      bcc_list: emailList
+    };
+
+    try {
+      await emailjs.send('service_2007', 'template_a63y975', templateParams, 'PE32og5tBpVl8pzhT');
+      alert("Success! Trophy synced and notification email blasted to all delegates.");
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      alert("Saved to cloud, but background email failed to send.");
+    }
+    setIsSendingEmail(false);
+  };
+
+  const handleDeleteFromCloud = async (collectionName, id) => {
+    if(window.confirm("Permanently delete this entry?")) await deleteDoc(doc(db, collectionName, id));
   };
 
   const activeTheme = THEMES[tab] || THEMES.core;
@@ -545,7 +598,13 @@ export default function App() {
                 <input className="input-field" placeholder="Year (2026)" value={modalFormData.year || ''} onChange={e => setModalFormData({...modalFormData, year: e.target.value})} />
                 <input className="input-field" placeholder="Prize Pool context" value={modalFormData.prize || ''} onChange={e => setModalFormData({...modalFormData, prize: e.target.value})} />
                 <select className="input-field" value={modalFormData.abstractsClosed || 'false'} onChange={e => setModalFormData({...modalFormData, abstractsClosed: e.target.value})}><option value="false">Abstracts Open</option><option value="true">Abstracts Closed</option></select>
-                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('campaigns')}>Sync Campaign to Cloud</button>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+                  <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('campaigns')}>Just Sync to App</button>
+                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : 'var(--success)' }} onClick={handleSaveAndEmailCampaign}>
+                    {isSendingEmail ? "Sending..." : "Sync & Email Delegates"}
+                  </button>
+                </div>
               </>
             )}
 
@@ -582,9 +641,12 @@ export default function App() {
                 <input className="input-field" placeholder="Tag (e.g. URGENT, TROPHY BRIEF)" value={modalFormData.tag || ''} onChange={e => setModalFormData({...modalFormData, tag: e.target.value})} />
                 <input className="input-field" placeholder="Email Subject / Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
                 <textarea className="input-field" placeholder="Paste broadcast contents here..." rows="5" value={modalFormData.content || ''} onChange={e => setModalFormData({...modalFormData, content: e.target.value})} style={{ resize: 'none' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
                   <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('news')}>Just Sync to App</button>
-                  <button className="action-btn" style={{ width: '100%', justifyContent: 'center', background: 'var(--success)' }} onClick={handleSaveAndEmail}>Broadcast & Email Unit</button>
+                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : 'var(--success)' }} onClick={handleSaveAndEmailNews}>
+                    {isSendingEmail ? "Sending..." : "Broadcast & Email Unit"}
+                  </button>
                 </div>
               </>
             )}
