@@ -19,30 +19,29 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. MONOCHROMATIC THEMES & ANGLES
+// 2. MONOCHROMATIC THEMES & ANGLES (Deepened for White Lines)
 // ==========================================
 const THEMES = {
-  core: { c1: "#F2F4F7", c2: "#D9E0E6", angle: 45 },
-  crew: { c1: "#F5F2EF", c2: "#E6DFD5", angle: -30 },
-  funds: { c1: "#EDF2EC", c2: "#D5E0D4", angle: 60 },
-  archive: { c1: "#ECF1F5", c2: "#D4DDE6", angle: -45 },
-  gallery: { c1: "#F4EFF5", c2: "#E1D5E6", angle: 15 },
-  news: { c1: "#F5F5F5", c2: "#DFDFDF", angle: 90 },
-  hq: { c1: "#EDEEED", c2: "#C6C8C6", angle: 0 }
+  core: { c1: "#A6B1C2", c2: "#E1E6EC", angle: 45 },      // Deep Slate
+  crew: { c1: "#CBBFA9", c2: "#F1EBE4", angle: -30 },     // Deep Sandstone
+  funds: { c1: "#AABCA3", c2: "#E3EAE0", angle: 60 },      // Deep Sage
+  archive: { c1: "#A3B1C6", c2: "#DFE5ED", angle: -45 },   // Deep Steel
+  gallery: { c1: "#C3B1D2", c2: "#EDE6F2", angle: 15 },    // Deep Lavender
+  news: { c1: "#B5B5B5", c2: "#EAEAEA", angle: 90 },       // Deep Silver
+  hq: { c1: "#A4A6A4", c2: "#DCDEDC", angle: 0 }           // Deep Charcoal
 };
 
 // ==========================================
-// 3. FLUID CSS ENGINE (DARK MODE OVERRIDE)
+// 3. FLUID CSS ENGINE & LIGHT MODE ENFORCER
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
-/* STRICT LIGHT MODE OVERRIDE: Prevents Samsung/Chrome from ruining colors */
 :root {
-  color-scheme: light only !important;
+  color-scheme: light only !important; /* Stops Samsung Dark Mode Glitches */
   --bg-card: rgba(255, 255, 255, 0.65); 
   --text-main: #1A1A1A; 
-  --text-muted: #5A5A5A;
+  --text-muted: #4A4A4A;
   --border-light: rgba(0, 0, 0, 0.08); 
   --accent-primary: #111111;
   --accent-secondary: rgba(0,0,0,0.04); 
@@ -51,32 +50,32 @@ const GLOBAL_STYLES = `
 
 body, html { 
   margin: 0; padding: 0; height: 100dvh; overflow: hidden; 
-  color: var(--text-main) !important; 
-  background-color: #F0F2F5 !important;
+  color: var(--text-main) !important; background-color: #E1E6EC !important;
   font-family: 'Plus Jakarta Sans', sans-serif; 
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 
-input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; color: #1A1A1A !important; background-color: #FFFFFF !important; }
+input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; color: #111 !important; }
 * { box-sizing: border-box; }
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 LIQUID BACKGROUND 🌟 */
+/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS 🌟 */
 .liquid-bg {
-  position: fixed; inset: -50%; z-index: -2; pointer-events: none;
-  background-size: 200% 200%;
-  animation: liquidBreathe 12s ease-in-out infinite;
-  transition: background-image 1.5s ease-in-out;
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background-size: 300% 300%;
+  animation: liquidBreathe 15s ease-in-out infinite;
+  transition: opacity 1.2s ease-in-out;
 }
 @keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-/* 🌟 ROTATING FLOWING LINES 🌟 */
+/* 🌟 WHITE FLOWING LINES 🌟 */
 .flowing-lines-layer {
   position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: -1; pointer-events: none;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(0,0,0,0.025) 15px, rgba(0,0,0,0.025) 17px);
+  /* Pure White lines at 70% opacity */
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(255,255,255,0.7) 15px, rgba(255,255,255,0.7) 17px);
   transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: streamLines 30s linear infinite;
+  animation: streamLines 40s linear infinite;
 }
 @keyframes streamLines { 0% { background-position: 0px 0px; } 100% { background-position: 0px 1000px; } }
 
@@ -100,14 +99,14 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 .panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9) !important; border: 1px solid var(--border-light); color: #111 !important; padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
 .panel-toggle:hover { border-color: var(--text-main); }
 
-.arch-card { background: rgba(255,255,255,0.65) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; }
+.arch-card { background: rgba(255,255,255,0.55) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; }
 .arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: rgba(255,255,255,0.65) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; }
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: rgba(255,255,255,0.55) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; }
 .gallery-card:hover { transform: translateY(-4px); }
 .gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: #555 !important; background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
 .badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
-.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(0,0,0,0.04) !important; color: #111 !important; border: 1px solid var(--border-light); }
+.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(0,0,0,0.06) !important; color: #111 !important; border: 1px solid var(--border-light); }
 
 .action-btn { background: #111 !important; color: #FFF !important; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; }
 .action-btn:hover { background: #000 !important; transform: scale(1.02); }
@@ -115,7 +114,7 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
 .delete-btn { background: rgba(253, 242, 242, 0.9) !important; color: #C53030 !important; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .delete-btn:hover { background: #C53030 !important; color: #FFF !important; }
 
-.modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
+.modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
 .modal-box { background: #FFF !important; border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; color: #111 !important; }
 .input-field { width: 100%; background: #F8F9FA !important; border: 1px solid #E9ECEF; padding: 12px 16px; color: #111 !important; border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
 .input-field:focus { border-color: #111; background: #FFF !important; }
@@ -147,15 +146,14 @@ input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto
     border-top: 1px solid var(--border-light); z-index: 60; 
     align-items: center; padding: 0 8px 20px 8px; padding-bottom: env(safe-area-inset-bottom);
     overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    scrollbar-width: none; 
   }
-  .mobile-bottom-nav::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
+  .mobile-bottom-nav::-webkit-scrollbar { display: none; } 
   
   .mobile-nav-item { 
     display: flex; flex-direction: column; align-items: center; justify-content: center; 
     gap: 4px; color: #555 !important; padding: 8px 4px; cursor: pointer; 
-    flex: 0 0 22%; /* Shows ~4.5 icons to hint at scrolling */
-    scroll-snap-align: start; transition: color 0.2s; 
+    flex: 0 0 22%; scroll-snap-align: start; transition: color 0.2s; 
   }
   .mobile-nav-item.active { color: #111 !important; } 
   .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
@@ -483,11 +481,19 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 PERFECTED LIQUID & FLOWING LINES 🌟 */}
-      <div 
-        className="liquid-bg" 
-        style={{ backgroundImage: `linear-gradient(135deg, ${activeTheme.c1} 0%, ${activeTheme.c2} 50%, ${activeTheme.c1} 100%)` }}
-      />
+      {/* 🌟 PERFECTED BACKGROUNDS: Fading Opacity instead of Glitchy Gradients 🌟 */}
+      {Object.entries(THEMES).map(([key, theme]) => (
+        <div 
+          key={key}
+          className="liquid-bg" 
+          style={{ 
+            backgroundImage: `linear-gradient(135deg, ${theme.c1} 0%, ${theme.c2} 50%, ${theme.c1} 100%)`,
+            opacity: tab === key ? 1 : 0
+          }}
+        />
+      ))}
+      
+      {/* WHITE FLOWING LINES */}
       <div 
         className="flowing-lines-layer" 
         style={{ transform: `rotate(${activeTheme.angle}deg)` }}
