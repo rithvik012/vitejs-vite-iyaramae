@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 
 // ==========================================
-// 1. FIREBASE CONNECTION (Keep Your Keys Here!)
+// 1. FIREBASE CONNECTION
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. AESTHETICS & CUSTOM CURSOR CSS
+// 2. AESTHETICS & CSS
 // ==========================================
 const GLOBAL_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
@@ -54,23 +54,26 @@ body, html {
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* Custom Magnetic Cursor */
+/* Custom Fluid Cursor */
 .custom-cursor {
-  position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+  position: fixed; top: 0; left: 0; width: 24px; height: 24px;
   border: 2px solid var(--text-main); border-radius: 50%;
   pointer-events: none; z-index: 999999;
   transform: translate(-50%, -50%);
-  transition: width 0.2s, height 0.2s, background-color 0.2s;
+  transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
   mix-blend-mode: difference;
+  will-change: transform;
 }
 .custom-cursor.active {
-  width: 50px; height: 50px; background-color: rgba(17, 24, 39, 0.1);
+  width: 60px; height: 60px; background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* UI Elements */
 .top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
 .rsa-menu-container { position: relative; display: inline-block; }
 .rsa-trigger { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; }
+.rsa-trigger:hover { background: var(--accent-secondary); }
 .rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; }
 .menu-item:hover { background: var(--accent-secondary); color: var(--text-main); }
@@ -91,16 +94,16 @@ body, html {
 .badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 .badge-dark { background: var(--text-main); color: #FFF; } .badge-light { background: var(--accent-secondary); color: var(--text-main); border: 1px solid var(--border-light); }
 
-.action-btn { background: var(--text-main); color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; }
+.action-btn { background: var(--text-main); color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: none; }
 .action-btn:hover { background: #000; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
-.edit-btn { background: var(--accent-secondary); color: var(--text-main); border: 1px solid var(--border-light); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; }
-.delete-btn { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.edit-btn { background: var(--accent-secondary); color: var(--text-main); border: 1px solid var(--border-light); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; cursor: none; }
+.delete-btn { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: none; }
 
 .modal-bg { position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.2s ease; }
 .modal-box { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 24px 48px rgba(0,0,0,0.08); max-height: 90vh; overflow-y: auto; }
 .input-field { width: 100%; background: var(--bg-main); border: 1px solid var(--border-light); padding: 12px 16px; color: var(--text-main); border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; }
 
-/* CREATIVE SPLASH SCREEN */
+/* SPLASH SCREEN */
 .splash-wrapper { position: fixed; inset: 0; background: var(--text-main); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s; }
 .splash-wrapper.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .splash-text { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2); position: relative; }
@@ -120,6 +123,9 @@ body, html {
 .fade-in { animation: fadeIn 0.4s ease forwards; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 `;
 
+// ==========================================
+// 3. ICONS
+// ==========================================
 const Icons = {
   Core: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>,
   Crew: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>,
@@ -132,33 +138,41 @@ const Icons = {
   ChevronDown: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
 };
 
+// ==========================================
+// 4. MAIN APPLICATION
+// ==========================================
 export default function App() {
   const [tab, setTab] = useState("core");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
 
-  // Custom Cursor State
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+  // Performance-optimized cursor references
+  const cursorRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
 
-  const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "UD Name", udEmail: "ud@college.in", officialEmail: "z649@nasaindia.co" });
+  // Database States
+  const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "" });
   const [delegates, setDelegates] = useState([]);
   const [finances, setFinances] = useState([]);
   const [vault, setVault] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [gallery, setGallery] = useState([]);
-  const [nasaNews, setNasaNews] = useState([]); // NEW: Cloud Synced News Feed
+  const [nasaNews, setNasaNews] = useState([]);
 
+  // Modal States
   const [modalType, setModalType] = useState(null); 
   const [modalFormData, setModalFormData] = useState({});
 
   useEffect(() => {
+    // Splash screen timer
     setTimeout(() => setIsBooting(false), 2400);
 
-    // Custom Cursor Logic
+    // High-performance cursor movement (bypasses React state to prevent lag)
     const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      }
       const target = e.target.closest('button, a, .rsa-trigger, .panel-toggle, .menu-item, .action-btn');
       setIsHovering(!!target);
     };
@@ -179,6 +193,7 @@ export default function App() {
     };
   }, []);
 
+  // Cloud Actions
   const openModal = (type, editingItem = null) => { setModalFormData(editingItem || {}); setModalType(type); setIsMenuOpen(false); };
   const closeModal = () => { setModalType(null); setModalFormData({}); };
 
@@ -196,27 +211,40 @@ export default function App() {
       }
       closeModal();
     } catch (e) {
-      alert("Cloud Sync Error. Check network.");
+      console.error(e);
+      alert("Error saving to cloud. Please try again.");
     }
   };
 
   const handleDeleteFromCloud = async (collectionName, id) => {
-    if(window.confirm("Permanently delete this from the cloud database?")) {
+    if(window.confirm("Permanently delete this entry from the cloud database?")) {
       await deleteDoc(doc(db, collectionName, id));
     }
   };
 
-  // VIEWS (Truncated standard rendering functions for brevity, maintaining functionality)
+  // ==========================================
+  // FULLY RESTORED RENDER VIEWS
+  // ==========================================
+
   const renderCore = () => (
     <div className="fade-in">
       <div style={{ marginBottom: 40 }}>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode} COMMAND CENTER</div>
+        <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode || 'Z649'} COMMAND CENTER</div>
         <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 40 }}>
-        <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE DELEGATES</div><div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{delegates.length}</div></div>
-        <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>TOTAL EXPENSES</div><div className="mono" style={{ fontSize: 32, fontWeight: 700 }}>₹{finances.filter(f => f.type === 'EXPENSE').reduce((a, b) => a + (Number(b.amount) || 0), 0).toLocaleString()}</div></div>
-        <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE PROJECTS</div><div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{vault.length}</div></div>
+        <div className="arch-card">
+          <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE DELEGATES</div>
+          <div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{delegates.length}</div>
+        </div>
+        <div className="arch-card">
+          <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>TOTAL EXPENSES</div>
+          <div className="mono" style={{ fontSize: 32, fontWeight: 700 }}>₹{finances.filter(f => f.type === 'EXPENSE').reduce((a, b) => a + (Number(b.amount) || 0), 0).toLocaleString()}</div>
+        </div>
+        <div className="arch-card">
+          <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE PROJECTS</div>
+          <div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{vault.length}</div>
+        </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
         <h2 className="syne" style={{ fontSize: 18, margin: 0 }}>CURRENT CAMPAIGNS</h2>
@@ -225,10 +253,117 @@ export default function App() {
       <div style={{ display: 'grid', gap: 16 }}>
         {campaigns.map(camp => (
           <div key={camp.id} className="arch-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px' }}>
-            <div><div style={{ fontSize: 16, fontWeight: 600 }}>{camp.title} <span className="mono" style={{ fontSize: 10, color: 'var(--text-muted)' }}>({camp.year})</span></div></div>
-            <div style={{ display: 'flex', gap: 12 }}><span className="badge badge-light">{camp.status || 'Active'}</span><button className="delete-btn" onClick={() => handleDeleteFromCloud('campaigns', camp.id)}>✕</button></div>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 600 }}>{camp.title} <span className="mono" style={{ fontSize: 10, color: 'var(--text-muted)' }}>({camp.year})</span></div>
+              <p className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Prize Pool: {camp.prize}</p>
+            </div>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              {camp.abstractsClosed === 'true' ? <span className="badge badge-dark">Abstracts Closed</span> : <span className="badge badge-light">Open</span>}
+              <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('campaigns', camp.id)}>✕</button>
+            </div>
           </div>
         ))}
+        {campaigns.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No campaigns synced to cloud database.</p>}
+      </div>
+    </div>
+  );
+
+  const renderCrew = () => (
+    <div className="fade-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+        <div>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PERSONNEL DATABASE</div>
+          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT CREW</h1>
+        </div>
+        <button className="action-btn" onClick={() => openModal('crew')}><Icons.Plus /> ADD DELEGATE</button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+        {delegates.map(d => (
+          <div key={d.id} className="arch-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div className={d.role === 'Unit Designee' ? 'badge badge-dark' : 'badge badge-light'}>{d.role}</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('crew', d)}>Edit</button>
+                <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('crew', d.id)}>✕</button>
+              </div>
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{d.name}</div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>{d.email} | {d.phone}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Proficient Skills:</div>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>{d.skills || "N/A"}</p>
+          </div>
+        ))}
+        {delegates.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No crew members synced.</p>}
+      </div>
+    </div>
+  );
+
+  const renderFunds = () => (
+    <div className="fade-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+        <div>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>FINANCIAL LEDGER</div>
+          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT FUNDS</h1>
+        </div>
+        <button className="action-btn" onClick={() => openModal('finances')}><Icons.Plus /> ADD TRANSACTION</button>
+      </div>
+      <div style={{ display: 'grid', gap: 16 }}>
+        {finances.map(f => (
+          <div key={f.id} className="arch-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <span className={f.type === 'COLLECTION' ? 'badge badge-dark' : 'badge badge-light'} style={{ marginBottom: 12 }}>{f.type}</span>
+              <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{f.desc} <span className="mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>({f.campaign})</span></div>
+              {f.type === 'COLLECTION' && (
+                <div style={{ marginTop: 12, maxWidth: '400px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    <span>Progress</span>
+                    <span>₹{Number(f.current || 0).toLocaleString()} / ₹{Number(f.target || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="progress-track"><div className="progress-fill" style={{ width: `${(Number(f.current || 0) / Number(f.target || 1)) * 100}%` }}></div></div>
+                </div>
+              )}
+            </div>
+            <div style={{ textAlign: 'right', display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div className="mono" style={{ fontSize: 24, fontWeight: 700 }}>₹{f.type === 'EXPENSE' ? Number(f.amount || 0).toLocaleString() : Number(f.target || 0).toLocaleString()}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px', justifyContent: 'center' }} onClick={() => openModal('finances', f)}>Edit</button>
+                <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('finances', f.id)}>✕</button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {finances.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No financial records synced.</p>}
+      </div>
+    </div>
+  );
+
+  const renderVault = () => (
+    <div className="fade-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+        <div>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>KNOWLEDGE VAULT</div>
+          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT ARCHIVE</h1>
+        </div>
+        <button className="action-btn" onClick={() => openModal('vault')}><Icons.Plus /> UPLOAD FILE</button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
+        {vault.map(v => (
+          <div key={v.id} className="arch-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div className={v.type === 'Design' ? 'badge badge-dark' : 'badge badge-light'}>{v.type} | {v.year}</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('vault', v)}>Edit</button>
+                <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('vault', v.id)}>✕</button>
+              </div>
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{v.title}</div>
+            <p className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 20 }}>File Size: {v.size}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <a href={v.link || "#"} target="_blank" rel="noreferrer" className="panel-toggle" style={{ fontSize: 11, textDecoration: 'none' }}>Download File ↗</a>
+            </div>
+          </div>
+        ))}
+        {vault.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No archive files synced.</p>}
       </div>
     </div>
   );
@@ -250,7 +385,13 @@ export default function App() {
               {g.fileType !== 'Image' && <><Icons.Gallery /><span className="mono" style={{ fontSize: 12, fontWeight: 600, marginTop: 8 }}>{g.fileType} LINK</span></>}
             </div>
             <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}><div className="badge badge-light">{g.category}</div><button className="delete-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => handleDeleteFromCloud('gallery', g.id)}>✕</button></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div className="badge badge-light">{g.category}</div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="edit-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => openModal('gallery', g)}>Edit</button>
+                  <button className="delete-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => handleDeleteFromCloud('gallery', g.id)}>✕</button>
+                </div>
+              </div>
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{g.title}</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{g.description}</div>
               <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -260,6 +401,41 @@ export default function App() {
             </div>
           </div>
         ))}
+        {gallery.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No gallery links added yet.</p>}
+      </div>
+    </div>
+  );
+
+  const renderHQ = () => (
+    <div className="fade-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+        <div>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>ADMINISTRATION</div>
+          <h1 className="syne" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT HQ ({leadership.unitCode || 'Z649'})</h1>
+        </div>
+        <button className="action-btn" onClick={() => openModal('hq', leadership)}><Icons.HQ/> EDIT HQ DETAILS</button>
+      </div>
+
+      <div className="arch-card" style={{ marginBottom: 24 }}>
+        <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>OFFICIAL INSTITUTION</div>
+        <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>UNIT {leadership.unitCode || 'Z649'}</div>
+        <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>OFFICIAL NASA MAILBOX</div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--success)' }}>{leadership.officialEmail || 'Not configured'}</div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
+        <div className="arch-card">
+          <div className="badge badge-dark" style={{ marginBottom: 16 }}>UNIT DESIGNEE (UD)</div>
+          <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.udName || 'Not configured'}</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.udPhone || 'N/A'}</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.udEmail || 'N/A'}</div>
+        </div>
+        <div className="arch-card">
+          <div className="badge badge-light" style={{ marginBottom: 16 }}>UNIT SECRETARY (USEC)</div>
+          <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.useName || 'Not configured'}</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.usePhone || 'N/A'}</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>Email: {leadership.useEmail || 'N/A'}</div>
+        </div>
       </div>
     </div>
   );
@@ -271,8 +447,8 @@ export default function App() {
       {/* ARCHITECTURAL ANIMATED BACKGROUND */}
       <div className="animated-grid-bg"></div>
 
-      {/* CUSTOM MAGNETIC CURSOR */}
-      <div className={`custom-cursor ${isHovering ? 'active' : ''}`} style={{ left: mousePos.x + 'px', top: mousePos.y + 'px' }}></div>
+      {/* FIXED FLUID CUSTOM CURSOR */}
+      <div ref={cursorRef} className={`custom-cursor ${isHovering ? 'active' : ''}`}></div>
 
       {/* SPLASH SCREEN: SCANNER REVEAL */}
       <div className={`splash-wrapper ${!isBooting ? 'hidden' : ''}`}>
@@ -280,27 +456,47 @@ export default function App() {
         <div className="mono" style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 24, letterSpacing: 4 }}>ESTABLISHING CLOUD UPLINK</div>
       </div>
 
+      {/* MAIN NAVIGATION WITH ALL TABS RESTORED */}
       <div className="top-nav">
         <div className="rsa-menu-container">
-          <div className="rsa-trigger" onClick={() => setIsMenuOpen(!isMenuOpen)}><h1 className="syne" style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>RSA</h1><Icons.ChevronDown /></div>
+          <div className="rsa-trigger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <h1 className="syne" style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>RSA</h1>
+            <Icons.ChevronDown />
+          </div>
           {isMenuOpen && (
             <div className="rsa-dropdown fade-in">
-              {[{ id: 'core', name: 'Dashboard' }, { id: 'gallery', name: 'Work Gallery' }].map(item => (
-                <div key={item.id} className="menu-item" onClick={() => { setTab(item.id); setIsMenuOpen(false); }}>{item.name}</div>
+              {[
+                { id: 'core', name: 'Dashboard', icon: <Icons.Core /> },
+                { id: 'crew', name: 'Unit Crew', icon: <Icons.Crew /> },
+                { id: 'funds', name: 'Financial Ledger', icon: <Icons.Funds /> },
+                { id: 'archive', name: 'Unit Archive', icon: <Icons.Archive /> },
+                { id: 'gallery', name: 'Work Gallery', icon: <Icons.Gallery /> },
+                { id: 'hq', name: 'HQ Operations', icon: <Icons.HQ /> }
+              ].map(item => (
+                <div key={item.id} className={`menu-item ${tab === item.id ? 'active' : ''}`} onClick={() => { setTab(item.id); setIsMenuOpen(false); }}>
+                  {item.icon} {item.name}
+                </div>
               ))}
             </div>
           )}
         </div>
-        <button className="panel-toggle" onClick={() => setIsPanelOpen(!isPanelOpen)}>NASA SYNC FEED <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--success)' }}></div></button>
+        <button className="panel-toggle" onClick={() => setIsPanelOpen(!isPanelOpen)}>
+          NASA SYNC FEED <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--success)' }}></div>
+        </button>
       </div>
 
+      {/* APPLICATION LAYOUT */}
       <div className="app-layout">
-        <div className="main-content" style={{ paddingRight: isPanelOpen ? (window.innerWidth > 768 ? 460 : 0) : (window.innerWidth > 768 ? 60 : 16) }}>
+        <div className="main-content" style={{ paddingRight: isPanelOpen ? (window.innerWidth > 768 ? 460 : 0) : (window.innerWidth > 768 ? 60 : 16) }} onClick={() => isMenuOpen && setIsMenuOpen(false)}>
           {tab === "core" && renderCore()}
+          {tab === "crew" && renderCrew()}
+          {tab === "funds" && renderFunds()}
+          {tab === "archive" && renderVault()}
           {tab === "gallery" && renderGallery()}
+          {tab === "hq" && renderHQ()}
         </div>
 
-        {/* FIREBASE SYNCED NASA PANEL */}
+        {/* FULLY FUNCTIONAL NASA PANEL */}
         <div className={`nasa-panel ${isPanelOpen ? 'open' : 'closed'}`}>
           <div style={{ padding: '32px 32px 24px', borderBottom: '1px solid var(--border-light)', background: 'var(--bg-card)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -315,7 +511,10 @@ export default function App() {
             {nasaNews.length === 0 ? <p className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>No recent email broadcasts synced.</p> : null}
             {nasaNews.sort((a,b) => b.timestamp - a.timestamp).map(news => (
               <div key={news.id} style={{ marginBottom: 32 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}><div className="badge badge-light" style={{ marginBottom: 12 }}>{news.tag}</div><button className="delete-btn" style={{ padding: '2px 6px', fontSize: 8 }} onClick={() => handleDeleteFromCloud('news', news.id)}>✕</button></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div className="badge badge-light" style={{ marginBottom: 12 }}>{news.tag}</div>
+                  <button className="delete-btn" style={{ padding: '2px 6px', fontSize: 8 }} onClick={() => handleDeleteFromCloud('news', news.id)}>✕</button>
+                </div>
                 <h3 className="syne" style={{ fontSize: 16, margin: '0 0 6px 0', lineHeight: 1.3 }}>{news.title}</h3>
                 <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>{news.content}</p>
               </div>
@@ -324,17 +523,107 @@ export default function App() {
         </div>
       </div>
 
+      {/* MOBILE BOTTOM NAVIGATION */}
+      <div className="mobile-bottom-nav">
+        {[
+          { id: 'core', name: 'Dash', icon: <Icons.Core /> },
+          { id: 'crew', name: 'Crew', icon: <Icons.Crew /> },
+          { id: 'funds', name: 'Funds', icon: <Icons.Funds /> },
+          { id: 'archive', name: 'Vault', icon: <Icons.Archive /> },
+          { id: 'hq', name: 'HQ', icon: <Icons.HQ /> }
+        ].map(item => (
+          <div key={item.id} className={`mobile-nav-item ${tab === item.id ? 'active' : ''}`} onClick={() => { setTab(item.id); setIsPanelOpen(false); }}>
+            {item.icon}
+            <span className="mobile-nav-label mono">{item.name}</span>
+          </div>
+        ))}
+      </div>
+
       {/* CLOUD DATA ENTRY MODALS */}
       {modalType && (
         <div className="modal-bg">
           <div className="modal-box fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}><h2 className="syne" style={{ margin: 0, fontSize: 24 }}>ADD TO CLOUD</h2><div style={{ cursor: 'pointer' }} onClick={closeModal}><Icons.Close/></div></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+              <h2 className="syne" style={{ margin: 0, fontSize: 24 }}>{modalFormData.id || modalType === 'hq' ? 'EDIT' : 'ADD NEW'} ENTRY</h2>
+              <div style={{ cursor: 'pointer' }} onClick={closeModal}><Icons.Close/></div>
+            </div>
             
+            {/* Crew Modal */}
+            {modalType === 'crew' && (
+              <>
+                <input className="input-field" placeholder="Full Delegate Name" value={modalFormData.name || ''} onChange={e => setModalFormData({...modalFormData, name: e.target.value})} />
+                <select className="input-field" value={modalFormData.role || 'Delegate'} onChange={e => setModalFormData({...modalFormData, role: e.target.value})}>
+                  <option value="Delegate">Delegate</option>
+                  <option value="Unit Designee">Unit Designee</option>
+                  <option value="Unit Secretary">Unit Secretary</option>
+                  <option value="Team Lead">Team Lead</option>
+                </select>
+                <input className="input-field" placeholder="Official Email" value={modalFormData.email || ''} onChange={e => setModalFormData({...modalFormData, email: e.target.value})} />
+                <input className="input-field" placeholder="Contact number" value={modalFormData.phone || ''} onChange={e => setModalFormData({...modalFormData, phone: e.target.value})} />
+                <textarea className="input-field" placeholder="Skills abstract ( AutoCAD, Rhino, GIS )" rows="3" value={modalFormData.skills || ''} onChange={e => setModalFormData({...modalFormData, skills: e.target.value})} style={{ resize: 'none' }}></textarea>
+                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('crew')}>Save to Cloud Database</button>
+              </>
+            )}
+
+            {/* Finances Modal */}
+            {modalType === 'finances' && (
+              <>
+                <select className="input-field" value={modalFormData.type || 'EXPENSE'} onChange={e => setModalFormData({...modalFormData, type: e.target.value})}>
+                  <option value="EXPENSE">Expense</option>
+                  <option value="COLLECTION">Collection Target</option>
+                </select>
+                <input className="input-field" placeholder="Purpose (Plotting, Event Fee)" value={modalFormData.desc || ''} onChange={e => setModalFormData({...modalFormData, desc: e.target.value})} />
+                <input className="input-field" placeholder="Campaign context (Louis Kahn)" value={modalFormData.campaign || ''} onChange={e => setModalFormData({...modalFormData, campaign: e.target.value})} />
+                
+                {modalFormData.type === 'COLLECTION' ? (
+                  <>
+                    <input type="number" className="input-field" placeholder="Target Amount (INR)" value={modalFormData.target || ''} onChange={e => setModalFormData({...modalFormData, target: Number(e.target.value)})} />
+                    <input type="number" className="input-field" placeholder="Amount Collected So Far (INR)" value={modalFormData.current || ''} onChange={e => setModalFormData({...modalFormData, current: Number(e.target.value)})} />
+                  </>
+                ) : (
+                  <input type="number" className="input-field" placeholder="Value (INR)" value={modalFormData.amount || ''} onChange={e => setModalFormData({...modalFormData, amount: Number(e.target.value)})} />
+                )}
+                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('finances')}>Execute Cloud Transaction</button>
+              </>
+            )}
+
+            {/* Vault Modal */}
+            {modalType === 'vault' && (
+              <>
+                <input className="input-field" placeholder="File Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
+                <input className="input-field" placeholder="File Size (e.g. 45MB)" value={modalFormData.size || ''} onChange={e => setModalFormData({...modalFormData, size: e.target.value})} />
+                <input className="input-field" placeholder="Year context (e.g. 2026)" value={modalFormData.year || ''} onChange={e => setModalFormData({...modalFormData, year: e.target.value})} />
+                <input className="input-field" placeholder="Paste URL (Google Drive / Behance)" value={modalFormData.link || ''} onChange={e => setModalFormData({...modalFormData, link: e.target.value})} />
+                <select className="input-field" value={modalFormData.type || 'Design'} onChange={e => setModalFormData({...modalFormData, type: e.target.value})}>
+                  <option value="Design">Design Sheet</option>
+                  <option value="Finance">Finance Document</option>
+                  <option value="Admin">Admin Document</option>
+                </select>
+                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('vault')}>Commit to Cloud Archive</button>
+              </>
+            )}
+
+            {/* Campaigns Modal */}
+            {modalType === 'campaigns' && (
+              <>
+                <input className="input-field" placeholder="Trophy / Campaign Name" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
+                <input className="input-field" placeholder="Year (2026)" value={modalFormData.year || ''} onChange={e => setModalFormData({...modalFormData, year: e.target.value})} />
+                <input className="input-field" placeholder="Prize Pool context" value={modalFormData.prize || ''} onChange={e => setModalFormData({...modalFormData, prize: e.target.value})} />
+                <select className="input-field" value={modalFormData.abstractsClosed || 'false'} onChange={e => setModalFormData({...modalFormData, abstractsClosed: e.target.value})}>
+                  <option value="false">Abstracts Open</option>
+                  <option value="true">Abstracts Closed</option>
+                </select>
+                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('campaigns')}>Sync Campaign to Cloud</button>
+              </>
+            )}
+
+            {/* Gallery Modal */}
             {modalType === 'gallery' && (
               <>
                 <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 16 }}>*Paste Google Drive, Behance, or direct PDF links here.</div>
                 <input className="input-field" placeholder="Project Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
                 <input className="input-field" placeholder="Author Name" value={modalFormData.authorName || ''} onChange={e => setModalFormData({...modalFormData, authorName: e.target.value})} />
+                <input className="input-field" placeholder="Category (e.g. Design, Documentation)" value={modalFormData.category || ''} onChange={e => setModalFormData({...modalFormData, category: e.target.value})} />
                 <select className="input-field" value={modalFormData.fileType || 'Drive Link'} onChange={e => setModalFormData({...modalFormData, fileType: e.target.value})}>
                   <option value="Drive Link">Google Drive Folder Link</option>
                   <option value="PDF">Direct PDF Link</option>
@@ -345,6 +634,27 @@ export default function App() {
               </>
             )}
 
+            {/* HQ Modal */}
+            {modalType === 'hq' && (
+              <>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>UNIT INFORMATION</div>
+                <input className="input-field" placeholder="Unit Code (e.g. Z649)" value={modalFormData.unitCode || ''} onChange={e => setModalFormData({...modalFormData, unitCode: e.target.value})} />
+                <input className="input-field" placeholder="Official NASA Email" value={modalFormData.officialEmail || ''} onChange={e => setModalFormData({...modalFormData, officialEmail: e.target.value})} />
+                
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, marginTop: 16 }}>UNIT DESIGNEE (UD)</div>
+                <input className="input-field" placeholder="UD Name" value={modalFormData.udName || ''} onChange={e => setModalFormData({...modalFormData, udName: e.target.value})} />
+                <input className="input-field" placeholder="UD Phone" value={modalFormData.udPhone || ''} onChange={e => setModalFormData({...modalFormData, udPhone: e.target.value})} />
+                <input className="input-field" placeholder="UD Email" value={modalFormData.udEmail || ''} onChange={e => setModalFormData({...modalFormData, udEmail: e.target.value})} />
+
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, marginTop: 16 }}>UNIT SECRETARY (USEC)</div>
+                <input className="input-field" placeholder="USEC Name" value={modalFormData.useName || ''} onChange={e => setModalFormData({...modalFormData, useName: e.target.value})} />
+                <input className="input-field" placeholder="USEC Phone" value={modalFormData.usePhone || ''} onChange={e => setModalFormData({...modalFormData, usePhone: e.target.value})} />
+                <input className="input-field" placeholder="USEC Email" value={modalFormData.useEmail || ''} onChange={e => setModalFormData({...modalFormData, useEmail: e.target.value})} />
+                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('hq')}>Save HQ to Cloud Database</button>
+              </>
+            )}
+
+            {/* News Feed Modal */}
             {modalType === 'news' && (
               <>
                 <input className="input-field" placeholder="Tag (e.g. URGENT, TROPHY BRIEF)" value={modalFormData.tag || ''} onChange={e => setModalFormData({...modalFormData, tag: e.target.value})} />
@@ -353,6 +663,7 @@ export default function App() {
                 <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('news')}>Broadcast to all Unit Panels</button>
               </>
             )}
+            
           </div>
         </div>
       )}
