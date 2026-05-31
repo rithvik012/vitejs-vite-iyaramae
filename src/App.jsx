@@ -272,7 +272,7 @@ export default function App() {
       <div className="animated-grid-bg"></div>
 
       {/* CUSTOM MAGNETIC CURSOR */}
-      <div className={`custom-cursor ${isHovering ? 'active' : ''}`} style={{ left: \`\${mousePos.x}px\`, top: \`\${mousePos.y}px\` }}></div>
+      <div className={`custom-cursor ${isHovering ? 'active' : ''}`} style={{ left: mousePos.x + 'px', top: mousePos.y + 'px' }}></div>
 
       {/* SPLASH SCREEN: SCANNER REVEAL */}
       <div className={`splash-wrapper ${!isBooting ? 'hidden' : ''}`}>
