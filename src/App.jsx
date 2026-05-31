@@ -271,7 +271,7 @@ export default function App() {
     if (isLeadership) setIsLeadership(false);
     else {
       const passcode = prompt("Enter UD/USEC Passcode:");
-      if (passcode === "Z649") setIsLeadership(true);
+      if (passcode === "saturday") setIsLeadership(true);
       else if (passcode !== null) alert("Incorrect passcode.");
     }
   };
