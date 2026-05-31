@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 
 // ==========================================
-// 1. FIREBASE CONNECTION 
+// 1. FIREBASE HUBLINK CONFIGURATION
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -18,19 +18,29 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. MONOCHROMATIC LIQUID + DASHED CSS
+// 2. DYNAMIC ARCHITECTURAL GRAPHICS SYSTEM
 // ==========================================
-const GLOBAL_STYLES = `
+const SECTIONS_THEMES = {
+  core: { start: "#F0F2F5", end: "#CFD8DC", angle: "45deg" },       // Slate Gray Pair
+  crew: { start: "#F5F2EB", end: "#D7CCC8", angle: "-30deg" },     // Sandstone Pair
+  funds: { start: "#E8F5E9", end: "#C8E6C9", angle: "60deg" },      // Sage Pair
+  archive: { start: "#E1F5FE", end: "#B3E5FC", angle: "-65deg" },   // Steel Pair
+  gallery: { start: "#F3E5F5", end: "#E1BEE7", angle: "15deg" },    // Muted Lavender Pair
+  news: { start: "#FAFAFA", end: "#E0E0E0", angle: "110deg" },     // Silver Pair
+  hq: { start: "#ECEFF1", end: "#B0BEC5", angle: "0deg" }          // Charcoal Pair
+};
+
+const GLOBAL_ENGINE_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
-  --bg-card: rgba(255, 255, 255, 0.65); 
-  --text-main: #1A1A1A; 
-  --text-muted: #5A5A5A;
-  --border-light: rgba(0, 0, 0, 0.08); 
+  --bg-card: rgba(255, 255, 255, 0.68); 
+  --text-main: #111111; 
+  --text-muted: #555555;
+  --border-light: rgba(0, 0, 0, 0.07); 
   --accent-primary: #111111;
   --accent-secondary: rgba(0,0,0,0.04); 
-  --success: #2A7249;
+  --success: #1B5E20;
 }
 
 body, html { 
@@ -39,120 +49,153 @@ body, html {
   font-family: 'Plus Jakarta Sans', sans-serif; 
   -webkit-user-select: none; user-select: none; 
   -webkit-tap-highlight-color: transparent;
+  background-color: #F0F2F5;
 }
 
 input, textarea, .selectable-text { -webkit-user-select: auto; user-select: auto; }
 * { box-sizing: border-box; }
-::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 10px; }
 .syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
 
-/* 🌟 MONOCHROMATIC LIQUID UNDERLAY 🌟 */
-.bg-layer {
-  position: fixed; inset: 0; z-index: -2;
+/* 🌟 KINETIC FLOW ENGINE 🌟 */
+.bg-canvas-container {
+  position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none;
+}
+.liquid-fluid-layer {
+  position: absolute; inset: -50%;
   background-size: 200% 200%;
-  animation: liquidMonochrome 18s ease-in-out infinite;
-  transition: background-image 1.2s ease-in-out;
+  animation: fluidDynamicMotion 16s ease-in-out infinite;
+  transition: background 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes fluidDynamicMotion {
+  0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
 }
 
-.theme-core .bg-layer { background-image: linear-gradient(120deg, #F0F2F5 0%, #DCE1E6 100%); } /* Slate Gray */
-.theme-crew .bg-layer { background-image: linear-gradient(120deg, #F5F3F0 0%, #EAE6DF 100%); } /* Warm Sandstone */
-.theme-funds .bg-layer { background-image: linear-gradient(120deg, #EFF2ED 0%, #D8E0D5 100%); } /* Sage Olive */
-.theme-archive .bg-layer { background-image: linear-gradient(120deg, #EDF0F5 0%, #D5DCE6 100%); } /* Cool Steel */
-.theme-gallery .bg-layer { background-image: linear-gradient(120deg, #F3EFF5 0%, #E4DAE8 100%); } /* Muted Lavender */
-.theme-news .bg-layer { background-image: linear-gradient(120deg, #F5F5F5 0%, #E0E0E0 100%); } /* Crisp Silver */
-.theme-hq .bg-layer { background-image: linear-gradient(120deg, #EAEBEA 0%, #C4C6C4 100%); } /* Monolith Charcoal */
-
-@keyframes liquidMonochrome { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-/* 🌟 FLOWING DASHED OVERLAY 🌟 */
-.dashed-overlay {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background-image: repeating-linear-gradient( -45deg, transparent, transparent 6px, rgba(0,0,0,0.035) 6px, rgba(0,0,0,0.035) 12px );
-  background-size: 200% 200%;
-  animation: slideDashes 40s linear infinite;
-  opacity: 0.8;
+/* SMART DYNAMIC TRANSFORM PATTERN */
+.vector-lines-layer {
+  position: absolute; width: 300%; height: 300%; top: -100%; left: -100%;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(0,0,0,0.038) 12px, rgba(0,0,0,0.038) 13px);
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: -1;
 }
-@keyframes slideDashes { 100% { background-position: 100% 100%; } }
 
-/* UI Elements */
+/* UI Structure & Alignment */
 .app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; }
 .main-content { 
   flex: 1; overflow-y: auto; padding: 40px; 
   display: flex; flex-direction: column; align-items: center; 
 }
+.content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; }
 
-/* CENTERING WRAPPER FOR DESKTOP */
-.content-wrapper { width: 100%; max-width: 1100px; margin: 0 auto; }
-
-.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
+.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
 .rsa-menu-container { position: relative; display: inline-block; }
 .rsa-trigger { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer; }
 .rsa-trigger:hover { background: var(--accent-secondary); }
-.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; cursor: pointer; }
 .menu-item:hover { background: var(--accent-secondary); color: var(--text-main); }
-.menu-item.active { background: var(--accent-primary); color: #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.menu-item.active { background: var(--accent-primary); color: #FFF; }
 
-/* NASA Panel */
-.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 420px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+/* NASA Sidebar Feed */
+.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 420px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.02); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .nasa-panel.closed { transform: translateX(100%); } .nasa-panel.open { transform: translateX(0); }
-.panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; backdrop-filter: blur(10px); }
-.panel-toggle:hover { border-color: var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.85); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
+.panel-toggle:hover { border-color: var(--text-main); }
 
-/* Cards & Buttons */
-.arch-card { background: var(--bg-card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); }
-.arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+/* Architectural Cards */
+.arch-card { background: var(--bg-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03); }
+.arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06); }
+.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 .gallery-card:hover { transform: translateY(-4px); }
-.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: var(--text-muted); background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
+.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); color: var(--text-muted); background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
 
 .badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 .badge-dark { background: var(--text-main); color: #FFF; } .badge-light { background: var(--accent-secondary); color: var(--text-main); border: 1px solid var(--border-light); }
 
 .action-btn { background: var(--text-main); color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; }
-.action-btn:hover { background: #000; transform: scale(1.02); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+.action-btn:hover { background: #000; transform: scale(1.01); }
 .delete-btn { background: rgba(253, 242, 242, 0.9); color: #C53030; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .delete-btn:hover { background: #C53030; color: #FFF; }
 
 /* Modals */
-.modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
-.modal-box { background: #FFF; border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
-.input-field { width: 100%; background: #F8F9FA; border: 1px solid #E9ECEF; padding: 12px 16px; color: var(--text-main); border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
+.modal-bg { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+.modal-box { background: #FFF; border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+.input-field { width: 100%; background: #F8F9FA; border: 1px solid #E9ECEF; padding: 12px 16px; color: var(--text-main); border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; }
 .input-field:focus { border-color: var(--text-main); background: #FFF; }
 
-/* Cinematic Splash Screen */
-.splash-wrapper { position: fixed; inset: 0; background: #111; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; }
-.splash-wrapper.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.splash-text { color: #FFFFFF; font-size: 80px; font-weight: 800; margin: 0; letter-spacing: 12px; opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(20px); animation: cinematicReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.splash-sub { color: #888; margin-top: 24px; letter-spacing: 6px; font-size: 11px; opacity: 0; animation: fadeSub 1s ease forwards 0.8s; }
-@keyframes cinematicReveal { 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
-@keyframes fadeSub { 100% { opacity: 1; } }
+/* 🌟 HIGH-END STRUCTURAL CINEMATIC LOADING SPLASH SCREEN 🌟 */
+.splash-wrapper { 
+  position: fixed; inset: 0; background: #0A0A0A; z-index: 99999; 
+  display: flex; flex-direction: column; align-items: center; justify-content: center; 
+  opacity: 1; transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.splash-wrapper.fade-out { opacity: 0; pointer-events: none; }
 
-/* 📱 MASSIVE MOBILE OPTIMIZATIONS */
+.structural-container {
+  position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;
+}
+/* Expanding Matrix Rings */
+.matrix-ring {
+  position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%;
+  animation: ringPulse 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.matrix-ring:nth-child(1) { width: 80px; height: 80px; animation-delay: 0s; }
+.matrix-ring:nth-child(2) { width: 140px; height: 140px; animation-delay: 0.3s; }
+.matrix-ring:nth-child(3) { width: 220px; height: 220px; animation-delay: 0.6s; }
+
+@keyframes ringPulse {
+  0% { transform: scale(0.9); opacity: 0; border-color: rgba(255,255,255,0.05); }
+  50% { opacity: 0.4; border-color: rgba(255,255,255,0.15); }
+  100% { transform: scale(1.15); opacity: 0; border-color: rgba(255,255,255,0.02); }
+}
+
+.architectural-axis {
+  position: absolute; background: rgba(255,255,255,0.15);
+}
+.axis-h { width: 60px; height: 1px; animation: scaleAxis 2s infinite alternate; }
+.axis-v { width: 1px; height: 60px; animation: scaleAxis 2s infinite alternate 0.5s; }
+@keyframes scaleAxis { 0% { transform: scaleX(0.6) scaleY(0.6); opacity: 0.3; } 100% { transform: scaleX(1.2) scaleY(1.2); opacity: 0.8; } }
+
+.splash-text { 
+  color: #FFFFFF; font-size: 64px; font-weight: 800; margin: 0; letter-spacing: 16px; z-index: 10;
+  text-indent: 16px; animation: textGlowReveal 2s ease-in-out infinite alternate;
+}
+@keyframes textGlowReveal { 
+  0% { opacity: 0.7; filter: blur(1px); } 100% { opacity: 1; filter: blur(0px); } 
+}
+
+.splash-sub { 
+  color: #777777; margin-top: 32px; letter-spacing: 8px; font-size: 10px; font-weight: 600;
+  text-indent: 8px; text-transform: uppercase; z-index: 10;
+}
+
+/* 📱 PHONE DEEP VIEWPORT SCROLL OPTIMIZATIONS */
 @media (max-width: 768px) {
   .top-nav { padding: 0 16px; height: 60px; } 
   .app-layout { padding-top: 60px; } 
   
-  /* Critical Scroll Fix: 140px bottom padding protects against Safari/Chrome URL bars and the bottom nav */
-  .main-content { padding: 24px 16px 140px 16px !important; }
+  /* Safe scrolling metrics preventing phone URL bars from clipping data matrices */
+  .main-content { padding: 24px 16px 150px 16px !important; }
+  .content-wrapper { padding: 0 4px; }
   
   .rsa-dropdown { display: none; }
   
-  .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+  .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.96); }
   .nasa-panel.closed { transform: translateY(100%); } .nasa-panel.open { transform: translateY(0); }
   .mobile-close-feed { display: flex; justify-content: space-between; align-items: center; padding: 24px 24px 16px 24px; border-bottom: 1px solid var(--border-light); background: #FFF; }
 
-  .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 60; justify-content: space-around; align-items: center; padding: 0 4px; padding-bottom: env(safe-area-inset-bottom); }
-  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); padding: 8px 4px; border-radius: 8px; cursor: pointer; flex: 1; transition: color 0.2s; }
+  .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 84px; background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 60; justify-content: space-around; align-items: center; padding: 0 8px 20px 8px; padding-bottom: env(safe-area-inset-bottom); }
+  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); padding: 8px 4px; cursor: pointer; flex: 1; }
   .mobile-nav-item.active { color: var(--text-main); } .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
 }
 @media (min-width: 769px) { .mobile-bottom-nav { display: none; } .mobile-close-feed { display: none; } }
-@keyframes menuPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes menuPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
 .fade-in { animation: fadeIn 0.4s ease forwards; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 `;
 
 // ==========================================
-// 3. ICONS
+// 3. ARCHITECTURAL VECTOR ICONS
 // ==========================================
 const Icons = {
   Core: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>,
@@ -170,18 +213,18 @@ const Icons = {
 };
 
 // ==========================================
-// 4. MAIN APPLICATION
+// 4. CORE ENGINE CORE COMPONENT
 // ==========================================
 export default function App() {
   const [tab, setTab] = useState("core");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [isBooting, setIsBooting] = useState(true);
-
-  // Security Simulation State
+  
+  // High fidelity splash workflow configuration
+  const [splashState, setSplashState] = useState("booting"); // booting -> fading -> dead
   const [isLeadership, setIsLeadership] = useState(false);
 
-  // Database States
+  // Cloud Realtime Matrix Sync States
   const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "" });
   const [delegates, setDelegates] = useState([]);
   const [finances, setFinances] = useState([]);
@@ -190,12 +233,14 @@ export default function App() {
   const [gallery, setGallery] = useState([]);
   const [unitNews, setUnitNews] = useState([]);
 
-  // Modal States
+  // Cloud Interface Modals
   const [modalType, setModalType] = useState(null); 
   const [modalFormData, setModalFormData] = useState({});
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 2400);
+    // Elegant splash fade orchestration
+    const fadeTimer = setTimeout(() => setSplashState("fading"), 2200);
+    const killTimer = setTimeout(() => setSplashState("dead"), 3000);
 
     const unsubHQ = onSnapshot(doc(db, "unit", "hq"), (docSnap) => { if (docSnap.exists()) setLeadership(docSnap.data()); });
     const unsubCrew = onSnapshot(collection(db, "crew"), (snap) => setDelegates(snap.docs.map(d => ({id: d.id, ...d.data()}))));
@@ -205,10 +250,12 @@ export default function App() {
     const unsubGallery = onSnapshot(collection(db, "gallery"), (snap) => setGallery(snap.docs.map(d => ({id: d.id, ...d.data()}))));
     const unsubNews = onSnapshot(collection(db, "news"), (snap) => setUnitNews(snap.docs.map(d => ({id: d.id, ...d.data()}))));
 
-    return () => { unsubHQ(); unsubCrew(); unsubFunds(); unsubVault(); unsubCampaigns(); unsubGallery(); unsubNews(); };
+    return () => { 
+      clearTimeout(fadeTimer); clearTimeout(killTimer);
+      unsubHQ(); unsubCrew(); unsubFunds(); unsubVault(); unsubCampaigns(); unsubGallery(); unsubNews(); 
+    };
   }, []);
 
-  // Admin Unlock System
   const toggleAdmin = () => {
     if (isLeadership) {
       setIsLeadership(false);
@@ -218,7 +265,6 @@ export default function App() {
     }
   };
 
-  // Cloud Actions
   const openModal = (type, editingItem = null) => { setModalFormData(editingItem || {}); setModalType(type); setIsMenuOpen(false); };
   const closeModal = () => { setModalType(null); setModalFormData({}); };
 
@@ -246,7 +292,6 @@ export default function App() {
     }
   };
 
-  // Email Bridge
   const handleSaveAndEmail = async () => {
     await handleSaveToCloud('news');
     const emailList = delegates.map(d => d.email).filter(e => e && e.includes('@')).join(',');
@@ -256,8 +301,10 @@ export default function App() {
     window.location.href = `mailto:?bcc=${emailList}&subject=${subject}&body=${body}`;
   };
 
+  const activeTheme = SECTIONS_THEMES[tab] || SECTIONS_THEMES.core;
+
   // ==========================================
-  // VIEWS (Wrapped in centering content-wrapper)
+  // VIEW RENDER MATRIX (Centered Desktop Blocks)
   // ==========================================
   const renderCore = () => (
     <div className="fade-in content-wrapper">
@@ -352,8 +399,8 @@ export default function App() {
                     <span>Progress</span>
                     <span>₹{Number(f.current || 0).toLocaleString()} / ₹{Number(f.target || 0).toLocaleString()}</span>
                   </div>
-                  <div className="progress-track" style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px' }}>
-                    <div className="progress-fill" style={{ width: `${(Number(f.current || 0) / Number(f.target || 1)) * 100}%`, height: '100%', background: 'var(--text-main)', borderRadius: '4px' }}></div>
+                  <div style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${Math.min(100, (Number(f.current || 0) / Number(f.target || 1)) * 100)}%`, height: '100%', background: 'var(--text-main)' }}></div>
                   </div>
                 </div>
               )}
@@ -425,7 +472,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <div className="badge badge-light">{g.category}</div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="edit-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => openModal('gallery', g)}>Edit</button>
+                  <button className="panel-toggle" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => openModal('gallery', g)}>Edit</button>
                   <button className="delete-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => handleDeleteFromCloud('gallery', g.id)}>✕</button>
                 </div>
               </div>
@@ -513,21 +560,36 @@ export default function App() {
 
   return (
     <>
-      <style>{GLOBAL_STYLES}</style>
+      <style>{GLOBAL_ENGINE_STYLES}</style>
       
-      {/* 🌟 TWO-LAYER BACKGROUND SYSTEM 🌟 */}
-      <div className={`theme-${tab}`}>
-        <div className="bg-layer"></div>
+      {/* 🌟 HARDWARE-ACCELERATED TRANSITION CANVAS 🌟 */}
+      <div className="bg-canvas-container">
+        <div 
+          className="liquid-fluid-layer" 
+          style={{ background: `linear-gradient(135deg, ${activeTheme.start} 0%, ${activeTheme.end} 100%)` }}
+        />
+        <div 
+          className="vector-lines-layer" 
+          style={{ transform: `rotate(${activeTheme.angle})` }}
+        />
       </div>
-      <div className="dashed-overlay"></div>
 
-      {/* CINEMATIC SPLASH SCREEN */}
-      <div className={`splash-wrapper ${!isBooting ? 'hidden' : ''}`}>
-        <h1 className="syne splash-text">{leadership.unitCode || 'Z649'}</h1>
-        <div className="mono splash-sub">ESTABLISHING CLOUD UPLINK</div>
-      </div>
+      {/* NEW INTEGRATED CINEMATIC MATRIX SPLASH SCREEN */}
+      {splashState !== "dead" && (
+        <div className={`splash-wrapper ${splashState === "fading" ? 'fade-out' : ''}`}>
+          <div className="structural-container">
+            <div className="matrix-ring"></div>
+            <div className="matrix-ring"></div>
+            <div className="matrix-ring"></div>
+            <div className="architectural-axis axis-h"></div>
+            <div className="architectural-axis axis-v"></div>
+            <h1 className="syne splash-text">{leadership.unitCode || 'Z649'}</h1>
+          </div>
+          <div className="mono splash-sub">ESTABLISHING CLOUD UPLINK</div>
+        </div>
+      )}
 
-      {/* MAIN NAVIGATION */}
+      {/* MAIN TOP NAVIGATION */}
       <div className="top-nav">
         <div className="rsa-menu-container">
           <div className="rsa-trigger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -553,7 +615,6 @@ export default function App() {
           )}
         </div>
         
-        {/* Admin Lock / Official Feed Nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button className="panel-toggle" style={{ border: 'none', background: 'transparent', boxShadow: 'none' }} onClick={toggleAdmin}>
             {isLeadership ? <Icons.Unlock /> : <Icons.Lock />}
@@ -565,7 +626,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* APPLICATION LAYOUT */}
+      {/* CORE WEB VIEWPORT CONTAINER */}
       <div className="app-layout">
         <div className="main-content" style={{ paddingRight: isPanelOpen && window.innerWidth > 768 ? 420 : 0 }} onClick={() => { isMenuOpen && setIsMenuOpen(false); }}>
           {tab === "core" && renderCore()}
@@ -577,7 +638,7 @@ export default function App() {
           {tab === "hq" && renderHQ()}
         </div>
 
-        {/* OFFICIAL NASA FEED PANEL (Redesigned for Full-Screen Mobile) */}
+        {/* OFFICIAL SIDEBAR DRAWER FEED */}
         <div className={`nasa-panel ${isPanelOpen ? 'open' : 'closed'}`}>
           <div className="mobile-close-feed">
             <h2 className="syne" style={{ margin: 0, fontSize: 20 }}>NASA OFFICIAL</h2>
@@ -606,7 +667,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* MOBILE BOTTOM NAVIGATION */}
+      {/* DOCK BAR SYSTEM FOR PHONES */}
       <div className="mobile-bottom-nav">
         {[
           { id: 'core', name: 'Dash', icon: <Icons.Core /> },
@@ -622,16 +683,15 @@ export default function App() {
         ))}
       </div>
 
-      {/* CLOUD DATA ENTRY MODALS */}
+      {/* CLOUD WORKFLOW RECORD ENGINE MODALS */}
       {modalType && (
         <div className="modal-bg">
           <div className="modal-box fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifycontent: 'space-between', marginBottom: 24, alignItems: 'center' }}>
               <h2 className="syne" style={{ margin: 0, fontSize: 24 }}>{modalFormData.id || modalType === 'hq' ? 'EDIT' : 'ADD NEW'} ENTRY</h2>
-              <div style={{ cursor: 'pointer' }} onClick={closeModal}><Icons.Close/></div>
+              <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={closeModal}><Icons.Close/></div>
             </div>
             
-            {/* Crew Modal */}
             {modalType === 'crew' && (
               <>
                 <input className="input-field" placeholder="Full Delegate Name" value={modalFormData.name || ''} onChange={e => setModalFormData({...modalFormData, name: e.target.value})} />
@@ -648,7 +708,6 @@ export default function App() {
               </>
             )}
 
-            {/* Finances Modal */}
             {modalType === 'finances' && (
               <>
                 <select className="input-field" value={modalFormData.type || 'EXPENSE'} onChange={e => setModalFormData({...modalFormData, type: e.target.value})}>
@@ -670,7 +729,6 @@ export default function App() {
               </>
             )}
 
-            {/* Vault Modal */}
             {modalType === 'vault' && (
               <>
                 <input className="input-field" placeholder="File Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
@@ -686,7 +744,6 @@ export default function App() {
               </>
             )}
 
-            {/* Campaigns Modal */}
             {modalType === 'campaigns' && (
               <>
                 <input className="input-field" placeholder="Trophy / Campaign Name" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
@@ -700,10 +757,8 @@ export default function App() {
               </>
             )}
 
-            {/* Gallery Modal */}
             {modalType === 'gallery' && (
               <>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 16 }}>*Paste Google Drive, Behance, or direct PDF links here.</div>
                 <input className="input-field" placeholder="Project Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
                 <input className="input-field" placeholder="Author Name" value={modalFormData.authorName || ''} onChange={e => setModalFormData({...modalFormData, authorName: e.target.value})} />
                 <input className="input-field" placeholder="Category (e.g. Design, Documentation)" value={modalFormData.category || ''} onChange={e => setModalFormData({...modalFormData, category: e.target.value})} />
@@ -717,19 +772,13 @@ export default function App() {
               </>
             )}
 
-            {/* HQ Modal */}
             {modalType === 'hq' && (
               <>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>UNIT INFORMATION</div>
                 <input className="input-field" placeholder="Unit Code (e.g. Z649)" value={modalFormData.unitCode || ''} onChange={e => setModalFormData({...modalFormData, unitCode: e.target.value})} />
                 <input className="input-field" placeholder="Official NASA Email" value={modalFormData.officialEmail || ''} onChange={e => setModalFormData({...modalFormData, officialEmail: e.target.value})} />
-                
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, marginTop: 16 }}>UNIT DESIGNEE (UD)</div>
                 <input className="input-field" placeholder="UD Name" value={modalFormData.udName || ''} onChange={e => setModalFormData({...modalFormData, udName: e.target.value})} />
                 <input className="input-field" placeholder="UD Phone" value={modalFormData.udPhone || ''} onChange={e => setModalFormData({...modalFormData, udPhone: e.target.value})} />
                 <input className="input-field" placeholder="UD Email" value={modalFormData.udEmail || ''} onChange={e => setModalFormData({...modalFormData, udEmail: e.target.value})} />
-
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, marginTop: 16 }}>UNIT SECRETARY (USEC)</div>
                 <input className="input-field" placeholder="USEC Name" value={modalFormData.useName || ''} onChange={e => setModalFormData({...modalFormData, useName: e.target.value})} />
                 <input className="input-field" placeholder="USEC Phone" value={modalFormData.usePhone || ''} onChange={e => setModalFormData({...modalFormData, usePhone: e.target.value})} />
                 <input className="input-field" placeholder="USEC Email" value={modalFormData.useEmail || ''} onChange={e => setModalFormData({...modalFormData, useEmail: e.target.value})} />
@@ -737,18 +786,14 @@ export default function App() {
               </>
             )}
 
-            {/* News Feed Modal (WITH EMAIL AUTOMATION) */}
             {modalType === 'news' && (
               <>
-                <input className="input-field" placeholder="Tag (e.g. URGENT, TROPHY BRIEF)" value={modalFormData.tag || ''} onChange={e => setModalFormData({...modalFormData, tag: e.target.value})} />
+                <input className="input-field" placeholder="Tag (e.g. URGENT)" value={modalFormData.tag || ''} onChange={e => setModalFormData({...modalFormData, tag: e.target.value})} />
                 <input className="input-field" placeholder="Email Subject / Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
                 <textarea className="input-field" placeholder="Paste broadcast contents here..." rows="5" value={modalFormData.content || ''} onChange={e => setModalFormData({...modalFormData, content: e.target.value})} style={{ resize: 'none' }} />
-                
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('news')}>Just Sync to App</button>
-                  <button className="action-btn" style={{ width: '100%', justifyContent: 'center', background: 'var(--success)' }} onClick={handleSaveAndEmail}>
-                    Broadcast & Email Unit
-                  </button>
+                  <button className="action-btn" style={{ width: '100%', justifyContent: 'center', background: 'var(--success)' }} onClick={handleSaveAndEmail}>Broadcast & Email Unit</button>
                 </div>
               </>
             )}
