@@ -4,8 +4,9 @@ import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc
 import emailjs from '@emailjs/browser';
 import { 
   Shield, ShieldAlert, Plus, Trash2, Users, TrendingUp, 
-  FolderGit2, Image as ImageIcon, Radio, Settings, X, 
-  ChevronRight, ExternalLink, Zap
+  FolderLock, Image as ImageIcon, Radio, Settings, X, 
+  ArrowUpRight, LayoutDashboard, Component, Wallet, 
+  Archive, FileImage, Rss
 } from 'lucide-react';
 
 // ==========================================
@@ -22,33 +23,36 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const ADMIN_SECURE_KEY = "RSA_Z649_SECURE_2026"; 
 
 // ==========================================
-// 2. DEEP CYBER CSS ENGINE
+// 2. ULTRA-PREMIUM CSS ENGINE (OBSIDIAN)
 // ==========================================
 const GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
   :root {
     color-scheme: dark !important; 
-    --bg-base: #030712;
-    --bg-surface: rgba(17, 24, 39, 0.6);
-    --bg-surface-hover: rgba(31, 41, 55, 0.8);
+    --bg-base: #000000;
+    --bg-surface: rgba(20, 20, 20, 0.4);
+    --bg-surface-hover: rgba(35, 35, 35, 0.6);
     
-    --neon-cyan: #00f0ff;
-    --neon-purple: #8a2be2;
-    --neon-orange: #ff3366;
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #52525b;
     
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-highlight: rgba(255, 255, 255, 0.2);
     
-    --border-glass: rgba(255, 255, 255, 0.05);
-    --border-glow-cyan: rgba(0, 240, 255, 0.3);
+    --accent: #ffffff;
+    --danger: #ef4444;
+    --success: #10b981;
     
-    --font-syne: 'Syne', sans-serif;
-    --font-mono: 'Space Grotesk', sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+
+    /* Custom easing for "Apple-like" fluid motion */
+    --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -56,180 +60,159 @@ const GLOBAL_STYLES = `
   body, html { 
     background-color: var(--bg-base);
     color: var(--text-primary);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     overflow: hidden; 
     height: 100dvh;
     -webkit-tap-highlight-color: transparent;
   }
 
-  input, textarea, select { -webkit-user-select: auto; user-select: auto; color: #fff !important; background-color: rgba(0,0,0,0.5) !important; }
+  input, textarea, select { -webkit-user-select: auto; user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.05) !important; }
   .selectable-text { -webkit-user-select: auto; user-select: auto; }
-  ::-webkit-scrollbar { width: 4px; } 
-  ::-webkit-scrollbar-track { background: transparent; } 
-  ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); border-radius: 10px; }
+  ::-webkit-scrollbar { width: 0px; } /* Invisible scrollbar for cleaner look */
 
-  /* 🌟 ADVANCED GRID & GLOW BACKGROUND 🌟 */
-  .cyber-grid-bg {
+  /* 🌟 AMBIENT AURORA BACKGROUND (Pro Designer Aesthetic) 🌟 */
+  .ambient-aurora {
     position: fixed; inset: 0; z-index: -3; pointer-events: none;
-    background-image: 
-      linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
-    transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
-    animation: gridMove 20s linear infinite;
+    background: #000000;
+    overflow: hidden;
   }
-  @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 50px; } }
-
-  .ambient-glows {
-    position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background: 
-      radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08), transparent 40%),
-      radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.08), transparent 40%);
-    filter: blur(60px);
+  .ambient-aurora::before, .ambient-aurora::after {
+    content: ''; position: absolute; width: 800px; height: 800px;
+    border-radius: 50%; filter: blur(120px); opacity: 0.15;
+    animation: auroraFloat 20s infinite alternate var(--ease-fluid);
+  }
+  .ambient-aurora::before { background: #3b82f6; top: -200px; left: -200px; }
+  .ambient-aurora::after { background: #8b5cf6; bottom: -200px; right: -200px; animation-delay: -10s; }
+  
+  @keyframes auroraFloat {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(100px, 100px) scale(1.2); }
   }
 
-  /* 🌟 KINETIC SCROLL ENGINE 🌟 */
+  .noise-overlay {
+    position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* 🌟 PREMIUM KINETIC SCROLL 🌟 */
   .kinetic-scroll-engine {
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
+    height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth;
   }
 
   .scrolling-section {
-    min-height: 100vh;
-    width: 100vw;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 20px;
-    opacity: 0.3;
-    transform: scale(0.95) translateY(40px);
-    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    min-height: 100vh; width: 100vw; scroll-snap-align: start; scroll-snap-stop: always;
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 24px 120px 24px; /* Padding bottom for the new dock */
+    opacity: 0; transform: translateY(30px);
+    transition: all 1.2s var(--ease-fluid);
   }
-  .scrolling-section.view-active { opacity: 1; transform: scale(1) translateY(0); }
+  .scrolling-section.view-active { opacity: 1; transform: translateY(0); }
 
-  /* 🌟 PRO-LEVEL GLASSMORPHISM PANELS 🌟 */
-  .glass-panel {
+  /* 🌟 BENTO BOX PANELS 🌟 */
+  .bento-container {
+    width: 100%; max-width: 1200px; height: auto; max-height: 85vh; overflow-y: auto;
+    scrollbar-width: none; display: flex; flex-direction: column; gap: 32px;
+  }
+
+  .bento-card {
     background: var(--bg-surface);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--border-glass);
-    border-radius: 24px;
-    padding: 40px;
-    width: 100%;
-    max-width: 1300px;
-    height: 85vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-  .glass-panel::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent); opacity: 0.3;
-  }
-
-  /* 🌟 HUD NAVIGATION 🌟 */
-  .hud-navigation { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; z-index: 100; }
-  .hud-dot-container { display: flex; align-items: center; justify-content: flex-end; cursor: pointer; position: relative; }
-  .hud-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-glass); transition: all 0.4s ease; border: 1px solid transparent; }
-  .hud-dot.active { background: var(--neon-cyan); transform: scale(2); box-shadow: 0 0 15px var(--neon-cyan); }
-  .hud-label { position: absolute; right: 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary); opacity: 0; transition: opacity 0.3s ease; white-space: nowrap; text-shadow: 0 0 10px rgba(0,240,255,0.5); }
-  .hud-dot-container:hover .hud-label { opacity: 1; }
-
-  /* 🌟 CYBER CARDS & TYPOGRAPHY 🌟 */
-  .section-title { font-family: var(--font-syne); font-weight: 800; font-size: 2.5rem; letter-spacing: -1px; text-transform: uppercase; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .grid-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 32px; }
-  
-  .architectural-card {
-    background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%);
-    border: 1px solid var(--border-glass);
-    border-radius: 16px; padding: 24px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px; padding: 32px;
+    transition: all 0.4s var(--ease-fluid);
     position: relative; overflow: hidden; word-wrap: break-word;
   }
-  .architectural-card:hover {
-    border-color: var(--border-glow-cyan);
+  .bento-card:hover {
     background: var(--bg-surface-hover);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.1);
+    border-color: var(--border-highlight);
   }
+
+  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; }
+  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+  /* 🌟 TYPOGRAPHY 🌟 */
+  .text-title { font-family: var(--font-heading); font-weight: 500; font-size: 3rem; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-primary); }
+  .text-subtitle { font-family: var(--font-body); font-weight: 500; font-size: 0.85rem; letter-spacing: 0.1em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 12px; display: block;}
+  .text-metric { font-family: var(--font-heading); font-weight: 400; font-size: 3.5rem; letter-spacing: -0.04em; color: var(--text-primary); }
+  .text-body { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; }
+
+  /* 🌟 MINIMALIST BUTTONS 🌟 */
+  .btn-primary {
+    background: var(--accent); color: #000; border: none;
+    padding: 12px 24px; border-radius: 100px;
+    font-family: var(--font-body); font-weight: 500; font-size: 0.85rem;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.3s var(--ease-fluid);
+  }
+  .btn-primary:hover { transform: scale(1.02); opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   
-  /* Geometric Cut Effect for Gallery Cards */
-  .gallery-card { clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%); padding-bottom: 32px; }
-  .gallery-img-placeholder { height: 160px; width: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--border-glass); background-size: cover; background-position: center;}
+  .btn-secondary { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--border-subtle); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--border-highlight); }
 
-  /* 🌟 BUTTONS & BADGES 🌟 */
-  .interactive-action-btn {
-    background: linear-gradient(90deg, rgba(0,240,255,0.1), transparent);
-    color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
-    padding: 10px 20px; font-family: var(--font-mono); font-weight: 600; font-size: 12px; border-radius: 8px;
-    cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;
+  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
+  .btn-icon:hover { color: var(--text-primary); background: rgba(255,255,255,0.1); }
+  .btn-icon.danger:hover { color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+
+  .status-pill { display: inline-flex; padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; background: rgba(255,255,255,0.1); color: var(--text-primary); }
+
+  /* 🌟 MAC-STYLE FLOATING DOCK 🌟 */
+  .floating-dock {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    background: rgba(15, 15, 15, 0.6); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+    border: 1px solid var(--border-subtle); border-radius: 100px;
+    display: flex; gap: 4px; padding: 6px; z-index: 100;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   }
-  .interactive-action-btn:hover { background: var(--neon-cyan); color: var(--bg-base); box-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  .dock-item {
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); cursor: pointer; transition: all 0.3s var(--ease-fluid); position: relative;
+  }
+  .dock-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.08); transform: translateY(-4px); }
+  .dock-item.active { color: #000; background: var(--accent); }
   
-  .sec-btn { border-color: var(--neon-purple); color: var(--neon-purple); background: linear-gradient(90deg, rgba(138,43,226,0.1), transparent); }
-  .sec-btn:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 20px rgba(138,43,226,0.4); }
-
-  .badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--border-glass); }
-  .badge-cyan { color: var(--neon-cyan); background: rgba(0,240,255,0.1); border-color: var(--neon-cyan); }
-  .badge-purple { color: #e879f9; background: rgba(138,43,226,0.1); border-color: #e879f9; }
-
-  /* Form Elements */
-  .input-element { width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; color: #fff; font-family: var(--font-mono); margin-bottom: 16px; transition: all 0.3s ease; }
-  .input-element:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,240,255,0.1); }
-
-  /* 🌟 NASA OVERLAY PANEL 🌟 */
-  .nasa-panel {
-    position: fixed; right: 0; top: 0; bottom: 0; width: 450px; z-index: 200;
-    background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(30px);
-    border-left: 1px solid var(--border-glass); box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-    display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Tooltip for Dock */
+  .dock-tooltip {
+    position: absolute; top: -40px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+    padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.05em;
+    border: 1px solid var(--border-subtle); opacity: 0; pointer-events: none; transition: all 0.2s; white-space: nowrap;
   }
-  .nasa-panel.closed { transform: translateX(100%); }
-  .nasa-panel.open { transform: translateX(0); }
+  .dock-item:hover .dock-tooltip { opacity: 1; top: -45px; }
 
-  /* 🌟 TOP NAV & LOCK 🌟 */
-  .top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: transparent; z-index: 90; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; border-bottom: 1px solid var(--border-glass); }
-  
-  .lockout-badge {
-    position: fixed; bottom: 30px; left: 30px; z-index: 100;
-    background: rgba(0,0,0,0.6); border: 1px solid var(--border-glass); backdrop-filter: blur(10px);
-    padding: 10px 20px; border-radius: 30px; display: flex; align-items: center; gap: 8px; cursor: pointer;
-    font-size: 11px; font-weight: 700; letter-spacing: 2px; transition: all 0.3s ease; color: var(--text-secondary);
-  }
-  .lockout-badge.active { border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,240,255,0.2); }
+  /* 🌟 TOP NAVIGATION 🌟 */
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; }
+  .logo-text { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
 
-  /* 🌟 SUPERNOVA SPLASH SCREEN 🌟 */
-  .splash-overlay { position: fixed; inset: 0; z-index: 999999; background: var(--bg-base); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out, visibility 0.8s; overflow: hidden; }
+  /* 🌟 FORM ELEMENTS 🌟 */
+  .input-element { width: 100%; border: 1px solid var(--border-subtle); padding: 16px; border-radius: 12px; font-family: var(--font-body); font-size: 0.95rem; margin-bottom: 16px; transition: all 0.3s ease; }
+  .input-element:focus { border-color: var(--border-highlight); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
+
+  /* 🌟 MODALS 🌟 */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: modalFadeIn 0.4s var(--ease-fluid); }
+  .modal-window { background: #0a0a0a; border: 1px solid var(--border-subtle); width: 100%; max-width: 500px; border-radius: 24px; padding: 40px; box-shadow: 0 40px 80px rgba(0,0,0,0.8); }
+  @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+  /* 🌟 CINEMATIC SPLASH SCREEN 🌟 */
+  .splash-overlay { position: fixed; inset: 0; z-index: 999999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.5s var(--ease-fluid), visibility 1.5s; }
   .splash-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .supernova-container { position: relative; display: flex; align-items: center; justify-content: center; }
-  .supernova-orb { position: absolute; width: 4px; height: 4px; background: var(--neon-cyan); border-radius: 50%; box-shadow: 0 0 80px 40px var(--neon-cyan); opacity: 0; z-index: 1; animation: explodeOrb 2.6s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
-  .splash-logo-text { position: relative; color: #FFF; font-size: 64px; font-family: var(--font-syne); font-weight: 800; letter-spacing: 24px; text-indent: 24px; z-index: 10; animation: textMaterialize 2s ease-in-out forwards; }
-  
-  @keyframes textMaterialize { 0% { opacity: 0; filter: blur(20px); transform: scale(0.8); } 30% { opacity: 1; filter: blur(0px); transform: scale(1); } 80% { opacity: 1; filter: blur(0px); transform: scale(1); } 100% { opacity: 0; filter: blur(10px); transform: scale(1.2); } }
-  @keyframes explodeOrb { 0% { transform: scale(0); opacity: 0; } 45% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(2); opacity: 0.8; } 90% { transform: scale(300); opacity: 1; background: #fff;} 100% { transform: scale(300); opacity: 0; } }
+  .splash-logo { color: #fff; font-family: var(--font-heading); font-size: 2.5rem; font-weight: 400; letter-spacing: 0.2em; opacity: 0; animation: cinematicReveal 2.5s var(--ease-fluid) forwards; }
+  @keyframes cinematicReveal { 0% { opacity: 0; filter: blur(20px); transform: scale(0.95); } 40% { opacity: 1; filter: blur(0px); transform: scale(1); } 80% { opacity: 1; filter: blur(0px); transform: scale(1); } 100% { opacity: 0; filter: blur(10px); transform: scale(1.05); } }
 
-  /* Modals */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-  .modal-window { background: #0b1120; border: 1px solid var(--border-glow-cyan); width: 100%; max-width: 500px; border-radius: 16px; padding: 32px; box-shadow: 0 0 40px rgba(0,240,255,0.1); }
-
+  /* Mobile Adjustments */
   @media (max-width: 768px) {
-    .glass-panel { height: auto; min-height: 85vh; padding: 24px; border-radius: 16px; margin-bottom: 60px;}
-    .hud-navigation { display: none; }
-    .top-nav { padding: 0 20px; }
-    .scrolling-section { padding: 80px 10px 20px 10px; }
-    .nasa-panel { width: 100%; border-left: none; }
-    .lockout-badge { bottom: 20px; left: 20px; padding: 8px 16px; }
+    .scrolling-section { padding: 80px 16px 100px 16px; }
+    .bento-card { padding: 24px; }
+    .text-title { font-size: 2.2rem; }
+    .top-bar { padding: 20px; }
+    .floating-dock { bottom: 20px; width: 90%; justify-content: space-between; padding: 8px 16px; }
+    .dock-item { width: 40px; height: 40px; }
+    .dock-tooltip { display: none; }
   }
 `;
 
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
-  const [isNasaFeedOpen, setIsNasaFeedOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
@@ -247,18 +230,18 @@ export default function App() {
   const [formPayload, setFormPayload] = useState({});
   const scrollEngineRef = useRef(null);
 
-  const structuralSections = [
-    { id: 'core', label: 'Command Center' },
-    { id: 'crew', label: 'Unit Crew' },
-    { id: 'funds', label: 'Treasury Ledger' },
-    { id: 'vault', label: 'Knowledge Vault' },
-    { id: 'gallery', label: 'Portfolio Gallery' },
-    { id: 'news', label: 'Unit Broadcasts' },
-    { id: 'hq', label: 'HQ Operations' }
+  const dockItems = [
+    { id: 'core', icon: <LayoutDashboard size={20} strokeWidth={1.5} />, label: 'Dashboard' },
+    { id: 'crew', icon: <Users size={20} strokeWidth={1.5} />, label: 'Personnel' },
+    { id: 'funds', icon: <Wallet size={20} strokeWidth={1.5} />, label: 'Finances' },
+    { id: 'vault', icon: <Archive size={20} strokeWidth={1.5} />, label: 'Vault' },
+    { id: 'gallery', icon: <FileImage size={20} strokeWidth={1.5} />, label: 'Gallery' },
+    { id: 'news', icon: <Rss size={20} strokeWidth={1.5} />, label: 'Broadcasts' },
+    { id: 'hq', icon: <Settings size={20} strokeWidth={1.5} />, label: 'Settings' }
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 2700);
+    setTimeout(() => setIsBooting(false), 2500);
 
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => d.exists() && setLeadership(d.data())),
@@ -287,9 +270,9 @@ export default function App() {
   const challengeAdminAuthorization = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
     else {
-      const entryToken = prompt("ENTER SYSTEM OVERRIDE KEY:");
+      const entryToken = prompt("Enter Administrative Credential:");
       if (entryToken === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
-      else if (entryToken) alert("ACCESS DENIED.");
+      else if (entryToken) alert("Authentication Failed.");
     }
   };
 
@@ -308,11 +291,11 @@ export default function App() {
   };
 
   const removeDocumentRecord = async (targetCollection, docId) => {
-    if (window.confirm("Purge record permanently?")) await deleteDoc(doc(db, targetCollection, docId));
+    if (window.confirm("Permanently delete this record?")) await deleteDoc(doc(db, targetCollection, docId));
   };
 
   const executeBatchPromotionSequence = async () => {
-    if (!window.confirm("⚠️ Advance all academic tiers? (5th Years become Alumni)")) return;
+    if (!window.confirm("Advance all academic tiers? (5th Years transition to Alumni)")) return;
     try {
       const operationBatch = writeBatch(db);
       crewData.forEach((member) => {
@@ -322,7 +305,7 @@ export default function App() {
         if (advancedYear !== member.year) operationBatch.update(doc(db, 'crew', member.id), { year: advancedYear });
       });
       await operationBatch.commit();
-      alert("ACADEMIC TIERS ADVANCED.");
+      alert("Academic Tiers Advanced Successfully.");
     } catch (err) { alert("Batch processing failed."); }
   };
 
@@ -343,43 +326,53 @@ export default function App() {
   };
 
   // -------------------------
-  // RENDER BLOCKS (7 SECTIONS)
+  // PRO RENDER BLOCKS
   // -------------------------
   const renderDashboard = () => (
-    <div className="glass-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>UNIT {leadership.unitCode}</div>
-          <h1 className="section-title" style={{ marginTop: '8px' }}>COMMAND CENTER</h1>
+    <div className="bento-container">
+      <div style={{ padding: '0 16px' }}>
+        <span className="text-subtitle">Overview</span>
+        <h1 className="text-title">Command Center</h1>
+      </div>
+      
+      <div className="bento-grid-3">
+        <div className="bento-card">
+          <span className="text-subtitle">Active Personnel</span>
+          <div className="text-metric">{crewData.length}</div>
+        </div>
+        <div className="bento-card">
+          <span className="text-subtitle">Net Capital</span>
+          <div className="text-metric">₹{financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0)}</div>
+        </div>
+        <div className="bento-card">
+          <span className="text-subtitle">Vault Assets</span>
+          <div className="text-metric">{vaultData.length}</div>
         </div>
       </div>
-      <div className="grid-deck">
-        <div className="architectural-card">
-          <div style={{ display: 'flex', gap: '8px', color: 'var(--text-secondary)', fontSize: '12px', letterSpacing: '2px' }}><Users size={16} color="var(--neon-cyan)"/> ACTIVE CREW</div>
-          <div style={{ fontSize: '48px', fontWeight: '800', marginTop: '16px', fontFamily: 'var(--font-syne)', color: '#fff' }}>{crewData.length}</div>
+
+      <div className="bento-card" style={{ marginTop: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+          <span className="text-subtitle" style={{ margin: 0 }}>Active Campaigns</span>
+          {isLeadershipMode && <button className="btn-primary btn-secondary" style={{ padding: '8px 16px', fontSize: '0.75rem' }} onClick={() => openModal('campaigns')}><Plus size={14}/> Sync</button>}
         </div>
-        <div className="architectural-card">
-          <div style={{ display: 'flex', gap: '8px', color: 'var(--text-secondary)', fontSize: '12px', letterSpacing: '2px' }}><TrendingUp size={16} color="var(--neon-purple)"/> CAPITAL LEDGER</div>
-          <div style={{ fontSize: '36px', fontWeight: '800', marginTop: '24px', fontFamily: 'var(--font-syne)', color: '#fff' }}>
-            ₹{financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0)}
-          </div>
-        </div>
-        <div className="architectural-card">
-          <div style={{ display: 'flex', gap: '8px', color: 'var(--text-secondary)', fontSize: '12px', letterSpacing: '2px' }}><FolderGit2 size={16} color="var(--neon-orange)"/> VAULT ASSETS</div>
-          <div style={{ fontSize: '48px', fontWeight: '800', marginTop: '16px', fontFamily: 'var(--font-syne)', color: '#fff' }}>{vaultData.length}</div>
-        </div>
-      </div>
-      <h3 style={{ fontFamily: 'var(--font-syne)', marginTop: '48px', color: 'var(--text-secondary)', letterSpacing: '2px' }}>ACTIVE CAMPAIGNS</h3>
-      <div style={{ display: 'grid', gap: '16px', marginTop: '16px' }}>
-        {campaignData.map(c => (
-          <div key={c.id} className="architectural-card" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: '16px', fontWeight: '600', color: '#fff' }}>{c.title} <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>({c.year})</span></div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>Prize: {c.prize}</div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {campaignData.length === 0 && <div className="text-body">No campaigns actively tracked.</div>}
+          {campaignData.map(c => (
+            <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid var(--border-subtle)' }}>
+              <div>
+                <div style={{ fontSize: '1.1rem', fontWeight: '500', color: 'var(--text-primary)' }}>{c.title} <span style={{fontSize:'0.85rem', color:'var(--text-secondary)'}}>({c.year})</span></div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Prize Pool: {c.prize}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <span className="status-pill" style={{ background: c.abstractsClosed==='true'?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.15)' }}>
+                  {c.abstractsClosed==='true' ? 'Closed' : 'Active'}
+                </span>
+                {isLeadershipMode && <button className="btn-icon danger" onClick={() => removeDocumentRecord('campaigns', c.id)}><Trash2 size={16}/></button>}
+              </div>
             </div>
-            <div className={`badge ${c.abstractsClosed==='true'?'':'badge-cyan'}`}>{c.abstractsClosed==='true'?'Closed':'Open'}</div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -389,29 +382,35 @@ export default function App() {
     const sortedYears = Object.keys(allocation).sort((a,b) => (a==="Alumni"||a==="Unassigned"?1:b==="Alumni"||b==="Unassigned"?-1:Number(a)-Number(b)));
 
     return (
-      <div className="glass-panel">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div><div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>ROSTER INTERFACE</div><h1 className="section-title">UNIT CREW</h1></div>
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Database</span><h1 className="text-title">Unit Crew</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="interactive-action-btn sec-btn" onClick={executeBatchPromotionSequence}>ADVANCE BATCHES</button>}
-            <button className="interactive-action-btn" onClick={() => { setFormPayload({ year: '1' }); setModalMode('crew'); }}><Plus size={16} /> ADD</button>
+            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={executeBatchPromotionSequence}>Advance Tiers</button>}
+            <button className="btn-primary" onClick={() => { setFormPayload({ year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Member</button>
           </div>
         </div>
+
         {sortedYears.map(year => (
-          <div key={year} style={{ marginTop: '32px' }}>
-            <h3 style={{ fontFamily: 'var(--font-syne)', color: 'var(--neon-purple)', letterSpacing: '2px', textTransform: 'uppercase', borderBottom: '1px solid var(--border-glass)', paddingBottom: '8px' }}>
-              {year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}
-            </h3>
-            <div className="grid-deck">
+          <div key={year} style={{ marginTop: '24px' }}>
+            <span className="text-subtitle" style={{ padding: '0 16px', color: 'var(--text-primary)' }}>
+              {year === 'Alumni' || year === 'Unassigned' ? year : `Year ${year}`}
+            </span>
+            <div className="bento-grid-2" style={{ marginTop: '16px' }}>
               {allocation[year].map(m => (
-                <div key={m.id} className="architectural-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <div className={`badge ${m.role==='Unit Designee'?'badge-purple':'badge-cyan'}`}>{m.role}</div>
-                    {isLeadershipMode && <button className="sec-btn" style={{background:'transparent', border:'none', cursor:'pointer'}} onClick={() => removeDocumentRecord('crew', m.id)}><Trash2 size={14} color="#ef4444"/></button>}
+                <div key={m.id} className="bento-card" style={{ padding: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                    <span className="status-pill">{m.role}</span>
+                    {isLeadershipMode && (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button className="btn-icon" onClick={() => openModal('crew', m)}><Settings size={14}/></button>
+                        <button className="btn-icon danger" onClick={() => removeDocumentRecord('crew', m.id)}><Trash2 size={14}/></button>
+                      </div>
+                    )}
                   </div>
-                  <div style={{ fontSize: '20px', fontWeight: '700', color: '#fff', fontFamily: 'var(--font-syne)' }}>{m.name}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{m.email}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--neon-cyan)', marginTop: '16px' }}>SKILLS: <span style={{color:'#fff'}}>{m.skills || 'N/A'}</span></div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '500', color: 'var(--text-primary)', marginBottom: '4px', fontFamily: 'var(--font-heading)' }}>{m.name}</div>
+                  <div className="text-body" style={{ fontSize: '0.85rem' }}>{m.email}</div>
+                  {m.skills && <div className="text-body" style={{ marginTop: '24px', fontSize: '0.85rem', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}><span style={{color:'var(--text-primary)'}}>Proficiencies:</span> {m.skills}</div>}
                 </div>
               ))}
             </div>
@@ -422,47 +421,51 @@ export default function App() {
   };
 
   const renderFunds = () => (
-    <div className="glass-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div><div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>FINANCIAL SYSTEM</div><h1 className="section-title">TREASURY</h1></div>
-        {isLeadershipMode && <button className="interactive-action-btn" onClick={() => { setFormPayload({ type: 'expense' }); setModalMode('finances'); }}><Plus size={16} /> LOG</button>}
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Financial</span><h1 className="text-title">Treasury</h1></div>
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'expense' }); setModalMode('finances'); }}><Plus size={16}/> Record Entry</button>}
       </div>
-      <div style={{ marginTop: '32px', display: 'grid', gap: '16px' }}>
-        {financialLog.map(f => (
-          <div key={f.id} className="architectural-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
-            <div>
-              <div className={`badge ${f.type==='income'?'badge-cyan':''}`} style={{marginBottom:'8px'}}>{f.type}</div>
-              <div style={{ fontSize: '16px', color: '#fff', fontWeight: '600' }}>{f.description}</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{f.date || 'No Date'}</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ fontSize: '24px', fontFamily: 'var(--font-mono)', fontWeight: '700', color: f.type==='income'?'#22c55e':'#ef4444' }}>
-                {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
+
+      <div className="bento-card" style={{ marginTop: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {financialLog.length === 0 && <div className="text-body">No financial records found.</div>}
+          {financialLog.map(f => (
+            <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+              <div>
+                <span className="status-pill" style={{ marginBottom: '12px' }}>{f.type}</span>
+                <div style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontWeight: '500' }}>{f.description}</div>
+                <div className="text-body" style={{ fontSize: '0.85rem', marginTop: '4px' }}>{f.date || 'Unspecified Date'}</div>
               </div>
-              {isLeadershipMode && <button style={{background:'transparent', border:'none', cursor:'pointer'}} onClick={() => removeDocumentRecord('finances', f.id)}><X size={16} color="var(--text-secondary)"/></button>}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                <div style={{ fontSize: '1.5rem', fontFamily: 'var(--font-heading)', color: f.type === 'income' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                  {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
+                </div>
+                {isLeadershipMode && <button className="btn-icon danger" onClick={() => removeDocumentRecord('finances', f.id)}><X size={16}/></button>}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
 
   const renderVault = () => (
-    <div className="glass-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div><div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>CLOUD STORAGE</div><h1 className="section-title">KNOWLEDGE VAULT</h1></div>
-        <button className="interactive-action-btn" onClick={() => { setFormPayload({ type: 'Design' }); setModalMode('vault'); }}><Plus size={16} /> UPLOAD</button>
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Storage</span><h1 className="text-title">Knowledge Vault</h1></div>
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Design' }); setModalMode('vault'); }}><Plus size={16}/> Upload Asset</button>}
       </div>
-      <div className="grid-deck">
+      <div className="bento-grid-3" style={{ marginTop: '16px' }}>
         {vaultData.map(v => (
-          <div key={v.id} className="architectural-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <div className="badge badge-purple">{v.type} | {v.year}</div>
-              {isLeadershipMode && <button style={{background:'transparent', border:'none', cursor:'pointer'}} onClick={() => removeDocumentRecord('vault', v.id)}><X size={14} color="#ef4444"/></button>}
+          <div key={v.id} className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <span className="status-pill">{v.type} | {v.year}</span>
+              {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => removeDocumentRecord('vault', v.id)}><Trash2 size={14}/></button>}
             </div>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>{v.title}</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', marginBottom: '24px' }}>Size: {v.size}</div>
-            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="interactive-action-btn sec-btn" style={{width:'100%', justifyContent:'center'}}>DOWNLOAD <ExternalLink size={14}/></a>
+            <div style={{ fontSize: '1.25rem', fontWeight: '500', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>{v.title}</div>
+            <div className="text-body" style={{ fontSize: '0.85rem', marginTop: '4px', marginBottom: '32px' }}>{v.size}</div>
+            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: 'auto', width: '100%', justifyContent: 'center' }}>Access File <ArrowUpRight size={16}/></a>
           </div>
         ))}
       </div>
@@ -470,25 +473,29 @@ export default function App() {
   );
 
   const renderGallery = () => (
-    <div className="glass-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div><div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>PORTFOLIO</div><h1 className="section-title">GALLERY</h1></div>
-        <button className="interactive-action-btn" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><ImageIcon size={16} /> ADD WORK</button>
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Showcase</span><h1 className="text-title">Portfolio</h1></div>
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><ImageIcon size={16}/> Add Project</button>}
       </div>
-      <div className="grid-deck">
+      <div className="bento-grid-2" style={{ marginTop: '16px' }}>
         {galleryData.map(g => (
-          <div key={g.id} className="architectural-card gallery-card">
-            <div className="gallery-img-placeholder" style={g.fileType === 'Image' ? { backgroundImage: `url(${g.link})` } : {}}>
-              {g.fileType !== 'Image' && <span style={{color:'var(--neon-cyan)', fontSize:'12px', letterSpacing:'2px'}}>{g.fileType} LINK</span>}
+          <div key={g.id} className="bento-card" style={{ padding: 0 }}>
+             <div style={{ height: '200px', background: g.fileType === 'Image' ? `url(${g.link}) center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justify-content: 'center' }}>
+              {g.fileType !== 'Image' && <Component size={32} color="var(--text-tertiary)" />}
             </div>
-            <div className="badge badge-cyan" style={{marginBottom:'12px'}}>{g.category}</div>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>{g.title}</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px', marginBottom: '16px' }}>{g.description}</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-glass)', paddingTop: '16px' }}>
-              <div style={{ fontSize: '10px', color: 'var(--neon-purple)', letterSpacing: '1px' }}>BY: {g.authorName}</div>
-              {g.link && <a href={g.link} target="_blank" rel="noreferrer" style={{color:'var(--neon-cyan)', textDecoration:'none', fontSize:'12px', fontWeight:'600'}}>VIEW ↗</a>}
+            <div style={{ padding: '32px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <span className="status-pill">{g.category}</span>
+                {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => removeDocumentRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+              </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: '500', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+              <div className="text-body" style={{ marginTop: '8px', marginBottom: '24px' }}>{g.description}</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '24px' }}>
+                <div className="text-subtitle" style={{ margin: 0 }}>By: {g.authorName}</div>
+                {g.link && <a href={g.link} target="_blank" rel="noreferrer" style={{color:'var(--text-primary)', textDecoration:'none', fontSize:'0.85rem', fontWeight:'500', display:'flex', alignItems:'center', gap:'4px'}}>View <ArrowUpRight size={14}/></a>}
+              </div>
             </div>
-            {isLeadershipMode && <button style={{position:'absolute', top:'10px', right:'10px', background:'rgba(0,0,0,0.5)', border:'none', padding:'6px', borderRadius:'50%', cursor:'pointer'}} onClick={() => removeDocumentRecord('gallery', g.id)}><Trash2 size={12} color="#ef4444"/></button>}
           </div>
         ))}
       </div>
@@ -496,22 +503,22 @@ export default function App() {
   );
 
   const renderNews = () => (
-    <div className="glass-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div><div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>COMMUNICATIONS</div><h1 className="section-title">BROADCASTS</h1></div>
-        {isLeadershipMode && <button className="interactive-action-btn" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Radio size={16} /> BROADCAST</button>}
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Communications</span><h1 className="text-title">Broadcasts</h1></div>
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Radio size={16}/> New Broadcast</button>}
       </div>
-      <div style={{ display: 'grid', gap: '24px', marginTop: '32px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '16px' }}>
         {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-          <div key={n.id} className="architectural-card" style={{ borderLeft: '4px solid var(--neon-cyan)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <div className="badge badge-purple">{n.tag}</div>
-              {isLeadershipMode && <button style={{background:'transparent', border:'none', cursor:'pointer'}} onClick={() => removeDocumentRecord('news', n.id)}><X size={16} color="#ef4444"/></button>}
+          <div key={n.id} className="bento-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <span className="status-pill">{n.tag}</span>
+              {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => removeDocumentRecord('news', n.id)}><Trash2 size={16}/></button>}
             </div>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#fff', fontFamily: 'var(--font-syne)', marginBottom: '12px' }}>{n.title}</div>
-            <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{n.content}</div>
-            <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '24px', borderTop: '1px solid var(--border-glass)', paddingTop: '12px', letterSpacing: '1px' }}>
-              LOGGED: {new Date(n.timestamp).toLocaleString()}
+            <div style={{ fontSize: '1.75rem', fontWeight: '500', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', marginBottom: '16px' }}>{n.title}</div>
+            <div className="text-body" style={{ whiteSpace: 'pre-wrap' }}>{n.content}</div>
+            <div className="text-subtitle" style={{ marginTop: '32px', borderTop: '1px solid var(--border-subtle)', paddingTop: '24px', marginBottom: 0 }}>
+              Published: {new Date(n.timestamp).toLocaleString()}
             </div>
           </div>
         ))}
@@ -520,29 +527,31 @@ export default function App() {
   );
 
   const renderHQ = () => (
-    <div className="glass-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div><div style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--neon-cyan)' }}>ADMINISTRATION</div><h1 className="section-title">UNIT HQ</h1></div>
-        {isLeadershipMode && <button className="interactive-action-btn sec-btn" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16} /> CONFIG</button>}
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Administration</span><h1 className="text-title">Unit HQ</h1></div>
+        {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure</button>}
       </div>
-      <div className="architectural-card" style={{ marginTop: '32px', marginBottom: '24px' }}>
-        <div style={{ fontSize: '12px', color: 'var(--text-secondary)', letterSpacing: '2px' }}>INSTITUTION IDENTIFIER</div>
-        <div style={{ fontSize: '32px', fontWeight: '700', color: '#fff', fontFamily: 'var(--font-syne)', margin: '8px 0 16px 0' }}>UNIT {leadership.unitCode}</div>
-        <div style={{ fontSize: '12px', color: 'var(--text-secondary)', letterSpacing: '2px' }}>OFFICIAL SECURE MAILBOX</div>
-        <div style={{ fontSize: '16px', color: 'var(--neon-cyan)', marginTop: '4px' }}>{leadership.officialEmail}</div>
+      
+      <div className="bento-card" style={{ marginTop: '16px' }}>
+        <span className="text-subtitle">Official Institution Identifier</span>
+        <div style={{ fontSize: '2.5rem', fontWeight: '500', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', margin: '8px 0 24px 0' }}>Unit {leadership.unitCode}</div>
+        <span className="text-subtitle">Authorized Comm Channel</span>
+        <div className="text-body">{leadership.officialEmail}</div>
       </div>
-      <div className="grid-deck">
-        <div className="architectural-card">
-          <div className="badge badge-cyan" style={{marginBottom:'16px'}}>UNIT DESIGNEE (UD)</div>
-          <div style={{ fontSize: '24px', fontWeight: '700', color: '#fff', fontFamily: 'var(--font-syne)' }}>{leadership.udName || 'Pending'}</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px' }}>TEL: {leadership.udPhone || 'N/A'}</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>MAIL: {leadership.udEmail || 'N/A'}</div>
+
+      <div className="bento-grid-2">
+        <div className="bento-card">
+          <span className="status-pill" style={{ marginBottom: '24px' }}>Unit Designee (UD)</span>
+          <div style={{ fontSize: '1.75rem', fontWeight: '500', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>{leadership.udName || 'Pending Assignment'}</div>
+          <div className="text-body" style={{ marginTop: '16px' }}>{leadership.udPhone || 'No contact provided'}</div>
+          <div className="text-body">{leadership.udEmail || 'No email provided'}</div>
         </div>
-        <div className="architectural-card">
-          <div className="badge badge-purple" style={{marginBottom:'16px'}}>UNIT SECRETARY (USEC)</div>
-          <div style={{ fontSize: '24px', fontWeight: '700', color: '#fff', fontFamily: 'var(--font-syne)' }}>{leadership.useName || 'Pending'}</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px' }}>TEL: {leadership.usePhone || 'N/A'}</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>MAIL: {leadership.useEmail || 'N/A'}</div>
+        <div className="bento-card">
+          <span className="status-pill" style={{ marginBottom: '24px' }}>Unit Secretary (USEC)</span>
+          <div style={{ fontSize: '1.75rem', fontWeight: '500', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>{leadership.useName || 'Pending Assignment'}</div>
+          <div className="text-body" style={{ marginTop: '16px' }}>{leadership.usePhone || 'No contact provided'}</div>
+          <div className="text-body">{leadership.useEmail || 'No email provided'}</div>
         </div>
       </div>
     </div>
@@ -553,32 +562,28 @@ export default function App() {
       <style>{GLOBAL_STYLES}</style>
       
       {/* BACKGROUND ELEMENTS */}
-      <div className="cyber-grid-bg"></div>
-      <div className="ambient-glows"></div>
+      <div className="ambient-aurora"></div>
+      <div className="noise-overlay"></div>
 
-      {/* SUPERNOVA SPLASH SCREEN */}
+      {/* CINEMATIC SPLASH SCREEN */}
       <div className={`splash-overlay ${!isBooting ? 'hidden' : ''}`}>
-        <div className="supernova-container">
-          <div className="supernova-orb"></div>
-          <div className="splash-logo-text">Z649</div>
-        </div>
-        <div className="splash-sub">ESTABLISHING SECURE UPLINK</div>
+        <div className="splash-logo">UNIT Z649</div>
       </div>
 
-      {/* TOP NAVIGATION & NASA TOGGLE */}
-      <div className="top-nav">
-        <h1 className="syne" style={{ fontSize: 24, fontWeight: 800, color: '#fff', letterSpacing: '2px' }}>RSA</h1>
-        <button className="interactive-action-btn" onClick={() => setIsNasaFeedOpen(!isNasaFeedOpen)}>
-          NASA OFFICIAL FEED <Zap size={14} />
+      {/* TOP BAR */}
+      <div className="top-bar">
+        <div className="logo-text">RSA</div>
+        <button className="btn-icon" onClick={challengeAdminAuthorization}>
+          {isLeadershipMode ? <Shield size={20} color="var(--text-primary)"/> : <ShieldAlert size={20} color="var(--text-secondary)"/>}
         </button>
       </div>
 
-      {/* HUD NAVIGATION (Desktop) */}
-      <div className="hud-navigation">
-        {structuralSections.map((sec, i) => (
-          <div key={sec.id} className="hud-dot-container" onClick={() => executeEngineNavigation(i)}>
-            <div className="hud-label">{sec.label}</div>
-            <div className={`hud-dot ${activeSectionIdx === i ? 'active' : ''}`}></div>
+      {/* MAC-STYLE FLOATING DOCK */}
+      <div className="floating-dock">
+        {dockItems.map((item, i) => (
+          <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
+            {item.icon}
+            <div className="dock-tooltip">{item.label}</div>
           </div>
         ))}
       </div>
@@ -594,53 +599,25 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderHQ()}</section>
       </div>
 
-      {/* NASA OVERLAY PANEL */}
-      <div className={`nasa-panel ${isNasaFeedOpen ? 'open' : 'closed'}`}>
-        <div style={{ padding: '30px', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: '10px', color: 'var(--neon-cyan)', letterSpacing: '2px' }}>LIVE SYNC</div>
-            <h2 className="syne" style={{ color: '#fff', fontSize: '20px', marginTop: '4px' }}>NASA INDIA</h2>
-          </div>
-          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => setIsNasaFeedOpen(false)}><X color="#fff"/></button>
-        </div>
-        <div style={{ padding: '30px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {[
-            { tag: "THEME 2026", title: "CATALYSE", desc: "A catalyst doesn't wait for change. It creates movement, breaks inertia, and opens new paths." },
-            { tag: "TROPHY", title: "Louis I. Kahn Trophy", desc: "Understanding the interrelations among the five elemental forces and the building envelope." },
-            { tag: "COMPETITION", title: "HUDCO Trophy", desc: "Designing for the informal sector and giving design alternatives for Sustainable Urban Development." }
-          ].map((n, i) => (
-            <div key={i} style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', borderLeft: '2px solid var(--neon-cyan)' }}>
-              <div className="badge badge-cyan" style={{marginBottom:'12px'}}>{n.tag}</div>
-              <h3 style={{ color: '#fff', fontFamily: 'var(--font-syne)', fontSize: '16px', marginBottom: '8px' }}>{n.title}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5' }}>{n.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* SECURITY LOCKOUT BADGE */}
-      <div className={`lockout-badge ${isLeadershipMode ? 'active' : ''}`} onClick={challengeAdminAuthorization}>
-        {isLeadershipMode ? <Shield size={14} /> : <ShieldAlert size={14} />}
-        <span>{isLeadershipMode ? "SYSTEM UNLOCKED" : "SECURE CORE"}</span>
-      </div>
-
       {/* MODALS */}
       {modalMode && (
         <div className="modal-overlay">
           <div className="modal-window">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h2 className="syne" style={{ color: '#fff', fontSize: '20px', textTransform: 'uppercase' }}>{formPayload.id ? 'EDIT' : 'NEW'} ENTRY</h2>
-              <X style={{ cursor: 'pointer', color: '#fff' }} onClick={() => setModalMode(null)}/>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
+              <h2 className="text-title" style={{ fontSize: '1.5rem' }}>{formPayload.id ? 'Edit' : 'New'} Record</h2>
+              <button className="btn-icon" onClick={() => setModalMode(null)}><X size={20}/></button>
             </div>
+            
             <form onSubmit={(e) => { e.preventDefault(); ['news', 'campaigns'].includes(modalMode) ? handleSaveAndEmail(modalMode) : handleSaveToCloud(modalMode); }}>
               
               {modalMode === 'crew' && (
                 <>
-                  <input required placeholder="Name" className="input-element" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
-                  <input placeholder="Role" className="input-element" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})} />
-                  <input type="email" placeholder="Email" className="input-element" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
-                  <input type="tel" placeholder="Phone" className="input-element" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
-                  <input placeholder="Skills" className="input-element" value={formPayload.skills||''} onChange={e=>setFormPayload({...formPayload, skills:e.target.value})} />
+                  <input required placeholder="Full Name" className="input-element" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
+                  <input placeholder="Role (e.g., Delegate)" className="input-element" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})} />
+                  <input type="email" placeholder="Email Address" className="input-element" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
+                  <input type="tel" placeholder="Phone Number" className="input-element" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
+                  <input placeholder="Proficiencies (Comma separated)" className="input-element" value={formPayload.skills||''} onChange={e=>setFormPayload({...formPayload, skills:e.target.value})} />
+                  <span className="text-subtitle">Academic Year</span>
                   <select className="input-element" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
                     <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
                   </select>
@@ -649,66 +626,75 @@ export default function App() {
 
               {modalMode === 'finances' && (
                 <>
-                  <input required placeholder="Description" className="input-element" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
-                  <input required type="number" placeholder="Amount" className="input-element" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
+                  <input required placeholder="Transaction Description" className="input-element" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
+                  <input required type="number" placeholder="Amount (INR)" className="input-element" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
                   <select className="input-element" value={formPayload.type||'expense'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
-                    <option value="expense">Expense (-)</option><option value="income">Income (+)</option>
+                    <option value="expense">Expense Deduction</option><option value="income">Income Addition</option>
                   </select>
                 </>
               )}
 
               {modalMode === 'vault' && (
                 <>
-                  <input required placeholder="Title" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <input placeholder="Size (e.g. 45MB)" className="input-element" value={formPayload.size||''} onChange={e=>setFormPayload({...formPayload, size:e.target.value})} />
-                  <input placeholder="URL Link" className="input-element" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                  <input required placeholder="Document Title" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <input placeholder="File Size (e.g. 45MB)" className="input-element" value={formPayload.size||''} onChange={e=>setFormPayload({...formPayload, size:e.target.value})} />
+                  <input placeholder="Storage URL Link" className="input-element" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
                   <select className="input-element" value={formPayload.type||'Design'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
-                    <option value="Design">Design</option><option value="Finance">Finance</option><option value="Admin">Admin</option>
+                    <option value="Design">Design Asset</option><option value="Finance">Financial Document</option><option value="Admin">Administrative</option>
                   </select>
                 </>
               )}
 
               {modalMode === 'gallery' && (
                 <>
-                  <input required placeholder="Title" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <input placeholder="Author" className="input-element" value={formPayload.authorName||''} onChange={e=>setFormPayload({...formPayload, authorName:e.target.value})} />
-                  <input placeholder="URL Link / Image Link" className="input-element" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                  <input required placeholder="Project Title" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <input placeholder="Author / Creator" className="input-element" value={formPayload.authorName||''} onChange={e=>setFormPayload({...formPayload, authorName:e.target.value})} />
+                  <input placeholder="Category (e.g. Documentation)" className="input-element" value={formPayload.category||''} onChange={e=>setFormPayload({...formPayload, category:e.target.value})} />
                   <select className="input-element" value={formPayload.fileType||'Drive Link'} onChange={e=>setFormPayload({...formPayload, fileType:e.target.value})}>
-                    <option value="Drive Link">Drive Link</option><option value="Image">Image</option><option value="PDF">PDF</option>
+                    <option value="Drive Link">Drive Folder</option><option value="Image">Direct Image URL</option><option value="PDF">PDF Link</option>
                   </select>
+                  <input placeholder="Asset URL" className="input-element" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                  <textarea placeholder="Project Description" className="input-element" rows="3" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})}></textarea>
                 </>
               )}
 
               {modalMode === 'news' && (
                 <>
-                  <input required placeholder="Tag" className="input-element" value={formPayload.tag||''} onChange={e=>setFormPayload({...formPayload, tag:e.target.value})} />
-                  <input required placeholder="Subject / Title" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <textarea rows="4" placeholder="Message" className="input-element" value={formPayload.content||''} onChange={e=>setFormPayload({...formPayload, content:e.target.value})}></textarea>
+                  <input required placeholder="Category Tag" className="input-element" value={formPayload.tag||''} onChange={e=>setFormPayload({...formPayload, tag:e.target.value})} />
+                  <input required placeholder="Subject / Headline" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <textarea rows="5" placeholder="Broadcast Message Body..." className="input-element" value={formPayload.content||''} onChange={e=>setFormPayload({...formPayload, content:e.target.value})}></textarea>
                 </>
               )}
 
               {modalMode === 'campaigns' && (
                 <>
-                  <input required placeholder="Trophy Name" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <input placeholder="Year" className="input-element" value={formPayload.year||''} onChange={e=>setFormPayload({...formPayload, year:e.target.value})} />
-                  <input placeholder="Prize" className="input-element" value={formPayload.prize||''} onChange={e=>setFormPayload({...formPayload, prize:e.target.value})} />
+                  <input required placeholder="Campaign / Trophy Name" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <input placeholder="Year Context" className="input-element" value={formPayload.year||''} onChange={e=>setFormPayload({...formPayload, year:e.target.value})} />
+                  <input placeholder="Prize Pool" className="input-element" value={formPayload.prize||''} onChange={e=>setFormPayload({...formPayload, prize:e.target.value})} />
                   <select className="input-element" value={formPayload.abstractsClosed||'false'} onChange={e=>setFormPayload({...formPayload, abstractsClosed:e.target.value})}>
-                    <option value="false">Open</option><option value="true">Closed</option>
+                    <option value="false">Status: Active</option><option value="true">Status: Closed</option>
                   </select>
                 </>
               )}
 
               {modalMode === 'hq' && (
                 <>
-                  <input placeholder="Unit Code" className="input-element" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
+                  <span className="text-subtitle">Unit Profile</span>
+                  <input placeholder="Unit Code (Z649)" className="input-element" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
                   <input placeholder="Official Email" className="input-element" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Unit Designee</span>
                   <input placeholder="UD Name" className="input-element" value={formPayload.udName||''} onChange={e=>setFormPayload({...formPayload, udName:e.target.value})} />
+                  <input placeholder="UD Phone" className="input-element" value={formPayload.udPhone||''} onChange={e=>setFormPayload({...formPayload, udPhone:e.target.value})} />
+                  <input placeholder="UD Email" className="input-element" value={formPayload.udEmail||''} onChange={e=>setFormPayload({...formPayload, udEmail:e.target.value})} />
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Unit Secretary</span>
                   <input placeholder="USEC Name" className="input-element" value={formPayload.useName||''} onChange={e=>setFormPayload({...formPayload, useName:e.target.value})} />
+                  <input placeholder="USEC Phone" className="input-element" value={formPayload.usePhone||''} onChange={e=>setFormPayload({...formPayload, usePhone:e.target.value})} />
+                  <input placeholder="USEC Email" className="input-element" value={formPayload.useEmail||''} onChange={e=>setFormPayload({...formPayload, useEmail:e.target.value})} />
                 </>
               )}
 
-              <button type="submit" className="interactive-action-btn" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }} disabled={isSendingEmail}>
-                {isSendingEmail ? 'PROCESSING...' : 'COMMIT TO CORE'}
+              <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '24px', padding: '16px' }} disabled={isSendingEmail}>
+                {isSendingEmail ? 'Processing...' : 'Save Configuration'}
               </button>
             </form>
           </div>
