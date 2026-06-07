@@ -77,12 +77,12 @@ function StaggeredCard({ children, index = 0, className = '', style = {} }) {
 // ==========================================
 const SECTIONS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, group: 'core' },
-  { id: 'crew',      label: 'Personnel', icon: Users,           group: 'core' },
-  { id: 'funds',     label: 'Treasury',  icon: Wallet,          group: 'core' },
-  { id: 'vault',     label: 'Vault',     icon: Archive,         group: 'data' },
-  { id: 'gallery',   label: 'Portfolio',  icon: FileImage,       group: 'data' },
-  { id: 'news',      label: 'Broadcasts', icon: Rss,             group: 'data' },
-  { id: 'hq',        label: 'Settings',  icon: Settings,        group: 'system' },
+  { id: 'crew', label: 'Personnel', icon: Users, group: 'core' },
+  { id: 'funds', label: 'Treasury', icon: Wallet, group: 'core' },
+  { id: 'vault', label: 'Vault', icon: Archive, group: 'data' },
+  { id: 'gallery', label: 'Portfolio', icon: FileImage, group: 'data' },
+  { id: 'news', label: 'Broadcasts', icon: Rss, group: 'data' },
+  { id: 'hq', label: 'Settings', icon: Settings, group: 'system' },
 ];
 
 // ==========================================
@@ -201,13 +201,13 @@ export default function App() {
   // ── SECTION META ──
   const currentSection = SECTIONS.find(s => s.id === activeSection) || SECTIONS[0];
   const sectionMeta = {
-    dashboard: { subtitle: 'Overview',        title: 'Command Center' },
-    crew:      { subtitle: 'Database',         title: 'Unit Personnel' },
-    funds:     { subtitle: 'Financial',        title: 'Treasury' },
-    vault:     { subtitle: 'Storage',          title: 'Knowledge Vault' },
-    gallery:   { subtitle: 'Showcase',         title: 'Portfolio' },
-    news:      { subtitle: 'Communications',   title: 'Broadcasts' },
-    hq:        { subtitle: 'Administration',   title: 'Unit HQ' },
+    dashboard: { subtitle: 'Overview', title: 'Command Center' },
+    crew: { subtitle: 'Database', title: 'Unit Personnel' },
+    funds: { subtitle: 'Financial', title: 'Treasury' },
+    vault: { subtitle: 'Storage', title: 'Knowledge Vault' },
+    gallery: { subtitle: 'Showcase', title: 'Portfolio' },
+    news: { subtitle: 'Communications', title: 'Broadcasts' },
+    hq: { subtitle: 'Administration', title: 'Unit HQ' },
   };
   const meta = sectionMeta[activeSection];
 
@@ -606,13 +606,13 @@ export default function App() {
   const renderActiveSection = () => {
     switch (activeSection) {
       case 'dashboard': return renderDashboard();
-      case 'crew':      return renderCrew();
-      case 'funds':     return renderFunds();
-      case 'vault':     return renderVault();
-      case 'gallery':   return renderGallery();
-      case 'news':      return renderNews();
-      case 'hq':        return renderHQ();
-      default:          return renderDashboard();
+      case 'crew': return renderCrew();
+      case 'funds': return renderFunds();
+      case 'vault': return renderVault();
+      case 'gallery': return renderGallery();
+      case 'news': return renderNews();
+      case 'hq': return renderHQ();
+      default: return renderDashboard();
     }
   };
 
