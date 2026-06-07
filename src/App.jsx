@@ -481,7 +481,7 @@ export default function App() {
       <div className="bento-grid-2" style={{ marginTop: '16px' }}>
         {galleryData.map(g => (
           <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-             <div style={{ height: '200px', background: g.fileType === 'Image' ? `url(${g.link}) center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justify-content: 'center' }}>
+             <div style={{ height: '200px', background: g.fileType === 'Image' ? `url(${g.link}) center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {g.fileType !== 'Image' && <Component size={32} color="var(--text-tertiary)" />}
             </div>
             <div style={{ padding: '32px' }}>
@@ -556,6 +556,11 @@ export default function App() {
       </div>
     </div>
   );
+
+  const openModal = (mode, data = {}) => {
+    setFormPayload(data);
+    setModalMode(mode);
+  };
 
   return (
     <>
