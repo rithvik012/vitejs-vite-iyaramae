@@ -1,10 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
-import emailjs from '@emailjs/browser';
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch } from "firebase/firestore";
+import { 
+  Shield, 
+  ShieldAlert, 
+  Plus, 
+  Trash2, 
+  Users, 
+  TrendingUp, 
+  FolderGit2, 
+  Layers, 
+  ChevronDown, 
+  GraduationCap, 
+  UserPlus, 
+  X, 
+  CheckCircle2 
+} from 'lucide-react';
 
 // ==========================================
-// 1. FIREBASE CONFIGURATION
+// CENTRALIZED CONFIGURATION & FIREBASE SETUP
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -18,704 +32,728 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ==========================================
-// 2. LIQUID PASTEL THEMES & ANGLES
-// ==========================================
-const THEMES = {
-  core: { c1: "#E0C3FC", c2: "#8EC5FC", angle: 45 },      
-  crew: { c1: "#FDFBFB", c2: "#EBEDEE", angle: -30 },     
-  funds: { c1: "#F6D365", c2: "#FDA085", angle: 60 },      
-  archive: { c1: "#CFD9DF", c2: "#E2EBF0", angle: -45 },   
-  gallery: { c1: "#FFECD2", c2: "#FCB69F", angle: 15 },    
-  news: { c1: "#A1C4FD", c2: "#C2E9FB", angle: 90 },       
-  hq: { c1: "#D4FC79", c2: "#96E6A1", angle: 0 }           
-};
+// Secure Master Access Key
+const ADMIN_SECURE_KEY = "RSA_Z649_SECURE_2026"; 
 
 // ==========================================
-// 3. FLUID CSS ENGINE (Z-INDEX RE-ENGINEERED)
+// ADVANCED KINETIC STYLING SYSTEM
 // ==========================================
 const GLOBAL_STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
 
-:root {
-  color-scheme: light only !important; 
-  --bg-card: rgba(255, 255, 255, 0.7) !important; 
-  --text-main: #1A1A1A !important; 
-  --text-muted: #5A5A5A !important;
-  --border-light: rgba(0, 0, 0, 0.08) !important; 
-  --accent-primary: #111111 !important;
-  --accent-secondary: rgba(0,0,0,0.05) !important; 
-  --success: #2A7249 !important;
-}
-
-body, html, #root { 
-  margin: 0; padding: 0; height: 100dvh; overflow: hidden; 
-  color: #1A1A1A !important; 
-  background-color: #F0F2F5 !important;
-  background-image: none !important; /* Force kill default StackBlitz grids */
-  font-family: 'Plus Jakarta Sans', sans-serif; 
-  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
-}
-
-input, textarea, select { -webkit-user-select: auto; user-select: auto; color: #111 !important; background-color: #FFF !important; }
-.selectable-text { -webkit-user-select: auto; user-select: auto; background-color: transparent !important; }
-* { box-sizing: border-box; }
-::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
-.syne { font-family: 'Syne', sans-serif; } .mono { font-family: 'Space Mono', monospace; }
-
-/* 🌟 TITANIUM BASE LAYER: Z-Index 1 guarantees it paves over ANY background bugs 🌟 */
-.titanium-base-layer {
-  position: fixed; inset: 0; z-index: 1; background-color: #F8F9FA !important; pointer-events: none;
-}
-
-/* 🌟 FLAWLESS OPACITY-BASED LIQUID BACKGROUNDS: Z-Index 2 🌟 */
-.liquid-bg-layer {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none;
-  background-size: 300% 300%;
-  animation: liquidBreathe 15s ease-in-out infinite;
-  transition: opacity 1.5s ease-in-out;
-  will-change: opacity;
-}
-@keyframes liquidBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-/* 🌟 BRIGHT WHITE FLOWING DASHED LINES: Z-Index 3 🌟 */
-.flowing-lines-vector {
-  position: fixed; width: 300vw; height: 300vh; top: -100vh; left: -100vw; z-index: 3; pointer-events: none;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255,255,255,0.6) 35px, rgba(255,255,255,0.6) 38px) !important;
-  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: streamLines 40s linear infinite;
-  will-change: transform; 
-}
-@keyframes streamLines { 0% { background-position: 0px 0px; } 100% { background-position: 0px 1000px; } }
-
-/* 🌟 APP LAYOUT: Z-Index 10 ensures content sits perfectly on top of the backgrounds 🌟 */
-.app-layout { display: flex; height: 100dvh; width: 100vw; padding-top: 70px; position: relative; justify-content: center; overflow: hidden; z-index: 10; }
-.main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; width: 100%; -webkit-overflow-scrolling: touch; }
-.content-wrapper { width: 100%; max-width: 1150px; margin: 0 auto; } 
-
-.top-nav { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255, 255, 255, 0.6) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-light); z-index: 50; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
-.rsa-menu-container { position: relative; display: inline-block; }
-.rsa-trigger { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer; color: #111 !important; }
-.rsa-trigger:hover { background: var(--accent-secondary); }
-.rsa-dropdown { position: absolute; top: 60px; left: 0; width: 240px; background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: 16px; padding: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 4px; transform-origin: top left; animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; font-weight: 600; color: #555 !important; transition: all 0.2s; border: 1px solid transparent; cursor: pointer; }
-.menu-item:hover { background: var(--accent-secondary); color: #111 !important; }
-.menu-item.active { background: #111 !important; color: #FFF !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
-/* Panels & Cards */
-.nasa-panel { position: absolute; right: 0; top: 70px; bottom: 0; width: 420px; border-left: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; z-index: 40; box-shadow: -10px 0 40px rgba(0,0,0,0.03); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.nasa-panel.closed { transform: translateX(100%); } .nasa-panel.open { transform: translateX(0); }
-.panel-toggle { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9) !important; border: 1px solid var(--border-light); color: #111 !important; padding: 8px 16px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; transition: all 0.2s; cursor: pointer; }
-.panel-toggle:hover { border-color: #111 !important; }
-
-.arch-card { background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.8); border-radius: 16px; padding: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); color: #111 !important; word-wrap: break-word; overflow: hidden; }
-.arch-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); }
-.gallery-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.7) !important; display: flex; flex-direction: column; transition: transform 0.3s ease; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #111 !important; word-wrap: break-word;}
-.gallery-card:hover { transform: translateY(-4px); }
-.gallery-img-placeholder { height: 180px; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); color: #555 !important; background-position: center; background-size: cover; border-bottom: 1px solid var(--border-light); }
-
-.badge { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; white-space: nowrap; }
-.badge-dark { background: #111 !important; color: #FFF !important; } .badge-light { background: rgba(255,255,255,0.8) !important; color: #111 !important; border: 1px solid var(--border-light); }
-
-.action-btn { background: #111 !important; color: #FFF !important; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-decoration: none; cursor: pointer; white-space: nowrap; }
-.action-btn:hover { background: #000 !important; transform: scale(1.02); }
-.action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.delete-btn { background: rgba(253, 242, 242, 0.9) !important; color: #C53030 !important; border: 1px solid #FEB2B2; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
-.delete-btn:hover { background: #C53030 !important; color: #FFF !important; }
-
-.modal-bg { position: fixed; inset: 0; background: rgba(28, 28, 28, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.3s ease; }
-.modal-box { background: #FFF !important; border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 32px 64px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; color: #111 !important; }
-.input-field { width: 100%; background: #F8F9FA !important; border: 1px solid #E9ECEF; padding: 12px 16px; color: #111 !important; border-radius: 8px; margin-bottom: 16px; font-size: 14px; outline: none; transition: border 0.2s; }
-.input-field:focus { border-color: #111; background: #FFF !important; }
-
-/* 🌟 NEW SUPERNOVA SPLASH SCREEN 🌟 */
-.splash-overlay { position: fixed; inset: 0; z-index: 999999; background: #050505 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out, visibility 0.8s; overflow: hidden; }
-.splash-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-.supernova-container { position: relative; display: flex; align-items: center; justify-content: center; }
-
-/* The Expanding Orb */
-.supernova-orb {
-  position: absolute; width: 10px; height: 10px; background: #FFFFFF; border-radius: 50%;
-  box-shadow: 0 0 60px 30px #FFFFFF; opacity: 0; z-index: 1;
-  animation: explodeOrb 2.6s cubic-bezier(0.8, 0, 0.2, 1) forwards;
-}
-
-/* The Z649 Text */
-.splash-logo-text { 
-  position: relative; color: #FFFFFF !important; font-size: 56px; font-weight: 800; letter-spacing: 20px; text-indent: 20px; z-index: 10;
-  animation: textMaterialize 2s ease-in-out forwards;
-}
-.splash-sub { color: #888 !important; margin-top: 40px; letter-spacing: 8px; font-size: 10px; font-weight: 600; opacity: 0; z-index: 10; animation: fadeUp 1s ease forwards 0.5s; text-transform: uppercase; }
-
-@keyframes textMaterialize {
-  0% { opacity: 0; filter: blur(12px); transform: scale(0.9); }
-  30% { opacity: 1; filter: blur(0px); transform: scale(1); }
-  80% { opacity: 1; filter: blur(0px); transform: scale(1); }
-  100% { opacity: 0; filter: blur(8px); transform: scale(1.1); }
-}
-
-@keyframes explodeOrb {
-  0% { transform: scale(0); opacity: 0; }
-  45% { transform: scale(0.5); opacity: 0; }
-  60% { transform: scale(2); opacity: 0.8; }
-  90% { transform: scale(200); opacity: 1; } /* Completely envelops screen */
-  100% { transform: scale(200); opacity: 0; }
-}
-
-@keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-10px); } }
-
-/* 📱 MOBILE DEEP SCROLL + SWIPEABLE NAV DOCK + FLEX FIXES */
-@media (max-width: 768px) {
-  .top-nav { padding: 0 16px; height: 60px; } 
-  .app-layout { padding-top: 60px; } 
-  .main-content { padding: 24px 16px 150px 16px !important; }
-  .content-wrapper { padding: 0; }
-  .rsa-dropdown { display: none; }
-  
-  .mobile-header-wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-  
-  .nasa-panel { width: 100%; top: 0; bottom: 0; z-index: 100; background: rgba(255, 255, 255, 0.96) !important; color: #111 !important; }
-  .nasa-panel.closed { transform: translateY(100%); } .nasa-panel.open { transform: translateY(0); }
-  .mobile-close-feed { display: flex; justify-content: space-between; align-items: center; padding: 24px 24px 16px 24px; border-bottom: 1px solid var(--border-light); background: #FFF !important; }
-
-  /* Swipeable Horizontal Dock */
-  .mobile-bottom-nav { 
-    display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: 84px; 
-    background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-    border-top: 1px solid var(--border-light); z-index: 60; 
-    align-items: center; padding: 0 16px 20px 16px; padding-bottom: env(safe-area-inset-bottom);
-    overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; gap: 8px; justify-content: flex-start;
+  :root {
+    --bg-main: #0a0a0c;
+    --bg-card: rgba(18, 18, 22, 0.75);
+    --accent: #ffffff;
+    --accent-glow: rgba(255, 255, 255, 0.15);
+    --border-light: rgba(255, 255, 255, 0.08);
+    --border-glow: rgba(255, 255, 255, 0.2);
+    --text-main: #f3f4f6;
+    --text-muted: #8e929b;
+    --font-syne: 'Syne', sans-serif;
+    --font-mono: 'Space Grotesk', sans-serif;
   }
-  .mobile-bottom-nav::-webkit-scrollbar { display: none; } 
-  
-  .mobile-nav-item { 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    gap: 6px; color: #666 !important; padding: 8px 4px; cursor: pointer; 
-    flex: 0 0 20%; 
-    scroll-snap-align: start; transition: color 0.2s; 
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
   }
-  .mobile-nav-item.active { color: #111 !important; } 
-  .mobile-nav-label { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; }
-}
-@media (min-width: 769px) { 
-  .mobile-bottom-nav { display: none; } 
-  .mobile-close-feed { display: none; } 
-  .mobile-header-wrap { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
-}
-@keyframes menuPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-.fade-in { animation: fadeIn 0.4s ease forwards; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.015) 0%, transparent 40%);
+  }
+
+  /* Kinetic Smooth Scroll Snap Container */
+  .kinetic-scroll-engine {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .kinetic-scroll-engine::-webkit-scrollbar { display: none; }
+
+  /* Kinetic Section Blocks */
+  .scrolling-section {
+    height: 100vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    position: relative;
+    opacity: 0.2;
+    transform: scale(0.96) translateY(20px);
+    transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .scrolling-section.view-active {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  /* Architectural Layout Elements */
+  .glass-panel {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 1280px;
+    height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    scrollbar-width: none;
+  }
+  .glass-panel::-webkit-scrollbar { display: none; }
+
+  /* Dynamic Flow Indicators */
+  .ambient-axis {
+    position: fixed;
+    top: 0;
+    left: 80px;
+    width: 1px;
+    height: 100vh;
+    background: linear-gradient(to bottom, transparent, var(--border-light) 20%, var(--border-light) 80%, transparent);
+    z-index: 1;
+  }
+
+  .axis-pulse {
+    position: absolute;
+    width: 3px;
+    height: 40px;
+    left: -1px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    animation: axisFlow 6s infinite linear;
+  }
+
+  @keyframes axisFlow {
+    0% { top: -40px; }
+    100% { top: 100vh; }
+  }
+
+  /* Interactive Navigation HUD */
+  .hud-navigation {
+    position: fixed;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 100;
+  }
+
+  .hud-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid transparent;
+  }
+
+  .hud-dot.active {
+    background: var(--accent);
+    transform: scale(1.6);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .hud-label {
+    position: absolute;
+    right: 24px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+  }
+  .hud-dot-container:hover .hud-label { opacity: 1; }
+
+  /* System UI Components */
+  .section-title {
+    font-family: var(--font-syne);
+    font-weight: 800;
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+
+  .grid-deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .architectural-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .architectural-card:hover {
+    border-color: var(--border-glow);
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateY(-4px);
+  }
+
+  .interactive-action-btn {
+    background: var(--accent);
+    color: var(--bg-main);
+    border: none;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .interactive-action-btn:hover {
+    box-shadow: 0 0 15px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+
+  .sec-btn {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-light);
+  }
+  .sec-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--accent); }
+
+  /* Categorized Year Badges */
+  .year-lane-title {
+    font-family: var(--font-syne);
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    border-left: 2px solid var(--accent);
+    padding-left: 12px;
+    margin: 32px 0 20px 0;
+    text-transform: uppercase;
+  }
+
+  /* Form Fields */
+  .input-element {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-light);
+    padding: 14px;
+    border-radius: 8px;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    margin-bottom: 16px;
+    transition: border-color 0.3s ease;
+  }
+  .input-element:focus { outline: none; border-color: var(--accent); }
+
+  /* Modal System */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 5, 7, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-window {
+    background: #121216;
+    border: 1px solid var(--border-light);
+    width: 100%;
+    max-width: 520px;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  }
+
+  .lockout-badge {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 100;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 10px 16px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+  .lockout-badge.active { border-color: #22c55e; color: #22c55e; }
 `;
 
-// ==========================================
-// 4. ICONS
-// ==========================================
-const Icons = {
-  Core: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>,
-  Crew: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>,
-  Funds: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>,
-  Archive: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>,
-  Gallery: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>,
-  News: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path></svg>,
-  HQ: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>,
-  Plus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>,
-  Close: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
-  ChevronDown: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>,
-  Lock: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>,
-  Unlock: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
-};
-
-// ==========================================
-// 5. MAIN APPLICATION
-// ==========================================
 export default function App() {
-  const [tab, setTab] = useState("core");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [isBooting, setIsBooting] = useState(true);
-  const [isSendingEmail, setIsSendingEmail] = useState(false); 
+  const [activeSectionIdx, setActiveSectionIdx] = useState(0);
+  const [isLeadershipMode, setIsLeadershipMode] = useState(false);
+  const [crewData, setCrewData] = useState([]);
+  const [financialLog, setFinancialLog] = useState([]);
+  const [modalMode, setModalMode] = useState(null); // 'crew' | 'fund' | null
+  const [formPayload, setFormPayload] = useState({});
+  
+  const scrollEngineRef = useRef(null);
 
-  // Security Verification
-  const [isLeadership, setIsLeadership] = useState(false);
+  const structuralSections = [
+    { id: 'core', label: 'Command Center' },
+    { id: 'crew', label: 'Unit Crew' },
+    { id: 'funds', label: 'Treasury Ledger' }
+  ];
 
-  // Firebase Realtime
-  const [leadership, setLeadership] = useState({ unitCode: "Z649", udName: "", udEmail: "", officialEmail: "z649@nasaindia.co.in" });
-  const [delegates, setDelegates] = useState([]);
-  const [finances, setFinances] = useState([]);
-  const [vault, setVault] = useState([]);
-  const [campaigns, setCampaigns] = useState([]);
-  const [gallery, setGallery] = useState([]);
-  const [unitNews, setUnitNews] = useState([]);
-
-  // Modals
-  const [modalType, setModalType] = useState(null); 
-  const [modalFormData, setModalFormData] = useState({});
-
+  // Real-time Database Sync
   useEffect(() => {
-    // Timed exactly to match the Supernova splash CSS animation
-    setTimeout(() => setIsBooting(false), 2700);
+    const unsubCrew = onSnapshot(collection(db, "crew"), (snap) => {
+      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setCrewData(data);
+    });
 
-    const unsubHQ = onSnapshot(doc(db, "unit", "hq"), (docSnap) => { if (docSnap.exists()) setLeadership(docSnap.data()); });
-    const unsubCrew = onSnapshot(collection(db, "crew"), (snap) => setDelegates(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-    const unsubFunds = onSnapshot(collection(db, "finances"), (snap) => setFinances(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-    const unsubVault = onSnapshot(collection(db, "vault"), (snap) => setVault(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-    const unsubCampaigns = onSnapshot(collection(db, "campaigns"), (snap) => setCampaigns(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-    const unsubGallery = onSnapshot(collection(db, "gallery"), (snap) => setGallery(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-    const unsubNews = onSnapshot(collection(db, "news"), (snap) => setUnitNews(snap.docs.map(d => ({id: d.id, ...d.data()}))));
+    const unsubFunds = onSnapshot(collection(db, "funds"), (snap) => {
+      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setFinancialLog(data);
+    });
 
-    return () => { unsubHQ(); unsubCrew(); unsubFunds(); unsubVault(); unsubCampaigns(); unsubGallery(); unsubNews(); };
+    return () => { unsubCrew(); unsubFunds(); };
   }, []);
 
-  const toggleAdmin = () => {
-    if (isLeadership) setIsLeadership(false);
-    else {
-      const passcode = prompt("Enter UD/USEC Passcode:");
-      if (passcode === "saturday") setIsLeadership(true);
-      else if (passcode !== null) alert("Incorrect passcode.");
+  // Kinetic Scrolling Engine Tracking
+  const handleEngineScroll = () => {
+    if (!scrollEngineRef.current) return;
+    const currentScrollPosition = scrollEngineRef.current.scrollTop;
+    const calculateIndex = Math.round(currentScrollPosition / window.innerHeight);
+    if (calculateIndex !== activeSectionIdx) {
+      setActiveSectionIdx(calculateIndex);
     }
   };
 
-  const openModal = (type, editingItem = null) => { setModalFormData(editingItem || {}); setModalType(type); setIsMenuOpen(false); };
-  const closeModal = () => { setModalType(null); setModalFormData({}); };
-
-  const handleSaveToCloud = async (collectionName) => {
-    try {
-      if (collectionName === 'hq') await setDoc(doc(db, "unit", "hq"), modalFormData);
-      else if (modalFormData.id) {
-        const docRef = doc(db, collectionName, modalFormData.id);
-        const dataToUpdate = { ...modalFormData };
-        delete dataToUpdate.id; 
-        await updateDoc(docRef, dataToUpdate);
-      } else { await addDoc(collection(db, collectionName), { ...modalFormData, timestamp: Date.now() }); }
-      closeModal();
-    } catch (e) { alert("Error saving to cloud."); }
+  const executeEngineNavigation = (targetIndex) => {
+    if (!scrollEngineRef.current) return;
+    scrollEngineRef.current.scrollTo({
+      top: targetIndex * window.innerHeight,
+      behavior: 'smooth'
+    });
+    setActiveSectionIdx(targetIndex);
   };
 
-  // ✉️ EMAILJS AUTOMATION - MANUAL BROADCAST
-  const handleSaveAndEmailNews = async () => {
-    setIsSendingEmail(true);
-    await handleSaveToCloud('news'); 
-
-    const emailList = delegates.map(d => d.email).filter(e => e && e.includes('@')).join(',');
-    if (emailList.length === 0) { 
-      alert("Broadcast saved to cloud, but no delegate emails found in Crew to send to."); 
-      setIsSendingEmail(false);
-      return; 
+  // Secure Gatekeeper Validation
+  const challengeAdminAuthorization = () => {
+    if (isLeadershipMode) {
+      setIsLeadershipMode(false);
+    } else {
+      const entryToken = prompt("ENTER AUTHORIZED UD/USEC PASSCODE:");
+      if (entryToken === ADMIN_SECURE_KEY) {
+        setIsLeadershipMode(true);
+      } else if (entryToken !== null) {
+        alert("ACCESS DENIED: Invalid Security Token.");
+      }
     }
+  };
 
-    const templateParams = {
-      subject: `[UNIT ${leadership.unitCode}] ${modalFormData.tag}: ${modalFormData.title}`,
-      message: `${modalFormData.content}\n\n--\nSent via RSA Unit Command Center`,
-      to_email: leadership.officialEmail || "z649@nasaindia.co.in", 
-      email: leadership.officialEmail || "z649@nasaindia.co.in", 
-      bcc_list: emailList
-    };
+  // Global Batch Promotion Engine
+  const executeBatchPromotionSequence = async () => {
+    const confirmation = window.confirm(
+      "⚠️ AMBIENT PROTOCOL NOTICE:\n\nThis sequence will advance every student block up by one academic tier (e.g., 1st Year → 2nd Year).\n\n5th Year designees will automatically be transitioned to Alumni. Do you authorize this database modification?"
+    );
+    if (!confirmation) return;
 
     try {
-      await emailjs.send('service_2007', 'template_a63y975', templateParams, 'PE32og5tBpVl8pzhT');
-      alert("Success! Broadcast synced and silent email blasted to all delegates.");
-    } catch (error) {
-      alert("Saved to cloud, but background email failed to send.");
+      const operationBatch = writeBatch(db);
+      crewData.forEach((member) => {
+        const structuralYear = member.year;
+        let advancedYear = structuralYear;
+
+        if (Number(structuralYear) >= 1 && Number(structuralYear) < 5) {
+          advancedYear = Number(structuralYear) + 1;
+        } else if (Number(structuralYear) === 5 || structuralYear === "5") {
+          advancedYear = "Alumni";
+        }
+
+        if (advancedYear !== structuralYear) {
+          const docReference = doc(db, 'crew', member.id);
+          operationBatch.update(docReference, { year: advancedYear });
+        }
+      });
+
+      await operationBatch.commit();
+      
+      // Dynamic celebration feedback
+      if (window.confetti) {
+        window.confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+      }
+      alert("DATABASE UPDATE SUCCESSFUL: All student records migrated to their consecutive academic terms.");
+    } catch (err) {
+      console.error(err);
+      alert("CRITICAL DATA ERROR: Unified write sequence failed to process.");
     }
-    setIsSendingEmail(false);
   };
 
-  // ✉️ EMAILJS AUTOMATION - CAMPAIGNS/TROPHIES
-  const handleSaveAndEmailCampaign = async () => {
-    setIsSendingEmail(true);
-    await handleSaveToCloud('campaigns');
-
-    const emailList = delegates.map(d => d.email).filter(e => e && e.includes('@')).join(',');
-    if (emailList.length === 0) { 
-      alert("Campaign saved, but no delegate emails found in Crew to send to."); 
-      setIsSendingEmail(false);
-      return; 
-    }
-
-    const templateParams = {
-      subject: `[UNIT ${leadership.unitCode}] NEW TROPHY LAUNCH: ${modalFormData.title}`,
-      message: `A new Campaign/Trophy has been synced to the database.\n\nTrophy: ${modalFormData.title}\nYear: ${modalFormData.year}\nPrize Pool: ${modalFormData.prize}\nAbstracts Closed: ${modalFormData.abstractsClosed === 'true' ? 'Yes' : 'No'}\n\nPlease check the Unit Command Center website for details.\n\n--\nSent via RSA Unit Command Center`,
-      to_email: leadership.officialEmail || "z649@nasaindia.co.in",
-      email: leadership.officialEmail || "z649@nasaindia.co.in", 
-      bcc_list: emailList
-    };
-
+  // Database Deletions
+  const removeDocumentRecord = async (targetCollection, docId) => {
+    if (!window.confirm("Verify clear intent to remove this record permanently from cloud infrastructure.")) return;
     try {
-      await emailjs.send('service_2007', 'template_a63y975', templateParams, 'PE32og5tBpVl8pzhT');
-      alert("Success! Trophy synced and notification email blasted to all delegates.");
-    } catch (error) {
-      alert("Saved to cloud, but background email failed to send.");
+      await deleteDoc(doc(db, targetCollection, docId));
+    } catch (e) {
+      alert("Error clearing record.");
     }
-    setIsSendingEmail(false);
   };
 
-  const handleDeleteFromCloud = async (collectionName, id) => {
-    if(window.confirm("Permanently delete this entry?")) await deleteDoc(doc(db, collectionName, id));
+  // Submission Pipeline
+  const commitRecordSubmission = async (e) => {
+    e.preventDefault();
+    try {
+      if (modalMode === 'crew') {
+        const fallbackPayload = {
+          name: formPayload.name || "Unnamed Personnel",
+          role: formPayload.role || "Delegate",
+          email: formPayload.email || "",
+          phone: formPayload.phone || "",
+          skills: formPayload.skills || "",
+          year: formPayload.year ? (formPayload.year === 'Alumni' ? 'Alumni' : Number(formPayload.year)) : 1
+        };
+        await addDoc(collection(db, "crew"), fallbackPayload);
+      } else if (modalMode === 'fund') {
+        const fallbackFund = {
+          description: formPayload.description || "Uncategorized Transaction",
+          amount: Number(formPayload.amount) || 0,
+          type: formPayload.type || "expense",
+          date: formPayload.date || new Date().toISOString().split('T')[0]
+        };
+        await addDoc(collection(db, "funds"), fallbackFund);
+      }
+      setModalMode(null);
+      setFormPayload({});
+    } catch (err) {
+      alert("Failed to commit data packet.");
+    }
   };
 
-  const activeTheme = THEMES[tab] || THEMES.core;
+  // ==========================================
+  // RENDER BLOCKS
+  // ==========================================
+  
+  // 1. Dashboard View
+  const renderDashboardBlock = () => {
+    const revenueSum = financialLog.filter(f => f.type === 'income').reduce((acc, c) => acc + (c.amount || 0), 0);
+    const expenseSum = financialLog.filter(f => f.type === 'expense').reduce((acc, c) => acc + (c.amount || 0), 0);
+    const operatingCapital = revenueSum - expenseSum;
 
-  const renderCore = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT {leadership.unitCode || 'Z649'} COMMAND CENTER</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>CORE DASHBOARD</h1></div>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 40 }}>
-        <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE DELEGATES</div><div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{delegates.length}</div></div>
-        <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>TOTAL EXPENSES</div><div className="mono" style={{ fontSize: 32, fontWeight: 700 }}>₹{finances.filter(f => f.type === 'EXPENSE').reduce((a, b) => a + (Number(b.amount) || 0), 0).toLocaleString()}</div></div>
-        <div className="arch-card"><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16 }}>ACTIVE PROJECTS</div><div className="syne" style={{ fontSize: 42, fontWeight: 700 }}>{vault.length}</div></div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
-        <h2 className="syne selectable-text" style={{ fontSize: 18, margin: 0 }}>CURRENT CAMPAIGNS</h2>
-        {isLeadership && <button className="panel-toggle" onClick={() => openModal('campaigns')}>+ Sync Campaign</button>}
-      </div>
-      <div style={{ display: 'grid', gap: 16 }}>
-        {campaigns.map(camp => (
-          <div key={camp.id} className="arch-card" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px' }}>
-            <div><div style={{ fontSize: 16, fontWeight: 600 }}>{camp.title} <span className="mono" style={{ fontSize: 10, color: 'var(--text-muted)' }}>({camp.year})</span></div><p className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Prize Pool: {camp.prize}</p></div>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              {camp.abstractsClosed === 'true' ? <span className="badge badge-dark">Abstracts Closed</span> : <span className="badge badge-light">Open</span>}
-              {isLeadership && <button className="delete-btn" style={{ padding: '6px' }} onClick={() => handleDeleteFromCloud('campaigns', camp.id)}><Icons.Close /></button>}
-            </div>
+    return (
+      <div className="glass-panel">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ fontSize: '11px', letterSpacing: '3px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>National Association of Students of Architecture</div>
+            <h1 className="section-title" style={{ marginTop: '6px' }}>UNIT Z649 HQ</h1>
           </div>
-        ))}
-        {campaigns.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No campaigns synced to cloud database.</p>}
-      </div>
-    </div>
-  );
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--text-muted)' }}>ACADEMIC SYSTEM</div>
+            <div style={{ fontSize: '18px', fontWeight: '700', marginTop: '4px' }}>OPERATIONAL</div>
+          </div>
+        </div>
 
-  const renderCrew = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PERSONNEL DATABASE</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT CREW</h1></div>
-        <button className="action-btn" onClick={() => openModal('crew')}><Icons.Plus /> ADD DELEGATE</button>
+        <div className="grid-deck" style={{ marginTop: '40px' }}>
+          <div className="architectural-card" style={{ borderLeft: '3px solid var(--accent)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-muted)' }}>
+              <Users size={18} />
+              <div style={{ fontSize: '12px', letterSpacing: '1px' }}>ACTIVE PERSONNEL</div>
+            </div>
+            <div style={{ fontSize: '48px', fontWeight: '800', marginTop: '16px', fontFamily: 'var(--font-syne)' }}>
+              {crewData.length}
+            </div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px' }}>Registered Sync Delegates</div>
+          </div>
+
+          <div className="architectural-card" style={{ borderLeft: '3px solid #22c55e' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-muted)' }}>
+              <TrendingUp size={18} />
+              <div style={{ fontSize: '12px', letterSpacing: '1px' }}>NET ASSET LEDGER</div>
+            </div>
+            <div style={{ fontSize: '48px', fontWeight: '800', marginTop: '16px', fontFamily: 'var(--font-syne)' }}>
+              ₹{operatingCapital.toLocaleString('en-IN')}
+            </div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px' }}>Liquid Base Balance</div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: '40px', padding: '24px', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
+          <h3 style={{ fontFamily: 'var(--font-syne)', marginBottom: '12px', fontSize: '14px', letterSpacing: '1px' }}>SYSTEM MOTIF</h3>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+            Welcome to the architecture framework interface for Unit Z649. Use your trackpad or mousewheel to scroll smoothly through distinct data arrays. Authenticate using the environmental lock switch below to manage structural assets.
+          </p>
+        </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
-        {delegates.map(d => (
-          <div key={d.id} className="arch-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
-              <div className={d.role === 'Unit Designee' ? 'badge badge-dark' : 'badge badge-light'}>{d.role}</div>
-              {/* RESTRICTED TO LEADERSHIP */}
-              {isLeadership && (
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('crew', d)}>Edit</button>
-                  <button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('crew', d.id)}>✕</button>
+    );
+  };
+
+  // 2. Organized Crew View
+  const renderCrewBlock = () => {
+    // Structural Category Allocation
+    const allocationMap = crewData.reduce((acc, user) => {
+      const yearBracket = user.year || "Unassigned";
+      if (!acc[yearBracket]) acc[yearBracket] = [];
+      acc[yearBracket].push(user);
+      return acc;
+    }, {});
+
+    const processingOrder = Object.keys(allocationMap).sort((alpha, beta) => {
+      if (alpha === "Alumni") return 1;
+      if (beta === "Alumni") return -1;
+      if (alpha === "Unassigned") return 1;
+      if (beta === "Unassigned") return -1;
+      return Number(alpha) - Number(beta);
+    });
+
+    return (
+      <div className="glass-panel">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <div style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--text-muted)' }}>ROSTER INTERFACE</div>
+            <h1 className="section-title" style={{ margin: '4px 0 0 0' }}>UNIT CREW</h1>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {isLeadershipMode && (
+              <button className="interactive-action-btn sec-btn" onClick={executeBatchPromotionSequence}>
+                <TrendingUp size={16} /> ADVANCE ALL BATCHES ⇡
+              </button>
+            )}
+            <button className="interactive-action-btn" onClick={() => { setFormPayload({ year: '1' }); setModalMode('crew'); }}>
+              <UserPlus size={16} /> REGISTER MEMBER
+            </button>
+          </div>
+        </div>
+
+        {processingOrder.map((bracket) => (
+          <div key={bracket}>
+            <div className="year-lane-title">
+              {bracket === "Alumni" || bracket === "Unassigned" ? bracket : `${bracket}${getOrdinalSuffix(bracket)} YEAR BATCH`}
+            </div>
+            <div className="grid-deck">
+              {allocationMap[bracket].map((member) => (
+                <div key={member.id} className="architectural-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                    <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.06)', padding: '4px 10px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                      {member.role}
+                    </span>
+                    {isLeadershipMode && (
+                      <button 
+                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }} 
+                        onClick={() => removeDocumentRecord('crew', member.id)}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '6px', fontFamily: 'var(--font-syne)' }}>{member.name}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>{member.email} • {member.phone}</div>
+                  {member.skills && (
+                    <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '12px', marginTop: '12px' }}>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '1px' }}>CORE PROFICIENCIES</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-main)' }}>{member.skills}</div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{d.name}</div>
-            <div className="mono selectable-text" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 16, wordBreak: 'break-all' }}>{d.email}<br/>{d.phone}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Proficient Skills:</div>
-            <p className="selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>{d.skills || "N/A"}</p>
-          </div>
-        ))}
-        {delegates.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No crew members synced.</p>}
-      </div>
-    </div>
-  );
-
-  const renderFunds = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>FINANCIAL LEDGER</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT FUNDS</h1></div>
-        {isLeadership && <button className="action-btn" onClick={() => openModal('finances')}><Icons.Plus /> ADD TRANSACTION</button>}
-      </div>
-      <div style={{ display: 'grid', gap: 16 }}>
-        {finances.map(f => (
-          <div key={f.id} className="arch-card" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ flex: '1 1 250px' }}>
-              <span className={f.type === 'COLLECTION' ? 'badge badge-dark' : 'badge badge-light'} style={{ marginBottom: 12 }}>{f.type}</span>
-              <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{f.desc} <span className="mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>({f.campaign})</span></div>
-              {f.type === 'COLLECTION' && (
-                <div style={{ marginTop: 12, width: '100%' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, marginBottom: 4 }}><span>Progress</span><span>₹{Number(f.current || 0).toLocaleString()} / ₹{Number(f.target || 0).toLocaleString()}</span></div>
-                  <div style={{ width: '100%', height: '8px', background: 'var(--border-light)', borderRadius: '4px', overflow: 'hidden' }}><div style={{ width: `${Math.min(100, (Number(f.current || 0) / Number(f.target || 1)) * 100)}%`, height: '100%', background: '#111' }}></div></div>
-                </div>
-              )}
-            </div>
-            <div style={{ textAlign: 'right', display: 'flex', gap: 12, alignItems: 'center' }}>
-              <div className="mono" style={{ fontSize: 24, fontWeight: 700 }}>₹{f.type === 'EXPENSE' ? Number(f.amount || 0).toLocaleString() : Number(f.target || 0).toLocaleString()}</div>
-              {isLeadership && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}><button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px', justifyContent: 'center' }} onClick={() => openModal('finances', f)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('finances', f.id)}>✕</button></div>
-              )}
+              ))}
             </div>
           </div>
         ))}
-        {finances.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No financial records synced.</p>}
-      </div>
-    </div>
-  );
 
-  const renderVault = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>KNOWLEDGE VAULT</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT ARCHIVE</h1></div>
-        <button className="action-btn" onClick={() => openModal('vault')}><Icons.Plus /> UPLOAD FILE</button>
+        {crewData.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '100px 0', color: 'var(--text-muted)' }}>No localized personnel profiles found.</div>
+        )}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
-        {vault.map(v => (
-          <div key={v.id} className="arch-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}><div className={v.type === 'Design' ? 'badge badge-dark' : 'badge badge-light'}>{v.type} | {v.year}</div><div style={{ display: 'flex', gap: 8 }}><button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('vault', v)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('vault', v.id)}>✕</button></div></div>
-            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{v.title}</div><p className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 20 }}>File Size: {v.size}</p>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><a href={v.link || "#"} target="_blank" rel="noreferrer" className="panel-toggle" style={{ fontSize: 11, textDecoration: 'none' }}>Download File ↗</a></div>
+    );
+  };
+
+  // Helper utility for clear ordinal text labels
+  const getOrdinalSuffix = (val) => {
+    const num = Number(val);
+    if (num === 1) return 'st';
+    if (num === 2) return 'nd';
+    if (num === 3) return 'rd';
+    return 'th';
+  };
+
+  // 3. Treasury View
+  const renderFundsBlock = () => {
+    return (
+      <div className="glass-panel">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+          <div>
+            <div style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--text-muted)' }}>FINANCIAL SUB-SYSTEM</div>
+            <h1 className="section-title" style={{ margin: '4px 0 0 0' }}>TREASURY LEDGER</h1>
           </div>
-        ))}
-        {vault.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No archive files synced.</p>}
-      </div>
-    </div>
-  );
+          <button className="interactive-action-btn" onClick={() => { setFormPayload({ type: 'expense' }); setModalMode('fund'); }}>
+            <Plus size={16} /> LOG TRANSACTION
+          </button>
+        </div>
 
-  const renderGallery = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>PORTFOLIO SHOWCASE</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>BEST WORKS GALLERY</h1></div>
-        <button className="action-btn" onClick={() => openModal('gallery')}><Icons.Plus /> ADD LINK</button>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
-        {gallery.map(g => (
-          <div key={g.id} className="gallery-card">
-            <div className="gallery-img-placeholder" style={g.fileType === 'Image' ? { backgroundImage: `url(${g.link})` } : {}}>
-              {g.fileType !== 'Image' && <><Icons.Gallery /><span className="mono" style={{ fontSize: 12, fontWeight: 600, marginTop: 8 }}>{g.fileType} LINK</span></>}
-            </div>
-            <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}><div className="badge badge-light">{g.category}</div><div style={{ display: 'flex', gap: 8 }}><button className="panel-toggle" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => openModal('gallery', g)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px', fontSize: 10 }} onClick={() => handleDeleteFromCloud('gallery', g.id)}>✕</button></div></div>
-              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{g.title}</div><div className="selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{g.description}</div>
-              <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', alignItems: 'center' }}><div className="mono" style={{ fontSize: 10, fontWeight: 700 }}>BY: {g.authorName?.toUpperCase() || 'UNIT MEMBER'}</div>{g.link && <a href={g.link} target="_blank" rel="noreferrer" className="action-btn" style={{ padding: '6px 12px', fontSize: 10 }}>OPEN ↗</a>}</div>
-            </div>
+        <div className="architectural-card" style={{ padding: '0', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '16px 24px', background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-light)', fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '1px' }}>
+            <div>STATEMENT ALLOCATION</div>
+            <div>DATETIME</div>
+            <div>VALUATION</div>
+            {isLeadershipMode && <div style={{ width: '24px' }}></div>}
           </div>
-        ))}
-        {gallery.length === 0 && <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No gallery links added yet.</p>}
-      </div>
-    </div>
-  );
-
-  const renderNews = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>UNIT COMMUNICATION</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>MANUAL BROADCASTS</h1></div>
-        {isLeadership && <button className="action-btn" onClick={() => openModal('news')}><Icons.Plus /> CREATE BROADCAST</button>}
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}>
-        {unitNews.length === 0 ? <p className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>No broadcasts found.</p> : null}
-        {unitNews.sort((a,b) => b.timestamp - a.timestamp).map(news => (
-          <div key={news.id} className="arch-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}><div className="badge badge-dark">{news.tag}</div>
-              {isLeadership && (<div style={{ display: 'flex', gap: 8 }}><button className="panel-toggle" style={{ fontSize: 10, padding: '4px 8px' }} onClick={() => openModal('news', news)}>Edit</button><button className="delete-btn" style={{ padding: '4px 8px' }} onClick={() => handleDeleteFromCloud('news', news.id)}>✕</button></div>)}
+          
+          {financialLog.map((tx) => (
+            <div key={tx.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '20px 24px', borderBottom: '1px solid var(--border-light)', alignItems: 'center', fontSize: '14px' }}>
+              <div style={{ fontWeight: '500' }}>{tx.description}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{tx.date}</div>
+              <div style={{ fontWeight: '600', color: tx.type === 'income' ? '#22c55e' : '#ef4444' }}>
+                {tx.type === 'income' ? '+' : '-'} ₹{Number(tx.amount).toLocaleString('en-IN')}
+              </div>
+              {isLeadershipMode ? (
+                <button 
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }} 
+                  onClick={() => removeDocumentRecord('funds', tx.id)}
+                >
+                  <X size={16} />
+                </button>
+              ) : <div style={{ width: '16px' }}></div>}
             </div>
-            <h3 className="syne selectable-text" style={{ fontSize: 20, margin: '0 0 12px 0' }}>{news.title}</h3>
-            <p className="selectable-text" style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.8, margin: 0, whiteSpace: 'pre-wrap' }}>{news.content}</p>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 24, paddingTop: 16, borderTop: '1px solid var(--border-light)' }}>BROADCAST LOGGED: {new Date(news.timestamp).toLocaleString()}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+          ))}
 
-  const renderHQ = () => (
-    <div className="fade-in content-wrapper">
-      <div className="mobile-header-wrap">
-        <div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: 2 }}>ADMINISTRATION</div><h1 className="syne selectable-text" style={{ margin: '8px 0 0 0', fontWeight: 800 }}>UNIT HQ ({leadership.unitCode || 'Z649'})</h1></div>
-        {isLeadership && <button className="action-btn" onClick={() => openModal('hq', leadership)}><Icons.HQ/> EDIT HQ DETAILS</button>}
+          {financialLog.length === 0 && (
+            <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>No transactional entries logged.</div>
+          )}
+        </div>
       </div>
-      <div className="arch-card" style={{ marginBottom: 24 }}><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>OFFICIAL INSTITUTION</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>UNIT {leadership.unitCode || 'Z649'}</div><div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>OFFICIAL NASA MAILBOX</div><div className="selectable-text" style={{ fontSize: 16, fontWeight: 600, color: 'var(--success)', wordBreak: 'break-all' }}>{leadership.officialEmail || 'Not configured'}</div></div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-        <div className="arch-card"><div className="badge badge-dark" style={{ marginBottom: 16 }}>UNIT DESIGNEE (UD)</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.udName || 'Not configured'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.udPhone || 'N/A'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', wordBreak: 'break-all' }}>Email: {leadership.udEmail || 'N/A'}</div></div>
-        <div className="arch-card"><div className="badge badge-light" style={{ marginBottom: 16 }}>UNIT SECRETARY (USEC)</div><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{leadership.useName || 'Not configured'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Phone: {leadership.usePhone || 'N/A'}</div><div className="mono selectable-text" style={{ fontSize: 12, color: 'var(--text-muted)', wordBreak: 'break-all' }}>Email: {leadership.useEmail || 'N/A'}</div></div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
-      
-      {/* 🌟 TITANIUM BASE LAYER: Z-Index 1 completely blocks index.css bugs 🌟 */}
-      <div className="titanium-base-layer"></div>
 
-      {/* 🌟 FORCE-INJECTED BACKGROUNDS (Z-INDEX 2) 🌟 */}
-      {Object.entries(THEMES).map(([key, theme]) => (
-        <div 
-          key={key}
-          className="liquid-bg-layer" 
-          style={{ 
-            backgroundImage: `linear-gradient(135deg, ${theme.c1} 0%, ${theme.c2} 50%, ${theme.c1} 100%)`,
-            opacity: tab === key ? 1 : 0
-          }}
-        />
-      ))}
-      
-      {/* WHITE FLOWING LINES (Z-INDEX 3) */}
-      <div 
-        className="flowing-lines-vector" 
-        style={{ transform: `rotate(${activeTheme.angle}deg)` }}
-      />
-
-      {/* 🌟 SUPERNOVA SPLASH SCREEN 🌟 */}
-      <div className={`splash-overlay ${!isBooting ? 'hidden' : ''}`}>
-        <div className="supernova-container">
-          <div className="supernova-orb"></div>
-          <div className="splash-logo-text">{leadership.unitCode || 'Z649'}</div>
-        </div>
-        <div className="splash-sub">ESTABLISHING CLOUD UPLINK</div>
+      {/* Kinetic Ambient Layout Thread */}
+      <div className="ambient-axis">
+        <div className="axis-pulse"></div>
       </div>
 
-      {/* TOP NAVIGATION */}
-      <div className="top-nav">
-        <div className="rsa-menu-container">
-          <div className="rsa-trigger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <h1 className="syne" style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>RSA</h1><Icons.ChevronDown />
+      {/* HUD Navigation Vector Layout */}
+      <div className="hud-navigation">
+        {structuralSections.map((sec, i) => (
+          <div 
+            key={sec.id} 
+            className="hud-dot-container" 
+            style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+            onClick={() => executeEngineNavigation(i)}
+          >
+            <div className={`hud-label`}>{sec.label}</div>
+            <div className={`hud-dot ${activeSectionIdx === i ? 'active' : ''}`}></div>
           </div>
-          {isMenuOpen && (
-            <div className="rsa-dropdown fade-in">
-              {[ { id: 'core', name: 'Dashboard', icon: <Icons.Core /> }, { id: 'crew', name: 'Unit Crew', icon: <Icons.Crew /> }, { id: 'funds', name: 'Financial Ledger', icon: <Icons.Funds /> }, { id: 'archive', name: 'Unit Archive', icon: <Icons.Archive /> }, { id: 'gallery', name: 'Work Gallery', icon: <Icons.Gallery /> }, { id: 'news', name: 'Unit Broadcasts', icon: <Icons.News /> }, { id: 'hq', name: 'HQ Operations', icon: <Icons.HQ /> } ].map(item => (
-                <div key={item.id} className={`menu-item ${tab === item.id ? 'active' : ''}`} onClick={() => { setTab(item.id); setIsMenuOpen(false); }}>{item.icon} {item.name}</div>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button className="panel-toggle" style={{ border: 'none', background: 'transparent', boxShadow: 'none' }} onClick={toggleAdmin}>
-            {isLeadership ? <Icons.Unlock /> : <Icons.Lock />}
-          </button>
-          <button className="panel-toggle" onClick={() => setIsPanelOpen(!isPanelOpen)}>OFFICIAL NASA FEED <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--success)' }}></div></button>
-        </div>
-      </div>
-
-      {/* MAIN VIEWPORT (Z-INDEX 10) */}
-      <div className="app-layout">
-        <div className="main-content" style={{ paddingRight: isPanelOpen && window.innerWidth > 768 ? 420 : 0 }} onClick={() => { isMenuOpen && setIsMenuOpen(false); }}>
-          {tab === "core" && renderCore()}
-          {tab === "crew" && renderCrew()}
-          {tab === "funds" && renderFunds()}
-          {tab === "archive" && renderVault()}
-          {tab === "gallery" && renderGallery()}
-          {tab === "news" && renderNews()}
-          {tab === "hq" && renderHQ()}
-        </div>
-
-        {/* SIDEBAR FEED */}
-        <div className={`nasa-panel ${isPanelOpen ? 'open' : 'closed'}`}>
-          <div className="mobile-close-feed"><h2 className="syne" style={{ margin: 0, fontSize: 20 }}>NASA OFFICIAL</h2><button className="panel-toggle" onClick={() => setIsPanelOpen(false)}>✕ Close</button></div>
-          <div style={{ padding: '32px 32px 24px', borderBottom: '1px solid var(--border-light)', display: window.innerWidth > 768 ? 'block' : 'none' }}><div><div className="syne" style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>NASA INDIA OFFICIAL</div><div className="mono" style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>68th YEAR UPDATES</div></div></div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: 32, paddingBottom: 140 }}>
-             {[ { id: 1, tag: "THEME 2026", title: "CATALYSE", date: "68th Year", desc: "A catalyst doesn't wait for change. It creates movement, breaks inertia, and opens new paths." }, { id: 2, tag: "TROPHY BRIEF", title: "Louis I. Kahn Trophy", date: "Brief Available", desc: "Understanding the interrelations among the five elemental forces and the building envelope." }, { id: 3, tag: "COMPETITION", title: "HUDCO Trophy", date: "Prize: ₹7,00,000", desc: "Designing for the informal sector and giving design alternatives for Sustainable Urban Development." } ].map(news => (
-              <div key={news.id} style={{ marginBottom: 32 }}><div className="badge badge-light" style={{ marginBottom: 12 }}>{news.tag}</div><h3 className="syne selectable-text" style={{ fontSize: 16, margin: '0 0 6px 0', lineHeight: 1.3 }}>{news.title}</h3><div className="mono selectable-text" style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 12 }}>{news.date}</div><p className="selectable-text" style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>{news.desc}</p></div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* HORIZONTAL SWIPEABLE MOBILE NAV DOCK */}
-      <div className="mobile-bottom-nav">
-        {[ { id: 'core', name: 'Dash', icon: <Icons.Core /> }, { id: 'crew', name: 'Crew', icon: <Icons.Crew /> }, { id: 'funds', name: 'Funds', icon: <Icons.Funds /> }, { id: 'archive', name: 'Vault', icon: <Icons.Archive /> }, { id: 'gallery', name: 'Gallery', icon: <Icons.Gallery /> }, { id: 'news', name: 'News', icon: <Icons.News /> }, { id: 'hq', name: 'HQ', icon: <Icons.HQ /> } ].map(item => (
-          <div key={item.id} className={`mobile-nav-item ${tab === item.id ? 'active' : ''}`} onClick={() => { setTab(item.id); setIsPanelOpen(false); }}>{item.icon}<span className="mobile-nav-label mono">{item.name}</span></div>
         ))}
       </div>
 
-      {/* DATA MODALS */}
-      {modalType && (
-        <div className="modal-bg">
-          <div className="modal-box fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24, alignItems: 'center' }}>
-              <h2 className="syne" style={{ margin: 0, fontSize: 24 }}>{modalFormData.id || modalType === 'hq' ? 'EDIT' : 'ADD NEW'} ENTRY</h2>
-              <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={closeModal}><Icons.Close/></div>
+      {/* Main Kinetic Scrolling Engine Wrapper */}
+      <div 
+        className="kinetic-scroll-engine" 
+        ref={scrollEngineRef} 
+        onScroll={handleEngineScroll}
+      >
+        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>
+          {renderDashboardBlock()}
+        </section>
+
+        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>
+          {renderCrewBlock()}
+        </section>
+
+        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>
+          {renderFundsBlock()}
+        </section>
+      </div>
+
+      {/* Global Interface Authorization Node */}
+      <div className={`lockout-badge ${isLeadershipMode ? 'active' : ''}`} onClick={challengeAdminAuthorization}>
+        {isLeadershipMode ? <Shield size={14} /> : <ShieldAlert size={14} />}
+        <span className="mono">{isLeadershipMode ? "LEADERSHIP VERIFIED" : "LOCK CONFIG"}</span>
+      </div>
+
+      {/* Modals Data Entry Windows */}
+      {modalMode && (
+        <div className="modal-overlay">
+          <div className="modal-window">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontFamily: 'var(--font-syne)', textTransform: 'uppercase' }}>
+                {modalMode === 'crew' ? 'New Personnel Entry' : 'Log Fiscal Transaction'}
+              </h3>
+              <X size={20} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} onClick={() => setModalMode(null)} />
             </div>
-            
-            {modalType === 'crew' && (
-              <>
-                <input className="input-field" placeholder="Full Delegate Name" value={modalFormData.name || ''} onChange={e => setModalFormData({...modalFormData, name: e.target.value})} />
-                <select className="input-field" value={modalFormData.role || 'Delegate'} onChange={e => setModalFormData({...modalFormData, role: e.target.value})}><option value="Delegate">Delegate</option><option value="Unit Designee">Unit Designee</option><option value="Unit Secretary">Unit Secretary</option><option value="Team Lead">Team Lead</option></select>
-                <input className="input-field" placeholder="Official Email" value={modalFormData.email || ''} onChange={e => setModalFormData({...modalFormData, email: e.target.value})} />
-                <input className="input-field" placeholder="Contact number" value={modalFormData.phone || ''} onChange={e => setModalFormData({...modalFormData, phone: e.target.value})} />
-                <textarea className="input-field" placeholder="Skills abstract ( AutoCAD, Rhino, GIS )" rows="3" value={modalFormData.skills || ''} onChange={e => setModalFormData({...modalFormData, skills: e.target.value})} style={{ resize: 'none' }}></textarea>
-                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('crew')}>Save to Cloud Database</button>
-              </>
-            )}
 
-            {modalType === 'finances' && (
-              <>
-                <select className="input-field" value={modalFormData.type || 'EXPENSE'} onChange={e => setModalFormData({...modalFormData, type: e.target.value})}><option value="EXPENSE">Expense</option><option value="COLLECTION">Collection Target</option></select>
-                <input className="input-field" placeholder="Purpose (Plotting, Event Fee)" value={modalFormData.desc || ''} onChange={e => setModalFormData({...modalFormData, desc: e.target.value})} />
-                <input className="input-field" placeholder="Campaign context (Louis Kahn)" value={modalFormData.campaign || ''} onChange={e => setModalFormData({...modalFormData, campaign: e.target.value})} />
-                {modalFormData.type === 'COLLECTION' ? (
-                  <><input type="number" className="input-field" placeholder="Target Amount (INR)" value={modalFormData.target || ''} onChange={e => setModalFormData({...modalFormData, target: Number(e.target.value)})} /><input type="number" className="input-field" placeholder="Amount Collected So Far (INR)" value={modalFormData.current || ''} onChange={e => setModalFormData({...modalFormData, current: Number(e.target.value)})} /></>
-                ) : (<input type="number" className="input-field" placeholder="Value (INR)" value={modalFormData.amount || ''} onChange={e => setModalFormData({...modalFormData, amount: Number(e.target.value)})} />)}
-                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('finances')}>Execute Cloud Transaction</button>
-              </>
-            )}
-
-            {modalType === 'vault' && (
-              <>
-                <input className="input-field" placeholder="File Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
-                <input className="input-field" placeholder="File Size (e.g. 45MB)" value={modalFormData.size || ''} onChange={e => setModalFormData({...modalFormData, size: e.target.value})} />
-                <input className="input-field" placeholder="Year context (e.g. 2026)" value={modalFormData.year || ''} onChange={e => setModalFormData({...modalFormData, year: e.target.value})} />
-                <input className="input-field" placeholder="Paste URL (Google Drive / Behance)" value={modalFormData.link || ''} onChange={e => setModalFormData({...modalFormData, link: e.target.value})} />
-                <select className="input-field" value={modalFormData.type || 'Design'} onChange={e => setModalFormData({...modalFormData, type: e.target.value})}><option value="Design">Design Sheet</option><option value="Finance">Finance Document</option><option value="Admin">Admin Document</option></select>
-                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('vault')}>Commit to Cloud Archive</button>
-              </>
-            )}
-
-            {modalType === 'campaigns' && (
-              <>
-                <input className="input-field" placeholder="Trophy / Campaign Name" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
-                <input className="input-field" placeholder="Year (2026)" value={modalFormData.year || ''} onChange={e => setModalFormData({...modalFormData, year: e.target.value})} />
-                <input className="input-field" placeholder="Prize Pool context" value={modalFormData.prize || ''} onChange={e => setModalFormData({...modalFormData, prize: e.target.value})} />
-                <select className="input-field" value={modalFormData.abstractsClosed || 'false'} onChange={e => setModalFormData({...modalFormData, abstractsClosed: e.target.value})}><option value="false">Abstracts Open</option><option value="true">Abstracts Closed</option></select>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-                  <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('campaigns')}>Just Sync to App</button>
-                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : '#111' }} onClick={handleSaveAndEmailCampaign}>
-                    {isSendingEmail ? "Sending..." : "Sync & Email Delegates"}
-                  </button>
-                </div>
-              </>
-            )}
-
-            {modalType === 'gallery' && (
-              <>
-                <input className="input-field" placeholder="Project Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
-                <input className="input-field" placeholder="Author Name" value={modalFormData.authorName || ''} onChange={e => setModalFormData({...modalFormData, authorName: e.target.value})} />
-                <input className="input-field" placeholder="Category (e.g. Design, Documentation)" value={modalFormData.category || ''} onChange={e => setModalFormData({...modalFormData, category: e.target.value})} />
-                <select className="input-field" value={modalFormData.fileType || 'Drive Link'} onChange={e => setModalFormData({...modalFormData, fileType: e.target.value})}><option value="Drive Link">Google Drive Folder Link</option><option value="PDF">Direct PDF Link</option><option value="Image">Image Address</option></select>
-                <input className="input-field" placeholder="Paste Shared URL here..." value={modalFormData.link || ''} onChange={e => setModalFormData({...modalFormData, link: e.target.value})} />
-                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('gallery')}>Sync to Gallery Cloud</button>
-              </>
-            )}
-
-            {modalType === 'hq' && (
-              <>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>UNIT INFORMATION</div>
-                <input className="input-field" placeholder="Unit Code (e.g. Z649)" value={modalFormData.unitCode || ''} onChange={e => setModalFormData({...modalFormData, unitCode: e.target.value})} />
-                <input className="input-field" placeholder="Official NASA Email" value={modalFormData.officialEmail || ''} onChange={e => setModalFormData({...modalFormData, officialEmail: e.target.value})} />
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, marginTop: 16 }}>UNIT DESIGNEE (UD)</div>
-                <input className="input-field" placeholder="UD Name" value={modalFormData.udName || ''} onChange={e => setModalFormData({...modalFormData, udName: e.target.value})} />
-                <input className="input-field" placeholder="UD Phone" value={modalFormData.udPhone || ''} onChange={e => setModalFormData({...modalFormData, udPhone: e.target.value})} />
-                <input className="input-field" placeholder="UD Email" value={modalFormData.udEmail || ''} onChange={e => setModalFormData({...modalFormData, udEmail: e.target.value})} />
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, marginTop: 16 }}>UNIT SECRETARY (USEC)</div>
-                <input className="input-field" placeholder="USEC Name" value={modalFormData.useName || ''} onChange={e => setModalFormData({...modalFormData, useName: e.target.value})} />
-                <input className="input-field" placeholder="USEC Phone" value={modalFormData.usePhone || ''} onChange={e => setModalFormData({...modalFormData, usePhone: e.target.value})} />
-                <input className="input-field" placeholder="USEC Email" value={modalFormData.useEmail || ''} onChange={e => setModalFormData({...modalFormData, useEmail: e.target.value})} />
-                <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('hq')}>Save HQ to Cloud Database</button>
-              </>
-            )}
-
-            {modalType === 'news' && (
-              <>
-                <input className="input-field" placeholder="Tag (e.g. URGENT, TROPHY BRIEF)" value={modalFormData.tag || ''} onChange={e => setModalFormData({...modalFormData, tag: e.target.value})} />
-                <input className="input-field" placeholder="Email Subject / Title" value={modalFormData.title || ''} onChange={e => setModalFormData({...modalFormData, title: e.target.value})} />
-                <textarea className="input-field" placeholder="Paste broadcast contents here..." rows="5" value={modalFormData.content || ''} onChange={e => setModalFormData({...modalFormData, content: e.target.value})} style={{ resize: 'none' }} />
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-                  <button className="action-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={() => handleSaveToCloud('news')}>Just Sync to App</button>
-                  <button className="action-btn" disabled={isSendingEmail} style={{ width: '100%', justifyContent: 'center', background: isSendingEmail ? '#888' : '#111' }} onClick={handleSaveAndEmailNews}>
-                    {isSendingEmail ? "Sending..." : "Broadcast & Email Unit"}
-                  </button>
-                </div>
-              </>
-            )}
-            
+            <form onSubmit={commitRecordSubmission}>
+              {modalMode === 'crew' ? (
+                <>
+                  <input required placeholder="Full Name" className="input-element" value={formPayload.name || ''} onChange={e => setFormPayload({...formPayload, name: e.target.value})} />
+                  <input placeholder="Assignment Designation (e.g. Delegate)" className="input-element" value={formPayload.role || ''} onChange={e => setFormPayload({...formPayload, role: e.target.value})} />
+                  <input type="email" placeholder="Institutional Email" className="input-element" value={formPayload.email || ''} onChange={e => setFormPayload({...formPayload, email: e.target.value})} />
+                  <input type="tel" placeholder="Contact Stream Number" className="input-element" value={formPayload.phone || ''} onChange={e => setFormPayload({...formPayload, phone: e.target.value})} />
+                  <input placeholder="Software & Domain Skills (Comma separated)" className="input-element" value={formPayload.skills || ''} onChange={e => setFormPayload({...formPayload, skills: e.target.value})} />
+                  
+                  <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>ACADEMIC TENURE YEAR</label>
+                  <select className="input-element" value={formPayload.year || '1'} onChange={e => setFormPayload({...formPayload, year: e.target.value})}>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                    <option value="3">3rd Year</option>
+                    <option value="4">4th Year</option>
+                    <option value="5">5th Year</option>
+                    <option value="Alumni">Alumni</option>
+                  </select>
+                </>
+              ) : (
+                <>
+                  <input required placeholder="Transaction Context / Description" className="input-element" value={formPayload.description || ''} onChange={e => setFormPayload({...formPayload, description: e.target.value})} />
+                  <input required type="number" placeholder="Valuation Amount (INR)" className="input-element" value={formPayload.amount || ''} onChange={e => setFormPayload({...formPayload, amount: e.target.value})} />
+                  <input type="date" className="input-element" value={formPayload.date || ''} onChange={e => setFormPayload({...formPayload, date: e.target.value})} />
+                  
+                  <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>TRANSACTION SYSTEM PATH</label>
+                  <select className="input-element" value={formPayload.type || 'expense'} onChange={e => setFormPayload({...formPayload, type: e.target.value})}>
+                    <option value="expense">Debit Allocation (Expense)</option>
+                    <option value="income">Credit Allocation (Income)</option>
+                  </select>
+                </>
+              )}
+              
+              <button type="submit" className="interactive-action-btn" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}>
+                Commit Packet to Ledger
+              </button>
+            </form>
           </div>
         </div>
       )}
