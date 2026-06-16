@@ -5,8 +5,8 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Layers, Fingerprint, Zap, Lock, Unlock, Menu, ChevronRight,
-  HardDrive, Cpu, ImagePlus, RadioTower, TrendingUp, TrendingDown
+  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil,
+  HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown
 } from 'lucide-react';
 
 // ==========================================
@@ -80,7 +80,7 @@ const GLOBAL_STYLES = `
   /* 🌟 HAPTIC SCROLL ENGINE 🌟 */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
-    min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 80px 24px 100px 24px;
+    min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
     opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -99,10 +99,12 @@ const GLOBAL_STYLES = `
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
-  /* 🌟 TOP NAVIGATION & HUD 🌟 */
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
+  /* 🌟 TOP NAVIGATION & HUD (RIGHT ALIGNED TO PREVENT OVERLAP) 🌟 */
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: flex-end; align-items: center; gap: 24px; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
-  .logo-text { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 600; letter-spacing: 0.02em; color: #fff; }
+  
+  .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 600; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+  .logo-toggle:hover { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
   .security-hud:hover { border-color: var(--neon-cyan); }
@@ -115,18 +117,11 @@ const GLOBAL_STYLES = `
   .nasa-sidebar {
     position: fixed; right: -380px; top: 0; bottom: 0; width: 380px;
     background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(50px);
-    border-left: 1px solid var(--glass-border); z-index: 95;
-    padding: 30px 24px; display: flex; flex-direction: column;
+    border-left: 1px solid var(--glass-border); z-index: 85;
+    padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
     box-shadow: -20px 0 60px rgba(0,0,0,0.8); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .nasa-sidebar.open { right: 0; }
-  .sidebar-toggle {
-    position: fixed; right: 24px; top: 100px; z-index: 96;
-    background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(20px);
-    border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.3s; color: #fff;
-  }
-  .sidebar-toggle:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
   .nasa-feed-item { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 16px; border-radius: 12px; margin-bottom: 12px; transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
   .nasa-feed-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); transform: translateX(-4px); }
 
@@ -156,6 +151,7 @@ const GLOBAL_STYLES = `
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
+  .council-tag { background: rgba(255, 190, 11, 0.1); color: var(--neon-gold); border-color: rgba(255, 190, 11, 0.3); box-shadow: 0 0 15px rgba(255, 190, 11, 0.15); }
   
   /* 🌟 AI TERMINAL 🌟 */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 100%; min-height: 350px;}
@@ -177,11 +173,10 @@ const GLOBAL_STYLES = `
     .text-title { font-size: 2.8rem; }
     .floating-dock { width: 92%; overflow-x: auto; justify-content: flex-start; padding: 10px; border-radius: 20px; -webkit-overflow-scrolling: touch; }
     .dock-item { min-width: 46px; height: 46px; }
-    .scrolling-section { padding: 90px 16px 120px 16px; scroll-snap-align: start; }
+    .scrolling-section { padding: 120px 16px 120px 16px; scroll-snap-align: start; }
     .modal-window { padding: 24px; }
-    .top-bar { padding: 16px 20px; }
-    .logo-text { font-size: 1.8rem; }
-    .sidebar-toggle { top: 80px; right: 16px; }
+    .top-bar { padding: 16px 20px; justify-content: space-between; }
+    .logo-toggle { font-size: 1.8rem; }
     .nasa-sidebar { width: 100%; right: -100%; }
   }
 `;
@@ -236,7 +231,6 @@ export default function App() {
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
-  // Auto-scroll AI chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [aiMessages]);
@@ -281,25 +275,28 @@ export default function App() {
     e.preventDefault();
     if (!aiInput.trim()) return;
     
-    // Add User Message
-    setAiMessages(prev => [...prev, { sender: 'user', text: aiInput }]);
-    const currentInput = aiInput.toLowerCase();
+    const currentInput = aiInput.trim();
+    setAiMessages(prev => [...prev, { sender: 'user', text: currentInput }]);
     setAiInput('');
 
-    // Simulate Processing Delay & Response
     setTimeout(() => {
-      let botResponse = "Processing directive through RSA architecture matrices... Action logged securely.";
-      
-      if (currentInput.includes("remind") || currentInput.includes("schedule")) {
-        botResponse = "Reminder registered in unit schedule. I will cross-reference this with the official NASA convention timelines.";
-      } else if (currentInput.includes("history") || currentInput.includes("past")) {
-        botResponse = "Accessing archives. RSA Unit Z649 has a documented history of robust architectural interventions. Would you like me to pull specific morphological study data?";
-      } else if (currentInput.includes("hello") || currentInput.includes("hi")) {
-        botResponse = "Greetings. RSA Cognitive Engine is fully operational. How can I assist the unit today?";
+      const inputLower = currentInput.toLowerCase();
+      let botResponse = "";
+
+      if (inputLower.includes("troph") || inputLower.includes("participate")) {
+        botResponse = "Currently active vectors: Louis I. Kahn Trophy (Submission Open) and Reubens Showcase (Evaluation Phase). Check the NASA Uplink for live status.";
+      } else if (inputLower.includes("remind") || inputLower.includes("schedule")) {
+        botResponse = "Temporal anchor set. The network will retain this schedule parameter.";
+      } else if (inputLower.includes("history") || inputLower.includes("past")) {
+        botResponse = "Querying deep storage... Unit Z649 archive spans multiple generations. Specify a morphological parameter to extract.";
+      } else if (inputLower.includes("hello") || inputLower.includes("hi")) {
+        botResponse = "Awaiting command sequence. How shall we proceed?";
+      } else {
+        botResponse = `Directive "${currentInput}" logged. Processing via backend matrices... Pending manual oversight.`;
       }
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 1200);
+    }, 800);
   };
 
   // ==========================================
@@ -349,7 +346,12 @@ export default function App() {
                         {isCouncil && <Crown size={12}/>}
                         {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
                       </span>
-                      {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-8px'}} onClick={() => deleteDocRecord('crew', m.id)}><Trash2 size={16}/></button>}
+                      {isLeadershipMode && (
+                        <div style={{ display: 'flex', gap: '8px', margin: '-8px' }}>
+                          <button className="btn-icon" onClick={() => { setFormPayload(m); setModalMode('crew'); }}><Pencil size={14}/></button>
+                          <button className="btn-icon danger" onClick={() => deleteDocRecord('crew', m.id)}><Trash2 size={14}/></button>
+                        </div>
+                      )}
                     </div>
                     <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
                     <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', display:'flex', alignItems:'center', gap:'6px', fontFamily: 'var(--font-mono)' }}><Mail size={12}/> {m.email}</div>
@@ -381,7 +383,7 @@ export default function App() {
 
         <div className="bento-grid-2">
           <div className="bento-card" style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-            <svg viewBox="0 0 36 36" className="donut-chart">
+            <svg viewBox="0 0 36 36" className="donut-chart" style={{width: '120px', height: '120px'}}>
                <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
                {total > 0 && <circle className="donut-segment-income" strokeDasharray={`${incPercent} ${100 - incPercent}`} strokeDashoffset="25" cx="18" cy="18" r="15.915" />}
                {total > 0 && <circle className="donut-segment-expense" strokeDasharray={`${expPercent} ${100 - expPercent}`} strokeDashoffset={25 - incPercent} cx="18" cy="18" r="15.915" />}
@@ -414,7 +416,12 @@ export default function App() {
                    <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'var(--text-secondary)' }}>
                       {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
                    </td>
-                   {isLeadershipMode && <td><button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><X size={16}/></button></td>}
+                   {isLeadershipMode && (
+                     <td style={{ display: 'flex', gap: '8px' }}>
+                       <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }}><Pencil size={16}/></button>
+                       <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={16}/></button>
+                     </td>
+                   )}
                  </tr>
                ))}
              </tbody>
@@ -435,7 +442,12 @@ export default function App() {
           <div key={v.id} className="bento-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
               <span className="status-pill"><HardDrive size={12}/> {v.type}</span>
-              {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-8px'}} onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
+              {isLeadershipMode && (
+                <div style={{ display: 'flex', gap: '8px', margin: '-8px' }}>
+                  <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>
+                  <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>
+                </div>
+              )}
             </div>
             <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
             <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%' }}>Extract Link <ArrowUpRight size={14}/></a>
@@ -460,7 +472,12 @@ export default function App() {
             <div style={{ padding: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill">{g.category}</span>
-                {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={16}/></button>}
+                {isLeadershipMode && (
+                  <div style={{ display: 'flex', gap: '8px', margin: '-6px' }}>
+                    <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={16}/></button>
+                    <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={16}/></button>
+                  </div>
+                )}
               </div>
               <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
               <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
@@ -483,7 +500,12 @@ export default function App() {
           <div key={n.id} className="bento-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
               <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag}</span>
-              {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={16}/></button>}
+              {isLeadershipMode && (
+                <div style={{ display: 'flex', gap: '8px', margin: '-6px' }}>
+                  <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={16}/></button>
+                  <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={16}/></button>
+                </div>
+              )}
             </div>
             <div style={{ fontSize: '2rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
             <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>{n.content}</div>
@@ -595,9 +617,9 @@ export default function App() {
         <div className="splash-brand">RSA_CORE</div>
       </div>
 
-      {/* 🌟 SECURITY HUD & LOGO (TOP BAR) 🌟 */}
+      {/* 🌟 LOGO TOGGLE & SECURITY HUD (TOP BAR) 🌟 */}
       <nav className="top-bar">
-        {/* Left: Security HUD */}
+        {/* Left Side: Security Lock (cleared out to not block titles) */}
         <div className="pointer-events-auto">
           <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
             <div className="hud-icon-box">
@@ -609,20 +631,16 @@ export default function App() {
           </div>
         </div>
         
-        {/* Right: Logo */}
-        <div className="logo-text pointer-events-auto">
+        {/* Right Side: Logo Acting as Sidebar Toggle */}
+        <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
           RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
+          {sidebarOpen ? <X size={28} color="#fff"/> : <Menu size={28} color="#fff"/>}
         </div>
       </nav>
 
-      {/* 🌟 SIDEBAR TOGGLE BUTTON 🌟 */}
-      <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        {sidebarOpen ? <ChevronRight size={24} /> : <Menu size={24} />}
-      </button>
-
       {/* 🌟 COLLAPSIBLE NASA SIDEBAR 🌟 */}
       <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', marginTop: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', marginTop: '40px' }}>
            <Globe size={28} color="#fff" />
            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', margin: 0, fontStyle: 'italic', fontWeight: '600' }}>NASA India</h2>
         </div>
