@@ -5,7 +5,8 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Layers, Fingerprint, Zap, Lock, Unlock, Menu, ChevronRight
+  Hexagon, Layers, Fingerprint, Zap, Lock, Unlock, Menu, ChevronRight,
+  HardDrive, Cpu, ImagePlus, RadioTower, TrendingUp, TrendingDown
 } from 'lucide-react';
 
 // ==========================================
