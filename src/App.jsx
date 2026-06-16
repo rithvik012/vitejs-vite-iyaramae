@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 // ==========================================
-// FIREBASE SECURE KERNEL
+// 1. FIREBASE SECURE KERNEL
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -26,7 +26,7 @@ const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
-// QUANTUM-LITHOS AESTHETIC ENGINE
+// 2. QUANTUM-LITHOS AESTHETIC ENGINE
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -54,6 +54,7 @@ const GLOBAL_STYLES = `
   input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
   ::-webkit-scrollbar { width: 0px; }
 
+  /* 🌟 DYNAMIC ANIMATRONICS BACKGROUND 🌟 */
   .animatronic-bg { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.35; animation: plasmaDrift 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
   .orb-c { width: 65vw; height: 65vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
@@ -69,10 +70,26 @@ const GLOBAL_STYLES = `
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
   @keyframes gridMotion { 0% { transform: perspective(800px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(800px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
 
-  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
-  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; }
+  /* 🌟 MULTI-STAGE QUANTUM SPLASH SCREEN 🌟 */
+  .boot-splash { 
+    position: fixed; inset: 0; z-index: 99999; background: #010103; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    clip-path: circle(150% at 50% 50%); 
+    transition: clip-path 1.5s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.5s 1.2s ease; 
+  }
+  .boot-splash.hidden { clip-path: circle(0% at 50% 50%); opacity: 0; pointer-events: none; }
+  
+  .splash-rings { position: absolute; width: 350px; height: 350px; border-radius: 50%; border: 1px solid rgba(0,240,255,0.05); border-top-color: var(--neon-cyan); animation: spinRings 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
+  .splash-rings::before { content: ''; position: absolute; inset: 30px; border-radius: 50%; border: 1px solid rgba(255,190,11,0.05); border-bottom-color: var(--neon-gold); animation: spinRings 3s linear infinite reverse; }
+  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-weight: 800; font-style: italic; color: #fff; letter-spacing: 0.05em; z-index: 10; text-shadow: 0 0 30px rgba(255,255,255,0.2); }
+  .splash-progress { width: 250px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 40px; position: relative; overflow: hidden; z-index: 10; }
+  .splash-bar { position: absolute; top: 0; left: 0; height: 100%; background: var(--neon-cyan); width: 0%; animation: loadSplash 2s cubic-bezier(0.8, 0, 0.2, 1) forwards; box-shadow: 0 0 15px var(--neon-cyan); }
+  
+  @keyframes spinRings { 100% { transform: rotate(360deg); } }
+  @keyframes loadSplash { 0% { width: 0%; } 40% { width: 40%; } 70% { width: 80%; } 100% { width: 100%; } }
+  @keyframes glitch { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
+  /* 🌟 KINETIC SCROLL ENGINE 🌟 */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
     min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
@@ -94,6 +111,7 @@ const GLOBAL_STYLES = `
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
+  /* 🌟 TOP BAR & HUD 🌟 */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -107,6 +125,7 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
+  /* 🌟 COLLAPSIBLE SIDEBAR 🌟 */
   .nasa-sidebar {
     position: fixed; right: -380px; top: 0; bottom: 0; width: 380px;
     background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(50px);
@@ -118,6 +137,7 @@ const GLOBAL_STYLES = `
   .nasa-feed-item { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 16px; border-radius: 12px; margin-bottom: 12px; transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
   .nasa-feed-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); transform: translateX(-4px); }
 
+  /* 🌟 RESPONSIVE DOCK 🌟 */
   .floating-dock {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: rgba(10, 12, 18, 0.85); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
@@ -128,6 +148,7 @@ const GLOBAL_STYLES = `
   .dock-tooltip { position: absolute; top: -45px; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; transform: translateY(10px); }
   .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(0); }
 
+  /* 🌟 TYPOGRAPHY & BUTTONS 🌟 */
   .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 3.8rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; }
   .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
@@ -142,12 +163,14 @@ const GLOBAL_STYLES = `
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
+  .council-tag { background: rgba(255, 190, 11, 0.1); color: var(--neon-gold); border-color: rgba(255, 190, 11, 0.3); box-shadow: 0 0 15px rgba(255, 190, 11, 0.15); }
   
   .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
   .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
   .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
   .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
 
+  /* 🌟 AI TERMINAL 🌟 */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
   .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
@@ -155,6 +178,7 @@ const GLOBAL_STYLES = `
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
   
+  /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .modal-window { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 550px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
 
@@ -210,7 +234,7 @@ export default function App() {
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 1500);
+    setTimeout(() => setIsBooting(false), 2800);
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -341,7 +365,7 @@ export default function App() {
     
     return (
       <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyBetween: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Identity Matrix</span><h1 className="text-title">Architects Array</h1></div>
           {isLeadershipMode && (
             <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
@@ -431,7 +455,7 @@ export default function App() {
                    </td>
                    <td>
                      <div style={{ display: 'flex', gap: '8px' }}>
-                       <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Open node configurations"><Pencil size={14}/></button>
+                       {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Open node configurations"><Pencil size={14}/></button>}
                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={14}/></button>}
                      </div>
                    </td>
@@ -456,12 +480,12 @@ export default function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
               <span className="status-pill"><HardDrive size={12}/> {v.type}</span>
               <div style={{ display: 'flex', gap: '4px' }}>
-                <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>
+                {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
                 {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
               </div>
             </div>
             <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
-            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%' }}>Extract Link <ArrowUpRight size={14}/></a>
+            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Extract Link <ArrowUpRight size={14}/></a>
           </div>
         ))}
       </div>
@@ -477,14 +501,14 @@ export default function App() {
       <div className="bento-grid-2">
         {galleryData.map(g => (
           <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-            <div style={{ height: '250px', background: g.fileType === 'Image URL' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+            <div style={{ height: '250px', background: g.fileType === 'Image URL' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {g.fileType !== 'Image URL' && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
             </div>
             <div style={{ padding: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill">{g.category}</span>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>
+                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
                 </div>
               </div>
@@ -510,7 +534,7 @@ export default function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
               <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag}</span>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>
+                {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
                 {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
               </div>
             </div>
@@ -527,7 +551,7 @@ export default function App() {
       <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
         <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure Core Parameters</button>
+          {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure Core Parameters</button>}
         </div>
       </div>
       <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)' }}>
@@ -547,6 +571,7 @@ export default function App() {
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginTop: '16px' }}>
           
+          {/* AI ASSISTANT TERMINAL */}
           <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
             <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> RSA Neural Interface</span>
             <div className="ai-terminal" style={{ marginTop: '16px' }}>
@@ -570,6 +595,7 @@ export default function App() {
             </div>
           </div>
 
+          {/* COUNCIL CONTACT DIRECTORY */}
           <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
             <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Crown size={14}/> High Command Directory</span>
             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '450px', overflowY: 'auto', paddingRight: '10px' }}>
@@ -584,7 +610,11 @@ export default function App() {
                   <div style={{ fontSize: '1.4rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <a href={`mailto:${m.email}`} className="btn-primary btn-secondary" style={{ flex: 1 }}><Mail size={14}/> Mail</a>
-                    {m.phone && <a href={`tel:${m.phone}`} className="btn-primary btn-secondary" style={{ flex: 1 }}><Phone size={14}/> Call</a>
+                    {m.phone && (
+                      <a href={`tel:${m.phone}`} className="btn-primary btn-secondary" style={{ flex: 1 }}>
+                        <Phone size={14}/> Call
+                      </a>
+                    )}
                   </div>
                 </div>
               ))}
@@ -600,17 +630,24 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
+      {/* 🌟 HARDWARE ACCELERATED ANIMATRONICS 🌟 */}
       <div className="animatronic-bg">
         <div className="laser-grid"></div>
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
       </div>
 
+      {/* 🌟 CINEMATIC QUANTUM IRIS BOOT SPLASH 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
-        <div className="splash-brand">RSA_CORE</div>
+        <div className="splash-rings"></div>
+        <div className="splash-brand">RSA<span style={{color:'var(--neon-cyan)'}}>.</span>CORE</div>
+        <div className="splash-progress"><div className="splash-bar"></div></div>
+        <div style={{fontFamily:'var(--font-mono)', fontSize:'0.75rem', color:'var(--neon-cyan)', marginTop:'20px', letterSpacing:'0.2em', animation:'glitch 0.5s infinite'}}>SYNCING QUANTUM NODES...</div>
       </div>
 
+      {/* 🌟 SECURITY HUD & LOGO (TOP BAR) 🌟 */}
       <nav className="top-bar">
+        {/* Left: Security HUD */}
         <div className="pointer-events-auto">
           <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
             <div className="hud-icon-box">
@@ -622,12 +659,14 @@ export default function App() {
           </div>
         </div>
         
+        {/* Right: Logo Acting as Sidebar Toggle */}
         <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
           RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
           {sidebarOpen ? <X size={26} color="#fff"/> : <Menu size={26} color="#fff"/>}
         </div>
       </nav>
 
+      {/* 🌟 COLLAPSIBLE NASA SIDEBAR 🌟 */}
       <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', marginTop: '40px' }}>
            <Globe size={28} color="#fff" />
@@ -658,6 +697,7 @@ export default function App() {
         </div>
       </div>
 
+      {/* 🌟 RESPONSIVE DOCK 🌟 */}
       <div className="floating-dock">
         {dockItems.map((item, i) => (
           <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
@@ -667,6 +707,7 @@ export default function App() {
         ))}
       </div>
 
+      {/* 🌟 HAPTIC SCROLL ENGINE 🌟 */}
       <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
         <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
@@ -678,7 +719,7 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
       </div>
 
-      {/* OPERATIVE VIEW/DOSSIER MODAL */}
+      {/* 🌟 OPERATIVE VIEW/DOSSIER MODAL 🌟 */}
       {viewingCrew && (
         <div className="modal-overlay pointer-events-auto">
           <div className="modal-window">
@@ -709,7 +750,7 @@ export default function App() {
         </div>
       )}
 
-      {/* SYNCHRONIZATION CONFIGURATION MODAL */}
+      {/* 🌟 SYNCHRONIZATION CONFIGURATION MODAL 🌟 */}
       {modalMode && (
         <div className="modal-overlay pointer-events-auto">
           <div className="modal-window">
