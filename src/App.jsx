@@ -6,11 +6,12 @@ import {
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
   Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye,
-  HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown
+  HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown,
+  TerminalSquare, ArrowRight
 } from 'lucide-react';
 
 // ==========================================
-// 1. FIREBASE SECURE KERNEL
+// FIREBASE SECURE KERNEL
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -26,14 +27,14 @@ const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
-// 2. QUANTUM-LITHOS AESTHETIC ENGINE
+// QUANTUM-LITHOS AESTHETIC ENGINE
 // ==========================================
 const GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
 
   :root {
-    --bg-base: #010103;
-    --glass-bg: rgba(8, 10, 15, 0.65);
+    --bg-base: #030303;
+    --glass-bg: rgba(10, 10, 10, 0.7);
     --glass-border: rgba(255, 255, 255, 0.08);
     --text-primary: #ffffff;
     --text-secondary: #8b9bb4;
@@ -50,46 +51,21 @@ const GLOBAL_STYLES = `
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
   body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
-  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(0,0,0,0.5) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
+  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
   input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
   ::-webkit-scrollbar { width: 0px; }
 
-  /* 🌟 DYNAMIC ANIMATRONICS BACKGROUND 🌟 */
   .animatronic-bg { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
-  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.35; animation: plasmaDrift 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
   .orb-c { width: 65vw; height: 65vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 55vw; height: 55vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -7s; }
   
-  .laser-grid {
-    position: absolute; width: 200vw; height: 200vh; top: -50vh; left: -50vw;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 50px 50px; transform: perspective(800px) rotateX(60deg) translateY(-100px) translateZ(-200px);
-    animation: gridMotion 20s linear infinite;
-  }
+  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw, 5vh) scale(1.05); } }
 
-  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
-  @keyframes gridMotion { 0% { transform: perspective(800px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(800px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
+  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; }
 
-  /* 🌟 MULTI-STAGE QUANTUM SPLASH SCREEN 🌟 */
-  .boot-splash { 
-    position: fixed; inset: 0; z-index: 99999; background: #010103; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    clip-path: circle(150% at 50% 50%); 
-    transition: clip-path 1.5s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.5s 1.2s ease; 
-  }
-  .boot-splash.hidden { clip-path: circle(0% at 50% 50%); opacity: 0; pointer-events: none; }
-  
-  .splash-rings { position: absolute; width: 350px; height: 350px; border-radius: 50%; border: 1px solid rgba(0,240,255,0.05); border-top-color: var(--neon-cyan); animation: spinRings 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
-  .splash-rings::before { content: ''; position: absolute; inset: 30px; border-radius: 50%; border: 1px solid rgba(255,190,11,0.05); border-bottom-color: var(--neon-gold); animation: spinRings 3s linear infinite reverse; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-weight: 800; font-style: italic; color: #fff; letter-spacing: 0.05em; z-index: 10; text-shadow: 0 0 30px rgba(255,255,255,0.2); }
-  .splash-progress { width: 250px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 40px; position: relative; overflow: hidden; z-index: 10; }
-  .splash-bar { position: absolute; top: 0; left: 0; height: 100%; background: var(--neon-cyan); width: 0%; animation: loadSplash 2s cubic-bezier(0.8, 0, 0.2, 1) forwards; box-shadow: 0 0 15px var(--neon-cyan); }
-  
-  @keyframes spinRings { 100% { transform: rotate(360deg); } }
-  @keyframes loadSplash { 0% { width: 0%; } 40% { width: 40%; } 70% { width: 80%; } 100% { width: 100%; } }
-  @keyframes glitch { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-  /* 🌟 KINETIC SCROLL ENGINE 🌟 */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
     min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
@@ -98,7 +74,7 @@ const GLOBAL_STYLES = `
   }
   .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
 
-  .bento-container { width: 100%; max-width: 1200px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
+  .bento-container { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
   
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
@@ -106,16 +82,15 @@ const GLOBAL_STYLES = `
     border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+  .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
   
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
-  /* 🌟 TOP BAR & HUD 🌟 */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
-  .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 600; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+  .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 700; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
   .logo-toggle:hover { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
@@ -125,31 +100,34 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
-  /* 🌟 COLLAPSIBLE SIDEBAR 🌟 */
+  /* 🌟 SLEEK SIDEBAR REDESIGN 🌟 */
   .nasa-sidebar {
-    position: fixed; right: -380px; top: 0; bottom: 0; width: 380px;
-    background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(50px);
-    border-left: 1px solid var(--glass-border); z-index: 85;
-    padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -20px 0 60px rgba(0,0,0,0.8); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
+    background: #050505; border-left: 1px solid var(--glass-border); z-index: 110;
+    padding: 32px 24px; display: flex; flex-direction: column;
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .nasa-sidebar.open { right: 0; }
-  .nasa-feed-item { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 16px; border-radius: 12px; margin-bottom: 12px; transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
-  .nasa-feed-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); transform: translateX(-4px); }
+  
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
+  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
+  
+  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
+  
+  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
+  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* 🌟 RESPONSIVE DOCK 🌟 */
   .floating-dock {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: rgba(10, 12, 18, 0.85); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
   }
   .dock-item { min-width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
   .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
-  .dock-tooltip { position: absolute; top: -45px; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; transform: translateY(10px); }
-  .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(0); }
-
-  /* 🌟 TYPOGRAPHY & BUTTONS 🌟 */
-  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 3.8rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; }
+  
+  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
   .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
   
@@ -163,31 +141,23 @@ const GLOBAL_STYLES = `
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
-  .council-tag { background: rgba(255, 190, 11, 0.1); color: var(--neon-gold); border-color: rgba(255, 190, 11, 0.3); box-shadow: 0 0 15px rgba(255, 190, 11, 0.15); }
   
-  .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
-  .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
-  .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
-  .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
-
-  /* 🌟 AI TERMINAL 🌟 */
+  /* AI TERMINAL */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
   .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
   .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
-  .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
   
-  /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .modal-window { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 550px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
+  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
 
   @media (max-width: 768px) {
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
     .text-title { font-size: 2.8rem; }
     .floating-dock { width: 92%; overflow-x: auto; justify-content: flex-start; padding: 10px; border-radius: 20px; }
     .dock-item { min-width: 46px; height: 46px; }
-    .scrolling-section { padding: 120px 16px; scroll-snap-align: start; }
+    .scrolling-section { padding: 100px 16px; scroll-snap-align: start; }
     .modal-window { padding: 24px; }
     .top-bar { padding: 16px 20px; }
     .logo-toggle { font-size: 1.8rem; }
@@ -201,7 +171,7 @@ export default function App() {
   const [isBooting, setIsBooting] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Core Synchronization Arrays
+  // Core Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
   const [financialLog, setFinancialLog] = useState([]);
@@ -209,14 +179,20 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
-  // AI Interface Configuration
+  // AI Cognitive Engine State & Simulated NASA Live Feed
   const [aiInput, setAiInput] = useState("");
+  const [nasaLiveFeed, setNasaLiveFeed] = useState({
+    events: ["68th Annual NASA Convention", "Zonal NASA Workshops"],
+    trophies: ["Louis I. Kahn (LIK) Trophy - Submission Open", "Reubens Showcase - Evaluation Phase", "Mohammad Shaheer Landscape (MSL) Trophy"],
+    status: "Active Telemetry"
+  });
+
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Executive Core Matrix operational. Syncing National Association of Students of Architecture (NASA) telemetry data and ongoing studio milestones. Input prompt.' }
+    { sender: 'bot', text: 'RSA Cognitive Engine online. Connected to NASA India Live Telemetry. Awaiting query or directive.' }
   ]);
   const chatEndRef = useRef(null);
 
-  // Form & View Controllers
+  // Modals & Forms
   const [modalMode, setModalMode] = useState(null); 
   const [viewingCrew, setViewingCrew] = useState(null);
   const [formPayload, setFormPayload] = useState({});
@@ -234,7 +210,7 @@ export default function App() {
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 2800);
+    setTimeout(() => setIsBooting(false), 2000);
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -298,7 +274,7 @@ export default function App() {
   };
 
   // ==========================================
-  // HIGH LEVEL SEMANTIC AI ENGINE
+  // ADVANCED COGNITIVE AI ENGINE
   // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
@@ -308,31 +284,32 @@ export default function App() {
     setAiMessages(prev => [...prev, { sender: 'user', text: textRaw }]);
     setAiInput('');
 
+    // Simulate Processing Delay for Realism
     setTimeout(() => {
       const tokens = textRaw.toLowerCase();
       let botResponse = "";
 
-      if (tokens.includes("nasa") || tokens.includes("national association")) {
-        botResponse = "National Association of Students of Architecture (NASA), India framework identified. Unit Z649 telemetry is operating nominally. Current national focus points are targeted toward active convention design modules, verification of regional registrations, and tracking of structural student dossiers.";
-      } else if (tokens.includes("louis i kahn") || tokens.includes("lik")) {
-        botResponse = "Louis I. Kahn (LIK) Trophy sub-routine isolated. Historical documentation metrics emphasize thorough analysis of heritage architecture. The submission compilation matrix is open. Ensure that all base maps, section renderings, and vernacular spatial configurations adhere to the strict presentation standards.";
-      } else if (tokens.includes("shaheer") || tokens.includes("msl") || tokens.includes("landscape")) {
-        botResponse = "Mohammad Shaheer Landscape Trophy algorithm initialized. Site vectors proximate to Velachery Railway Station ('The Hydro-Social Connector') loaded. Project is optimized as a high-fidelity biological landscape machine designed to seamlessly alleviate flash urban flooding conditions through precise environmental topography adjustments.";
-      } else if (tokens.includes("varyankaval") || tokens.includes("rural") || tokens.includes("ariyalur")) {
-        botResponse = "Rural documentation database accessed for Varyankaval Village (Ariyalur, Tamil Nadu). Morphological data clusters, land-use zoning parameters, and community-driven developmental blueprints are stored securely. Ready to output cross-sectional vernacular details upon request.";
+      // Advanced Knowledge Routing
+      if (tokens.includes("troph") || tokens.includes("participate") || tokens.includes("available")) {
+        botResponse = `Parsing live telemetry... Current active vectors: \n1. ${nasaLiveFeed.trophies[0]}\n2. ${nasaLiveFeed.trophies[1]}\n3. ${nasaLiveFeed.trophies[2]}`;
+      } else if (tokens.includes("event") || tokens.includes("program")) {
+        botResponse = `NASA India live tracking indicates upcoming operations: ${nasaLiveFeed.events.join(", ")}. Observer Protocol Cycle 3 is also actively integrating new modules.`;
+      } else if (tokens.includes("nasa") || tokens.includes("national association")) {
+        botResponse = `Network synced to NASA India. Unit ${leadership.unitCode} connection secure. You can review Official Trophies and Convention metrics directly via the sidebar Uplink.`;
+      } else if (tokens.includes("shaheer") || tokens.includes("msl") || tokens.includes("velachery")) {
+        botResponse = "Accessing MSL Landscape Trophy data. Project 'The Hydro-Social Connector' parameters loaded. Design focuses on a biological machine to counteract urban flooding near Velachery Railway Station.";
       } else if (tokens.includes("kanchipuram") || tokens.includes("vernacular")) {
-        botResponse = "Kanchipuram housing typologies documented. Structural logs emphasize complex timber jointing systems, thinnai entrance configurations, and central open-sky courtyards customized for local Micro-Climate Modulation.";
-      } else if (tokens.includes("roof") || tokens.includes("pavilion") || tokens.includes("kinetic")) {
-        botResponse = "Kinetic Design Profile: International Student Center pavilion. Mathematical logic for the motorized, bi-folding roof mechanism is verified. Actuators will coordinate roof transformation based on environmental daylight levels.";
-      } else if (tokens.includes("status") || tokens.includes("diagnostics") || tokens.includes("ledger")) {
-        const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-        botResponse = `System Diagnostics: Active Operatives inside array total [${crewData.length}]. Ledger status shows a current net balance of ₹${net.toLocaleString()}. Mainframe storage is uncompromised.`;
+        botResponse = "Kanchipuram vernacular documentation matrix accessed. Files include cataloging of timber joint typologies and internal courtyard configurations.";
+      } else if (tokens.includes("varyankaval") || tokens.includes("rural") || tokens.includes("ariyalur")) {
+        botResponse = "Rural documentation database for Varyankaval Village (Ariyalur, TN) accessed. Base maps and morphological parameters are ready for extraction.";
+      } else if (tokens.includes("hello") || tokens.includes("hi")) {
+        botResponse = "Greetings. The RSA Cognitive Engine is fully synced. Query trophies, events, or unit data.";
       } else {
-        botResponse = `Directive registered: "${textRaw}". Operational parameters analyzed. No immediate abnormalities detected across Unit Z649 databases. Systems continue running at peak structural efficiency.`;
+        botResponse = `Directive "${textRaw}" recognized. I am cross-referencing this against the NASA framework and Unit Z649 archives. System efficiency optimal.`;
       }
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 750);
+    }, 850);
   };
 
   // ==========================================
@@ -352,7 +329,7 @@ export default function App() {
           <div className="text-metric">{vaultData.length}</div>
         </div>
         <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> Frequency Transmissions</span>
+          <span className="text-subtitle" style={{color: '#fff'}}><Activity size={14}/> Network Comms</span>
           <div className="text-metric">{newsData.length}</div>
         </div>
       </div>
@@ -383,7 +360,7 @@ export default function App() {
                       {['UD', 'USEC', 'Coordinator'].includes(m.role) && <Crown size={12} style={{marginRight:4}}/>}
                       {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> View Profile</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> View Dossier</span>
                   </div>
                   <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
@@ -441,7 +418,7 @@ export default function App() {
                  <th>Classification</th>
                  <th>Transaction Narrative / Description</th>
                  <th>Value Magnitude</th>
-                 <th>Action Configuration</th>
+                 <th>Action</th>
                </tr>
              </thead>
              <tbody>
@@ -531,36 +508,58 @@ export default function App() {
         {newsData.length === 0 && <div className="text-sm text-white/50" style={{padding:'0 16px'}}>Silence on the network.</div>}
         {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
           <div key={n.id} className="bento-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '16px' }}>
               <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag}</span>
               <div style={{ display: 'flex', gap: '6px' }}>
                 {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
                 {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
               </div>
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
-            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>{n.content}</div>
+            <div style={{ fontSize: '2.2rem', fontWeight: '600', marginBottom: '24px', fontFamily: "var(--font-heading)", fontStyle: 'italic', letterSpacing: '0.02em' }}>{n.title}</div>
+            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: '1.8' }}>{n.content}</div>
           </div>
         ))}
       </div>
     </div>
   );
 
-  const renderUnitCouncil = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure Core Parameters</button>}
+  const renderUnitCouncil = () => {
+    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
+
+    return (
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure Core Parameters</button>}
+          </div>
+        </div>
+        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
+          <span className="text-subtitle" style={{color: '#fff'}}>Network Operational Identity</span>
+          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
+          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+        </div>
+
+        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
+        <div className="bento-grid-2">
+          {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
+          {councilMembers.map(m => (
+            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
+                  {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                </span>
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
+              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
+                <Eye size={14}/> View Dossier
+              </button>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)' }}>
-        <span className="text-subtitle" style={{color: '#fff'}}>Network Operational Identity</span>
-        <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
-        <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderRSAIntel = () => {
     const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
@@ -586,7 +585,7 @@ export default function App() {
               <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
                 <input 
                   className="ai-input" 
-                  placeholder="Query NASA India status, trophies (LIK/MSL), or rural data clusters..." 
+                  placeholder="Query NASA status, trophies, or rural matrices..." 
                   value={aiInput}
                   onChange={(e) => setAiInput(e.target.value)}
                 />
@@ -595,27 +594,22 @@ export default function App() {
             </div>
           </div>
 
-          {/* COUNCIL CONTACT DIRECTORY */}
+          {/* HIGH COMMAND DIRECTORY (With View Dossier) */}
           <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
             <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Crown size={14}/> High Command Directory</span>
             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '450px', overflowY: 'auto', paddingRight: '10px' }}>
               {councilMembers.length === 0 && <div className="text-sm text-white/50">No executives initialized inside the matrix.</div>}
               {councilMembers.map(m => (
-                <div key={m.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
+                <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                     <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
                       {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
                     </span>
                   </div>
                   <div style={{ fontSize: '1.4rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <a href={`mailto:${m.email}`} className="btn-primary btn-secondary" style={{ flex: 1 }}><Mail size={14}/> Mail</a>
-                    {m.phone && (
-                      <a href={`tel:${m.phone}`} className="btn-primary btn-secondary" style={{ flex: 1 }}>
-                        <Phone size={14}/> Call
-                      </a>
-                    )}
-                  </div>
+                  <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
+                    <Eye size={14}/> View Dossier
+                  </button>
                 </div>
               ))}
             </div>
@@ -637,14 +631,6 @@ export default function App() {
         <div className="plasma-orb orb-p"></div>
       </div>
 
-      {/* 🌟 CINEMATIC QUANTUM IRIS BOOT SPLASH 🌟 */}
-      <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
-        <div className="splash-rings"></div>
-        <div className="splash-brand">RSA<span style={{color:'var(--neon-cyan)'}}>.</span>CORE</div>
-        <div className="splash-progress"><div className="splash-bar"></div></div>
-        <div style={{fontFamily:'var(--font-mono)', fontSize:'0.75rem', color:'var(--neon-cyan)', marginTop:'20px', letterSpacing:'0.2em', animation:'glitch 0.5s infinite'}}>SYNCING QUANTUM NODES...</div>
-      </div>
-
       {/* 🌟 SECURITY HUD & LOGO (TOP BAR) 🌟 */}
       <nav className="top-bar">
         {/* Left: Security HUD */}
@@ -662,36 +648,36 @@ export default function App() {
         {/* Right: Logo Acting as Sidebar Toggle */}
         <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
           RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
-          {sidebarOpen ? <X size={26} color="#fff"/> : <Menu size={26} color="#fff"/>}
         </div>
       </nav>
 
-      {/* 🌟 COLLAPSIBLE NASA SIDEBAR 🌟 */}
+      {/* 🌟 SLEEK NASA SIDEBAR REDESIGN 🌟 */}
       <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', marginTop: '40px' }}>
-           <Globe size={28} color="#fff" />
-           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', margin: 0, fontStyle: 'italic', fontWeight: '600' }}>NASA India</h2>
+        
+        <div className="sidebar-header">
+          <div className="sidebar-logo">RSA<span style={{color: '#fff'}}>.</span> <span style={{fontSize:'1rem', color:'#fff', fontStyle:'normal', fontFamily:'var(--font-body)', fontWeight:'400'}}>X</span> NASA</div>
+          <button className="sidebar-close" onClick={() => setSidebarOpen(false)}><X size={28}/></button>
         </div>
         
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '10px' }}>
-          <span className="text-subtitle" style={{ color: 'var(--text-secondary)' }}><Activity size={12}/> Live Telemetry</span>
+          <div className="sidebar-section-title"><Activity size={14}/> Live Telemetry</div>
           
-          <div className="nasa-feed-item">
+          <div className="sidebar-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>EVENT</span><CalendarClock size={14}/></div>
-            <div style={{ fontSize: '1.1rem', fontWeight: '600', marginTop: '4px' }}>68th Annual Convention</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Status: Active Preparation</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>68th Annual Convention</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Active Preparation</div>
           </div>
 
-          <div className="nasa-feed-item">
+          <div className="sidebar-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHY SYSTEM</span><Shield size={14}/></div>
-            <div style={{ fontSize: '1.1rem', fontWeight: '600', marginTop: '4px' }}>Louis I. Kahn Trophy</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Compilation Open</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>Louis I. Kahn Trophy</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Compilation Open</div>
           </div>
 
-          <span className="text-subtitle" style={{ color: 'var(--text-secondary)', marginTop: '30px' }}><Zap size={12}/> Action Portals</span>
+          <div className="sidebar-section-title" style={{ marginTop: '30px' }}><Zap size={14}/> Action Portals</div>
           <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="nasa-feed-item" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ fontWeight: '600' }}>Official Portal Link</div><ArrowUpRight size={18} color="#fff"/>
+            <div className="sidebar-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontWeight: '600', fontSize: '1.1rem' }}>Official Portal Link</div><ArrowUpRight size={20} color="#fff"/>
             </div>
           </a>
         </div>
@@ -724,26 +710,29 @@ export default function App() {
         <div className="modal-overlay pointer-events-auto">
           <div className="modal-window">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h2 className="text-title" style={{ fontSize: '2.2rem' }}>Operative Dossier</h2>
+              <h2 className="text-title" style={{ fontSize: '2.5rem' }}>Operative Dossier</h2>
               <button className="btn-icon" onClick={() => setViewingCrew(null)}><X size={24}/></button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:'16px', marginBottom:'32px' }}>
-              <div><span className="text-subtitle">Identity</span><div style={{fontSize:'1.6rem', fontWeight:'600'}}>{viewingCrew.name}</div></div>
-              <div><span className="text-subtitle">Role Assignment</span><div className="status-pill">{viewingCrew.role}</div></div>
-              {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType} Vector</div></div>}
+              <div><span className="text-subtitle">Identity</span><div style={{fontSize:'1.8rem', fontWeight:'600', fontFamily:'var(--font-heading)', fontStyle:'italic'}}>{viewingCrew.name}</div></div>
+              <div><span className="text-subtitle">Role Assignment</span><div className="status-pill" style={{color:'var(--neon-cyan)', borderColor:'rgba(0,240,255,0.3)'}}>{viewingCrew.role}</div></div>
+              {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department Matrix</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType} Vector</div></div>}
               <div><span className="text-subtitle">Generation Group</span><div style={{fontSize:'1.1rem'}}>Batch Vector: Year {viewingCrew.year}</div></div>
-              <div><span className="text-subtitle">Comms Endpoint</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.email}</div></div>
-              {viewingCrew.phone && <div><span className="text-subtitle">Mobile Secure Array</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.phone}</div></div>}
+              
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                <a href={`mailto:${viewingCrew.email}`} className="btn-primary" style={{ flex: 1 }}><Mail size={16}/> Comms</a>
+                {viewingCrew.phone && <a href={`tel:${viewingCrew.phone}`} className="btn-primary" style={{ flex: 1 }}><Phone size={16}/> Mobile</a>}
+              </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
               {isLeadershipMode ? (
                 <>
-                  <button className="btn-primary" style={{flex: 1}} onClick={() => { setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Modify Profile</button>
-                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Erase</button>
+                  <button className="btn-primary btn-secondary" style={{flex: 1}} onClick={() => { setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Override Data</button>
+                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Erase Node</button>
                 </>
               ) : (
-                <div style={{fontSize:'0.8rem', color:'var(--text-secondary)', fontStyle:'italic'}}>Elevate system status to lock/unlock editing authorizations.</div>
+                <div style={{fontSize:'0.8rem', color:'var(--text-secondary)', fontStyle:'italic'}}><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Elevate system status to lock/unlock editing authorizations.</div>
               )}
             </div>
           </div>
@@ -818,7 +807,7 @@ export default function App() {
               )}
 
               <button type="submit" className="btn-primary w-full justify-center mt-4" style={{ padding: '18px', fontSize: '1rem', letterSpacing: '0.1em' }}>
-                COMMIT CONFIGURATION
+                <TerminalSquare size={18}/> COMMIT CONFIGURATION
               </button>
             </form>
           </div>
