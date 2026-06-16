@@ -424,7 +424,7 @@ export default function App() {
         {vaultData.map(v => (
           <div key={v.id} className="bento-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span className="status-pill"><Component size={12}/> {v.type}</span>
+              <span className="status-pill"><Hardrive size={12}/> {v.type}</span>
               {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-8px'}} onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
             </div>
             <div style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '24px' }}>{v.title}</div>
