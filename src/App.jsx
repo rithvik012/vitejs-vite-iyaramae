@@ -6,7 +6,7 @@ import {
   Archive, FileImage, Rss, LayoutDashboard, Settings, 
   X, ArrowUpRight, Component, Mail, Globe, 
   Menu, ChevronRight, Activity, Calendar, Award,
-  Cpu, Sparkles, Zap, TrendingUp, TrendingDown, Lock, Unlock, Fingerprint
+  Cpu, Sparkles, Zap, TrendingUp, TrendingDown, Lock, Unlock, Fingerprint, Radio
 } from 'lucide-react';
 
 // ==========================================
