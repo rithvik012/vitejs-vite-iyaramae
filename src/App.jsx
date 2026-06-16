@@ -3,15 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
-  Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
+  Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye,
-  HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown,
-  TerminalSquare, ArrowRight
+  LayoutDashboard, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye,
+  HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown
 } from 'lucide-react';
 
 // ==========================================
-// FIREBASE SECURE KERNEL
+// FIREBASE CONFIGURATION
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -27,151 +26,128 @@ const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
-// QUANTUM-LITHOS AESTHETIC ENGINE
+// CLEAN & SIMPLE STYLES
 // ==========================================
 const GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
   :root {
     --bg-base: #030303;
-    --glass-bg: rgba(10, 10, 10, 0.7);
+    --glass-bg: rgba(15, 15, 15, 0.7);
     --glass-border: rgba(255, 255, 255, 0.08);
     --text-primary: #ffffff;
     --text-secondary: #8b9bb4;
-    --neon-cyan: #00f0ff;
-    --neon-purple: #7000ff;
-    --neon-gold: #ffbe0b;
-    --neon-pink: #ff0055;
-    --neon-green: #00ff66;
+    --accent: #00f0ff;
+    --accent-hover: #00d4e6;
+    --danger: #ff0055;
+    --success: #00ff66;
+    --warning: #ffbe0b;
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-ui: 'Outfit', sans-serif;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-  body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
-  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
-  input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-body); user-select: none; }
+  body, html { background-color: var(--bg-base); color: var(--text-primary); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
+  
+  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; width: 100%; }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
   ::-webkit-scrollbar { width: 0px; }
 
-  .animatronic-bg { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
-  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
-  .orb-c { width: 65vw; height: 65vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
-  .orb-p { width: 55vw; height: 55vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -7s; }
-  
-  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw, 5vh) scale(1.05); } }
+  /* Background Effects */
+  .bg-effects { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
+  .glow-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; animation: float 30s infinite alternate ease-in-out; }
+  .orb-1 { width: 60vw; height: 60vw; background: var(--accent); top: -20vh; left: -10vw; }
+  .orb-2 { width: 50vw; height: 50vw; background: #7000ff; bottom: -10vh; right: -10vw; animation-delay: -5s; }
+  @keyframes float { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw, 5vh) scale(1.05); } }
 
-  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
-  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; }
+  /* Splash Screen */
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+  .boot-splash.hidden { opacity: 0; pointer-events: none; }
+  .splash-text { font-family: var(--font-heading); font-size: 4rem; font-style: italic; color: #fff; }
 
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
-  .scrolling-section {
-    min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
-    opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+  /* Scrolling Layout */
+  .scroll-container { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+  .section { min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 100px 24px; opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+  .section.active { opacity: 1; transform: translateY(0); }
 
-  .bento-container { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
-  
-  .bento-card { 
-    background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-    border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
-  
-  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  /* Cards & Grids */
+  .content-wrapper { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
+  .card { background: var(--glass-bg); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); transition: transform 0.3s; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
 
+  /* Top Bar & Sidebar */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
-  
-  .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 700; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-  .logo-toggle:hover { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
-  
-  .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
-  .security-hud:hover { border-color: var(--neon-cyan); }
-  .hud-icon-box { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
-  .hud-locked .hud-icon-box { background: rgba(255, 255, 255, 0.1); color: #fff; }
-  .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-  .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
+  .logo-btn { font-family: var(--font-heading); font-size: 2rem; font-style: italic; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: color 0.3s; }
+  .logo-btn:hover { color: var(--accent); }
+  .admin-status { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 700; color: #fff; transition: all 0.3s; }
+  .admin-status:hover { border-color: var(--accent); }
+  .admin-status.unlocked { color: var(--accent); border-color: rgba(0,240,255,0.3); }
 
-  /* 🌟 SLEEK SIDEBAR REDESIGN 🌟 */
-  .nasa-sidebar {
-    position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
-    background: #050505; border-left: 1px solid var(--glass-border); z-index: 110;
-    padding: 32px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .nasa-sidebar.open { right: 0; }
-  
-  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
-  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
-  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
-  
-  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
-  
-  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
-  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; background: #080808; border-left: 1px solid var(--glass-border); z-index: 100; padding: 40px 24px; display: flex; flex-direction: column; transition: right 0.5s ease; box-shadow: -20px 0 50px rgba(0,0,0,0.8); }
+  .sidebar.open { right: 0; }
+  .sidebar-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; margin-bottom: 12px; }
 
-  .floating-dock {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
-  }
-  .dock-item { min-width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-  .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
+  /* Bottom Dock */
+  .dock { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(10,10,10,0.9); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 90; }
+  .dock-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: all 0.3s; position: relative; }
+  .dock-btn.active { background: #fff; color: #000; transform: translateY(-5px); }
+  .dock-btn:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; }
+  .dock-tooltip { position: absolute; top: -40px; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap; }
+  .dock-btn:hover .dock-tooltip { opacity: 1; }
+
+  /* Typography */
+  .title { font-family: var(--font-heading); font-style: italic; font-size: 3.5rem; color: #fff; margin-bottom: 8px; }
+  .subtitle { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.6); text-transform: uppercase; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .big-number { font-size: 3rem; font-weight: 300; color: #fff; }
+
+  /* Buttons & Tags */
+  .btn { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255,255,255,0.2); }
+  .btn-outline { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
+  .btn-outline:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .icon-btn { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: 0.2s; }
+  .icon-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+  .icon-btn.danger:hover { color: var(--danger); background: rgba(255,0,85,0.1); }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); }
   
-  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-  .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
-  
-  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; font-family: var(--font-ui); letter-spacing: 0.05em; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-  .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
-  .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  
-  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-  .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
-  .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
-  
-  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
-  
-  /* AI TERMINAL */
-  .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
-  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
-  .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
-  .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
-  .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
-  
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
+  th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
+  td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; }
+
+  /* AI Chat Box */
+  .chat-container { background: rgba(0,0,0,0.5); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
+  .chat-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-behavior: smooth; }
+  .message { padding: 16px; border-radius: 12px; font-size: 0.95rem; max-width: 85%; line-height: 1.6; }
+  .message.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .message.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+  /* Modals */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 600px; border-radius: 20px; padding: 40px; max-height: 90vh; overflow-y: auto; }
 
   @media (max-width: 768px) {
-    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
-    .text-title { font-size: 2.8rem; }
-    .floating-dock { width: 92%; overflow-x: auto; justify-content: flex-start; padding: 10px; border-radius: 20px; }
-    .dock-item { min-width: 46px; height: 46px; }
-    .scrolling-section { padding: 100px 16px; scroll-snap-align: start; }
-    .modal-window { padding: 24px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .title { font-size: 2.8rem; }
+    .dock { width: 92%; overflow-x: auto; justify-content: flex-start; }
+    .dock-btn { min-width: 46px; height: 46px; }
+    .section { padding: 120px 16px; }
+    .modal { padding: 24px; }
     .top-bar { padding: 16px 20px; }
-    .logo-toggle { font-size: 1.8rem; }
-    .nasa-sidebar { width: 100%; right: -100%; }
+    .sidebar { width: 100%; right: -100%; }
   }
 `;
 
 export default function App() {
-  const [activeSectionIdx, setActiveSectionIdx] = useState(0);
-  const [isLeadershipMode, setIsLeadershipMode] = useState(false);
+  const [activeSection, setActiveSection] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Core Databases
+  // Database Arrays
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
   const [financialLog, setFinancialLog] = useState([]);
@@ -179,38 +155,32 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
-  // AI Cognitive Engine State & Simulated NASA Live Feed
+  // AI Chat Logic
   const [aiInput, setAiInput] = useState("");
-  const [nasaLiveFeed, setNasaLiveFeed] = useState({
-    events: ["68th Annual NASA Convention", "Zonal NASA Workshops"],
-    trophies: ["Louis I. Kahn (LIK) Trophy - Submission Open", "Reubens Showcase - Evaluation Phase", "Mohammad Shaheer Landscape (MSL) Trophy"],
-    status: "Active Telemetry"
-  });
-
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Cognitive Engine online. Connected to NASA India Live Telemetry. Awaiting query or directive.' }
+    { sender: 'bot', text: 'Hello! I am your RSA AI Assistant. I can help you with design ideas, NASA trophies, team management, or any architectural questions. How can I assist you today?' }
   ]);
-  const chatEndRef = useRef(null);
+  const chatBoxRef = useRef(null);
 
-  // Modals & Forms
+  // Forms and Modals
   const [modalMode, setModalMode] = useState(null); 
-  const [viewingCrew, setViewingCrew] = useState(null);
-  const [formPayload, setFormPayload] = useState({});
-  const scrollEngineRef = useRef(null);
+  const [viewingProfile, setViewingProfile] = useState(null);
+  const [formData, setFormData] = useState({});
+  const scrollRef = useRef(null);
 
-  const dockItems = [
-    { id: 'core', icon: <Hexagon size={22} strokeWidth={1.5}/>, label: 'Omni-View' },
-    { id: 'crew', icon: <UsersRound size={22} strokeWidth={1.5}/>, label: 'Architects Array' },
-    { id: 'funds', icon: <CircleDollarSign size={22} strokeWidth={1.5}/>, label: 'Capital Ledger' },
-    { id: 'vault', icon: <HardDrive size={22} strokeWidth={1.5}/>, label: 'Deep Archives' },
-    { id: 'gallery', icon: <Aperture size={22} strokeWidth={1.5}/>, label: 'Morphological Gallery' },
-    { id: 'news', icon: <RadioTower size={22} strokeWidth={1.5}/>, label: 'Frequency Relay' },
-    { id: 'hq', icon: <Crown size={22} strokeWidth={1.5}/>, label: 'Executive Core' },
-    { id: 'ai', icon: <BrainCircuit size={22} strokeWidth={1.5}/>, label: 'RSA Intel AI' }
+  const sections = [
+    { id: 'dashboard', icon: <LayoutDashboard size={22}/>, label: 'Dashboard' },
+    { id: 'team', icon: <UsersRound size={22}/>, label: 'Team' },
+    { id: 'funds', icon: <CircleDollarSign size={22}/>, label: 'Finances' },
+    { id: 'vault', icon: <HardDrive size={22}/>, label: 'Files' },
+    { id: 'gallery', icon: <ImagePlus size={22}/>, label: 'Gallery' },
+    { id: 'news', icon: <Activity size={22}/>, label: 'Notice Board' },
+    { id: 'council', icon: <Crown size={22}/>, label: 'Unit Council' },
+    { id: 'ai', icon: <BrainCircuit size={22}/>, label: 'AI Assistant' }
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 2000);
+    setTimeout(() => setIsBooting(false), 1500);
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -222,148 +192,142 @@ export default function App() {
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
+  // Fix for the jumping page bug: Only scroll the chat box inner div!
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
   }, [aiMessages]);
 
-  const handleEngineScroll = () => {
-    if (!scrollEngineRef.current) return;
-    const idx = Math.round(scrollEngineRef.current.scrollTop / window.innerHeight);
-    if (idx !== activeSectionIdx) setActiveSectionIdx(idx);
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const idx = Math.round(scrollRef.current.scrollTop / window.innerHeight);
+    if (idx !== activeSection) setActiveSection(idx);
   };
 
-  const executeEngineNavigation = (idx) => {
-    scrollEngineRef.current.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
-    setActiveSectionIdx(idx);
+  const navigateTo = (idx) => {
+    scrollRef.current.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+    setActiveSection(idx);
   };
 
-  const handleSecurityToggle = () => {
-    if (isLeadershipMode) {
-      setIsLeadershipMode(false);
+  const toggleAdmin = () => {
+    if (isAdmin) {
+      setIsAdmin(false);
     } else {
-      const pass = prompt("RSA COGNITIVE OVERRIDE: Input Secure Credentials");
-      if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
-      else if (pass) alert("SECURITY WARNING: AUTHORIZATION DENIED.");
+      const pass = prompt("Enter Admin Password:");
+      if (pass === ADMIN_SECURE_KEY) setIsAdmin(true);
+      else if (pass) alert("Incorrect Password.");
     }
   };
 
-  const handleSaveToCloud = async (collectionName) => {
+  const saveToDatabase = async () => {
     try {
-      if (collectionName === 'hq') {
-        await setDoc(doc(db, "unit", "hq"), formPayload);
-      } else if (formPayload.id) {
-        const { id, ...data } = formPayload;
-        await updateDoc(doc(db, collectionName, id), data);
+      if (modalMode === 'hq') {
+        await setDoc(doc(db, "unit", "hq"), formData);
+      } else if (formData.id) {
+        const { id, ...data } = formData;
+        await updateDoc(doc(db, modalMode, id), data);
       } else {
-        await addDoc(collection(db, collectionName), { ...formPayload, timestamp: Date.now() });
+        await addDoc(collection(db, modalMode), { ...formData, timestamp: Date.now() });
       }
       setModalMode(null); 
-      setViewingCrew(null);
-      setFormPayload({});
+      setViewingProfile(null);
+      setFormData({});
     } catch (e) { 
-      alert("Database Synchronization Interrupted."); 
+      alert("Error saving data. Please check your connection."); 
     }
   };
 
-  const deleteDocRecord = async (col, id) => {
-    if (window.confirm("Confirm vector deletion from cloud network?")) {
+  const deleteRecord = async (col, id) => {
+    if (window.confirm("Are you sure you want to delete this?")) {
       await deleteDoc(doc(db, col, id));
       setModalMode(null);
-      setViewingCrew(null);
+      setViewingProfile(null);
     }
   };
 
   // ==========================================
-  // ADVANCED COGNITIVE AI ENGINE
+  // HIGHLY CREATIVE AI LOGIC
   // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
     if (!aiInput.trim()) return;
     
-    const textRaw = aiInput.trim();
-    setAiMessages(prev => [...prev, { sender: 'user', text: textRaw }]);
+    const text = aiInput.trim();
+    setAiMessages(prev => [...prev, { sender: 'user', text: text }]);
     setAiInput('');
 
-    // Simulate Processing Delay for Realism
     setTimeout(() => {
-      const tokens = textRaw.toLowerCase();
-      let botResponse = "";
+      const q = text.toLowerCase();
+      let response = "";
 
-      // Advanced Knowledge Routing
-      if (tokens.includes("troph") || tokens.includes("participate") || tokens.includes("available")) {
-        botResponse = `Parsing live telemetry... Current active vectors: \n1. ${nasaLiveFeed.trophies[0]}\n2. ${nasaLiveFeed.trophies[1]}\n3. ${nasaLiveFeed.trophies[2]}`;
-      } else if (tokens.includes("event") || tokens.includes("program")) {
-        botResponse = `NASA India live tracking indicates upcoming operations: ${nasaLiveFeed.events.join(", ")}. Observer Protocol Cycle 3 is also actively integrating new modules.`;
-      } else if (tokens.includes("nasa") || tokens.includes("national association")) {
-        botResponse = `Network synced to NASA India. Unit ${leadership.unitCode} connection secure. You can review Official Trophies and Convention metrics directly via the sidebar Uplink.`;
-      } else if (tokens.includes("shaheer") || tokens.includes("msl") || tokens.includes("velachery")) {
-        botResponse = "Accessing MSL Landscape Trophy data. Project 'The Hydro-Social Connector' parameters loaded. Design focuses on a biological machine to counteract urban flooding near Velachery Railway Station.";
-      } else if (tokens.includes("kanchipuram") || tokens.includes("vernacular")) {
-        botResponse = "Kanchipuram vernacular documentation matrix accessed. Files include cataloging of timber joint typologies and internal courtyard configurations.";
-      } else if (tokens.includes("varyankaval") || tokens.includes("rural") || tokens.includes("ariyalur")) {
-        botResponse = "Rural documentation database for Varyankaval Village (Ariyalur, TN) accessed. Base maps and morphological parameters are ready for extraction.";
-      } else if (tokens.includes("hello") || tokens.includes("hi")) {
-        botResponse = "Greetings. The RSA Cognitive Engine is fully synced. Query trophies, events, or unit data.";
+      if (q.includes("design") || q.includes("concept") || q.includes("idea")) {
+        response = "When developing a concept, I always recommend looking at the context first. What is the sun path? Where is the wind coming from? A great design solves a problem before it tries to look beautiful. Try mixing standard geometric forms with materials that are native to your site's location.";
+      } else if (q.includes("lik") || q.includes("kahn") || q.includes("heritage")) {
+        response = "For the Louis I. Kahn (LIK) Trophy, your primary focus must be accuracy and storytelling. Don't just draw the building; draw how people used it. Highlight the vernacular joints, the thickness of the walls for climate control, and ensure your base maps and line weights are incredibly precise.";
+      } else if (q.includes("msl") || q.includes("landscape") || q.includes("shaheer")) {
+        response = "For the Mohammad Shaheer Landscape Trophy, treat the land as a living organism. If you are working on urban flooding (like Velachery), think about bioswales, permeable paving, and native planting. Architecture shouldn't fight water; it should guide it.";
+      } else if (q.includes("trophies") || q.includes("nasa")) {
+        response = "Currently, NASA India has opened submissions for the LIK Trophy and the Reubens Showcase. Make sure your Unit Designee has uploaded all the names to the portal. I recommend setting internal college deadlines 3 days before the actual NASA deadline to avoid server crashes!";
+      } else if (q.includes("time") || q.includes("manage") || q.includes("stress")) {
+        response = "Architecture school is tough! The best trick is 'Time-Boxing'. Dedicate 2 hours purely to drafting, then take a 30-minute break. Do not try to design and draft at the same time. Sketch your ideas on paper first, solve the problems, and only then move to AutoCAD or Rhino.";
+      } else if (q.includes("hello") || q.includes("hi")) {
+        response = "Hello there! I'm ready to help. You can ask me for design critiques, trophy information, or how to organize your team better.";
       } else {
-        botResponse = `Directive "${textRaw}" recognized. I am cross-referencing this against the NASA framework and Unit Z649 archives. System efficiency optimal.`;
+        response = "That is an interesting point. As an AI, I suggest looking at it from a different perspective: how does this affect the end user navigating the space? Would you like me to pull up some reference data or help you brainstorm further?";
       }
 
-      setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 850);
+      setAiMessages(prev => [...prev, { sender: 'bot', text: response }]);
+    }, 1000);
   };
 
   // ==========================================
-  // VIEW RENDER BLOCKS
+  // UI SECTIONS
   // ==========================================
-  
   const renderDashboard = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px' }}><span className="text-subtitle">Mainframe Telemetry</span><h1 className="text-title">Omni-View</h1></div>
-      <div className="bento-grid-3">
-        <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Active Architects</span>
-          <div className="text-metric">{crewData.length}</div>
+    <div className="content-wrapper">
+      <div><span className="subtitle">Overview</span><h1 className="title">Dashboard</h1></div>
+      <div className="grid-3">
+        <div className="card">
+          <span className="subtitle"><UsersRound size={16}/> Total Team Members</span>
+          <div className="big-number">{crewData.length}</div>
         </div>
-        <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Node Repositories</span>
-          <div className="text-metric">{vaultData.length}</div>
+        <div className="card">
+          <span className="subtitle"><HardDrive size={16}/> Saved Files</span>
+          <div className="big-number">{vaultData.length}</div>
         </div>
-        <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><Activity size={14}/> Network Comms</span>
-          <div className="text-metric">{newsData.length}</div>
+        <div className="card">
+          <span className="subtitle"><Activity size={16}/> Notice Board Updates</span>
+          <div className="big-number">{newsData.length}</div>
         </div>
       </div>
     </div>
   );
 
   const renderCrew = () => {
-    const allocation = crewData.reduce((acc, u) => { const y = u.year||"Unassigned"; if(!acc[y]) acc[y]=[]; acc[y].push(u); return acc; }, {});
-    const order = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
-    
+    const grouped = crewData.reduce((acc, u) => { const y = u.year||"Other"; if(!acc[y]) acc[y]=[]; acc[y].push(u); return acc; }, {});
+    const order = ['1', '2', '3', '4', '5', 'Alumni', 'Other']; 
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Identity Matrix</span><h1 className="text-title">Architects Array</h1></div>
-          {isLeadershipMode && (
-            <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
-          )}
+      <div className="content-wrapper">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="subtitle">People</span><h1 className="title">Team Members</h1></div>
+          {isAdmin && <button className="btn" onClick={() => { setFormData({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Member</button>}
         </div>
-        
-        {order.map(year => allocation[year] && (
+        {order.map(year => grouped[year] && (
           <div key={year} style={{ marginTop: '24px' }}>
-            <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `Generation 0${year}`}</span>
-            <div className="bento-grid-2" style={{ marginTop: '16px' }}>
-              {allocation[year].map(m => (
-                <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: ['UD', 'USEC', 'Coordinator'].includes(m.role) ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+            <span className="subtitle" style={{ color: '#fff' }}>{year === 'Alumni' || year === 'Other' ? year : `Year ${year} Students`}</span>
+            <div className="grid-2" style={{ marginTop: '16px' }}>
+              {grouped[year].map(m => (
+                <div key={m.id} className="card" style={{ cursor: 'pointer', border: ['UD', 'USEC', 'Coordinator'].includes(m.role) ? '1px solid var(--warning)' : '' }} onClick={() => setViewingProfile(m)}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill">
+                    <span className="tag">
                       {['UD', 'USEC', 'Coordinator'].includes(m.role) && <Crown size={12} style={{marginRight:4}}/>}
-                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Head` : m.role}
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> View Dossier</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={14}/> View</span>
                   </div>
                   <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>{m.email}</div>
                 </div>
               ))}
             </div>
@@ -376,66 +340,56 @@ export default function App() {
   const renderFunds = () => {
     const income = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0);
     const expense = financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-    const total = income + expense;
     const net = income - expense;
     const goal = Number(leadership.financialGoal) || 1; 
 
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Economic Flow</span><h1 className="text-title">Capital Ledger</h1></div>
-          {isLeadershipMode && (
-            <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Inject Transaction</button>
-          )}
+      <div className="content-wrapper">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="subtitle">Money Flow</span><h1 className="title">Finances</h1></div>
+          {isAdmin && <button className="btn" onClick={() => { setFormData({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Transaction</button>}
         </div>
 
-        <div className="bento-grid-2">
-          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
+        <div className="grid-2">
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <span className="subtitle">Total Money Moved</span>
             <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
-              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>CREDITS</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-green)'}}>₹{income.toLocaleString()}</div></div>
-              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>DEBITS</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-pink)'}}>₹{expense.toLocaleString()}</div></div>
+              <div><span style={{fontSize:'0.8rem', color:'var(--text-secondary)'}}>INCOME</span><div style={{fontSize:'1.8rem', fontWeight:'700', color:'var(--success)'}}>₹{income.toLocaleString()}</div></div>
+              <div><span style={{fontSize:'0.8rem', color:'var(--text-secondary)'}}>EXPENSES</span><div style={{fontSize:'1.8rem', fontWeight:'700', color:'var(--danger)'}}>₹{expense.toLocaleString()}</div></div>
             </div>
           </div>
-          
-          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Main Net Pool Account</span>
-            <div className="text-metric">₹{net.toLocaleString()}</div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '20px' }}>
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <span className="subtitle" style={{color:'#fff'}}><Zap size={14}/> Current Balance</span>
+            <div className="big-number">₹{net.toLocaleString()}</div>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '16px' }}>
                <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
             </div>
-            <div style={{ display:'flex', justifyContent:'space-between', marginTop: '10px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontFamily:'var(--font-mono)' }}>
-              <span>Target Metric</span>
-              <span>₹{goal.toLocaleString()}</span>
+            <div style={{ display:'flex', justifyContent:'space-between', marginTop: '8px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>
+              <span>Target Goal</span><span>₹{goal.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
-        <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
-           <table className="pro-table">
+        <div className="card" style={{ padding: '16px 24px', overflowX: 'auto' }}>
+           <table>
              <thead>
-               <tr>
-                 <th>Classification</th>
-                 <th>Transaction Narrative / Description</th>
-                 <th>Value Magnitude</th>
-                 <th>Action</th>
-               </tr>
+               <tr><th>Type</th><th>Details</th><th>Amount</th>{isAdmin && <th>Edit</th>}</tr>
              </thead>
              <tbody>
-               {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>Ledger Empty.</td></tr>}
+               {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'30px', color:'rgba(255,255,255,0.5)'}}>No money records yet.</td></tr>}
                {financialLog.map(f => (
                  <tr key={f.id}>
-                   <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)', borderColor: f.type==='income'?'rgba(0,255,102,0.2)':'rgba(255,0,85,0.2)' }}>{f.type}</span></td>
+                   <td><span className="tag" style={{ color: f.type==='income'?'var(--success)':'var(--danger)', borderColor: f.type==='income'?'rgba(0,255,102,0.3)':'rgba(255,0,85,0.3)' }}>{f.type}</span></td>
                    <td style={{ fontWeight: '500' }}>{f.description}</td>
-                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>
-                      {f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}
-                   </td>
-                   <td>
-                     <div style={{ display: 'flex', gap: '8px' }}>
-                       {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Open node configurations"><Pencil size={14}/></button>}
-                       {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={14}/></button>}
-                     </div>
-                   </td>
+                   <td style={{ fontWeight:'700', color: f.type==='income'?'var(--success)':'#fff' }}>{f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}</td>
+                   {isAdmin && (
+                     <td>
+                       <div style={{ display: 'flex', gap: '8px' }}>
+                         <button className="icon-btn" onClick={() => { setFormData(f); setModalMode('finances'); }}><Pencil size={16}/></button>
+                         <button className="icon-btn danger" onClick={() => deleteRecord('finances', f.id)}><Trash2 size={16}/></button>
+                       </div>
+                     </td>
+                   )}
                  </tr>
                ))}
              </tbody>
@@ -446,23 +400,25 @@ export default function App() {
   };
 
   const renderVault = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Deep Storage</span><h1 className="text-title">Encrypted Archives</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Design File' }); setModalMode('vault'); }}><Plus size={16}/> Push Payload</button>}
+    <div className="content-wrapper">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="subtitle">Storage</span><h1 className="title">File Vault</h1></div>
+        {isAdmin && <button className="btn" onClick={() => { setFormData({ type: 'Document' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
       </div>
-      <div className="bento-grid-3">
+      <div className="grid-3">
         {vaultData.map(v => (
-          <div key={v.id} className="bento-card">
+          <div key={v.id} className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span className="status-pill"><HardDrive size={12}/> {v.type}</span>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
-                {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
-              </div>
+              <span className="tag"><HardDrive size={12}/> {v.type}</span>
+              {isAdmin && (
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button className="icon-btn" onClick={() => { setFormData(v); setModalMode('vault'); }}><Pencil size={14}/></button>
+                  <button className="icon-btn danger" onClick={() => deleteRecord('vault', v.id)}><Trash2 size={14}/></button>
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
-            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Extract Link <ArrowUpRight size={14}/></a>
+            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
+            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ width: '100%', textDecoration: 'none' }}>Open File <ArrowUpRight size={16}/></a>
           </div>
         ))}
       </div>
@@ -470,27 +426,29 @@ export default function App() {
   );
 
   const renderGallery = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Visual Subsystem</span><h1 className="text-title">Morphological Gallery</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image URL' }); setModalMode('gallery'); }}><Plus size={16}/> Upload Media</button>}
+    <div className="content-wrapper">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="subtitle">Images</span><h1 className="title">Photo Gallery</h1></div>
+        {isAdmin && <button className="btn" onClick={() => { setFormData({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Photo</button>}
       </div>
-      <div className="bento-grid-2">
+      <div className="grid-2">
         {galleryData.map(g => (
-          <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-            <div style={{ height: '250px', background: g.fileType === 'Image URL' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {g.fileType !== 'Image URL' && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
+          <div key={g.id} className="card" style={{ padding: 0 }}>
+            <div style={{ height: '250px', background: `url("${g.link}") center/cover`, borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {!g.link && <ImagePlus size={40} color="rgba(255,255,255,0.3)" />}
             </div>
-            <div style={{ padding: '32px' }}>
+            <div style={{ padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <span className="status-pill">{g.category}</span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
-                </div>
+                <span className="tag">{g.category || 'General'}</span>
+                {isAdmin && (
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button className="icon-btn" onClick={() => { setFormData(g); setModalMode('gallery'); }}><Pencil size={14}/></button>
+                    <button className="icon-btn danger" onClick={() => deleteRecord('gallery', g.id)}><Trash2 size={14}/></button>
+                  </div>
+                )}
               </div>
-              <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
-              <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: '700', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+              <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.9rem', lineHeight: '1.6' }}>{g.description}</div>
             </div>
           </div>
         ))}
@@ -499,278 +457,210 @@ export default function App() {
   );
 
   const renderNews = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Signal Relay</span><h1 className="text-title">Network Comms</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><RadioTower size={16}/> Transmit Signal</button>}
+    <div className="content-wrapper">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="subtitle">Updates</span><h1 className="title">Notice Board</h1></div>
+        {isAdmin && <button className="btn" onClick={() => { setFormData({}); setModalMode('news'); }}><RadioTower size={16}/> Add Notice</button>}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '16px' }}>
-        {newsData.length === 0 && <div className="text-sm text-white/50" style={{padding:'0 16px'}}>Silence on the network.</div>}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '16px' }}>
+        {newsData.length === 0 && <div style={{padding:'20px', color:'rgba(255,255,255,0.5)'}}>No new updates.</div>}
         {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-          <div key={n.id} className="bento-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '16px' }}>
-              <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag}</span>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
-                {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
-              </div>
+          <div key={n.id} className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '16px' }}>
+              <span className="tag" style={{ color: 'var(--accent)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag || 'Update'}</span>
+              {isAdmin && (
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button className="icon-btn" onClick={() => { setFormData(n); setModalMode('news'); }}><Pencil size={14}/></button>
+                  <button className="icon-btn danger" onClick={() => deleteRecord('news', n.id)}><Trash2 size={14}/></button>
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: '2.2rem', fontWeight: '600', marginBottom: '24px', fontFamily: "var(--font-heading)", fontStyle: 'italic', letterSpacing: '0.02em' }}>{n.title}</div>
-            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: '1.8' }}>{n.content}</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
+            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>{n.content}</div>
           </div>
         ))}
       </div>
     </div>
   );
 
-  const renderUnitCouncil = () => {
-    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
+  const renderUnitCouncil = () => (
+    <div className="content-wrapper">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="subtitle">Leadership</span><h1 className="title">Unit Council</h1></div>
+        {isAdmin && <button className="btn btn-outline" onClick={() => { setFormData(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Details</button>}
+      </div>
+      <div className="card" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <span className="subtitle" style={{color: '#fff'}}>Official Unit Code</span>
+        <div style={{ fontSize: '3rem', fontWeight: '700', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
+        <div className="tag" style={{textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+      </div>
+    </div>
+  );
 
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure Core Parameters</button>}
-          </div>
-        </div>
-        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
-          <span className="text-subtitle" style={{color: '#fff'}}>Network Operational Identity</span>
-          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
-          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
-        </div>
-
-        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
-        <div className="bento-grid-2">
-          {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
-          {councilMembers.map(m => (
-            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
-                  {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                </span>
-              </div>
-              <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
-                <Eye size={14}/> View Dossier
-              </button>
+  const renderAI = () => (
+    <div className="content-wrapper" style={{ maxWidth: '900px' }}>
+      <div><span className="subtitle">Smart Assistant</span><h1 className="title">AI Co-Pilot</h1></div>
+      <div className="chat-container">
+        <div className="chat-history" ref={chatBoxRef}>
+          {aiMessages.map((msg, idx) => (
+            <div key={idx} className={`message ${msg.sender}`}>
+              {msg.text}
             </div>
           ))}
         </div>
+        <form onSubmit={handleAiSubmit} style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
+          <input placeholder="Ask about design, NASA events, or team management..." value={aiInput} onChange={(e) => setAiInput(e.target.value)} style={{ flex: 1 }}/>
+          <button type="submit" className="btn" style={{ padding: '0 24px', borderRadius: '12px' }}><Send size={18}/></button>
+        </form>
       </div>
-    );
-  };
-
-  const renderRSAIntel = () => {
-    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
-
-    return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
-        <div style={{ padding: '0 16px' }}><span className="text-subtitle">Command Intelligence</span><h1 className="text-title">Cognitive Engine</h1></div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginTop: '16px' }}>
-          
-          {/* AI ASSISTANT TERMINAL */}
-          <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-            <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> RSA Neural Interface</span>
-            <div className="ai-terminal" style={{ marginTop: '16px' }}>
-              <div className="ai-chat-box">
-                {aiMessages.map((msg, idx) => (
-                  <div key={idx} className={`ai-msg ${msg.sender}`}>
-                    {msg.text}
-                  </div>
-                ))}
-                <div ref={chatEndRef} />
-              </div>
-              <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
-                <input 
-                  className="ai-input" 
-                  placeholder="Query NASA status, trophies, or rural matrices..." 
-                  value={aiInput}
-                  onChange={(e) => setAiInput(e.target.value)}
-                />
-                <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
-              </form>
-            </div>
-          </div>
-
-          {/* HIGH COMMAND DIRECTORY (With View Dossier) */}
-          <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
-            <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Crown size={14}/> High Command Directory</span>
-            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '450px', overflowY: 'auto', paddingRight: '10px' }}>
-              {councilMembers.length === 0 && <div className="text-sm text-white/50">No executives initialized inside the matrix.</div>}
-              {councilMembers.map(m => (
-                <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
-                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-                  <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
-                    <Eye size={14}/> View Dossier
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 HARDWARE ACCELERATED ANIMATRONICS 🌟 */}
-      <div className="animatronic-bg">
-        <div className="laser-grid"></div>
-        <div className="plasma-orb orb-c"></div>
-        <div className="plasma-orb orb-p"></div>
+      <div className="bg-effects">
+        <div className="glow-orb orb-1"></div>
+        <div className="glow-orb orb-2"></div>
       </div>
 
-      {/* 🌟 SECURITY HUD & LOGO (TOP BAR) 🌟 */}
+      <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
+        <div className="splash-text">RSA.</div>
+      </div>
+
       <nav className="top-bar">
-        {/* Left: Security HUD */}
         <div className="pointer-events-auto">
-          <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
-            <div className="hud-icon-box">
-               {isLeadershipMode ? <Unlock size={14} strokeWidth={2.5}/> : <Lock size={14} strokeWidth={2.5}/>}
-            </div>
-            <div className="hud-text">
-               [ ADMIN PORTAL: {isLeadershipMode ? 'UNLOCKED' : 'LOCKED'} ]
-            </div>
+          <div className={`admin-status ${isAdmin ? 'unlocked' : ''}`} onClick={toggleAdmin}>
+            {isAdmin ? <Unlock size={14}/> : <Lock size={14}/>}
+            {isAdmin ? 'ADMIN MODE' : 'USER MODE'}
           </div>
         </div>
         
-        {/* Right: Logo Acting as Sidebar Toggle */}
-        <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
+        <div className="logo-btn pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          RSA<span style={{color: 'var(--accent)'}}>.</span>
+          {sidebarOpen ? <X size={28} color="#fff" style={{marginLeft: 8}}/> : <Menu size={28} color="#fff" style={{marginLeft: 8}}/>}
         </div>
       </nav>
 
-      {/* 🌟 SLEEK NASA SIDEBAR REDESIGN 🌟 */}
-      <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
+      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontStyle: 'italic', color: '#fff', marginBottom: '32px' }}>NASA India</h2>
         
-        <div className="sidebar-header">
-          <div className="sidebar-logo">RSA<span style={{color: '#fff'}}>.</span> <span style={{fontSize:'1rem', color:'#fff', fontStyle:'normal', fontFamily:'var(--font-body)', fontWeight:'400'}}>X</span> NASA</div>
-          <button className="sidebar-close" onClick={() => setSidebarOpen(false)}><X size={28}/></button>
-        </div>
-        
-        <div style={{ flex: 1, overflowY: 'auto', paddingRight: '10px' }}>
-          <div className="sidebar-section-title"><Activity size={14}/> Live Telemetry</div>
-          
-          <div className="sidebar-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>EVENT</span><CalendarClock size={14}/></div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>68th Annual Convention</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Active Preparation</div>
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          <span className="subtitle" style={{ marginBottom: '16px' }}><CalendarClock size={16}/> Upcoming Events</span>
+          <div className="sidebar-item">
+            <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff' }}>68th Annual Convention</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Status: Preparation Phase</div>
           </div>
 
-          <div className="sidebar-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHY SYSTEM</span><Shield size={14}/></div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>Louis I. Kahn Trophy</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Compilation Open</div>
+          <span className="subtitle" style={{ marginTop: '32px', marginBottom: '16px' }}><Shield size={16}/> Active Trophies</span>
+          <div className="sidebar-item">
+            <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff' }}>Louis I. Kahn Trophy</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Focus: Documentation</div>
+          </div>
+          <div className="sidebar-item">
+            <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff' }}>Landscape Trophy</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Focus: Urban Context</div>
           </div>
 
-          <div className="sidebar-section-title" style={{ marginTop: '30px' }}><Zap size={14}/> Action Portals</div>
-          <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="sidebar-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ fontWeight: '600', fontSize: '1.1rem' }}>Official Portal Link</div><ArrowUpRight size={20} color="#fff"/>
-            </div>
+          <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ width: '100%', marginTop: '32px', textDecoration: 'none' }}>
+            Open Official Website <ArrowUpRight size={16}/>
           </a>
         </div>
       </div>
 
-      {/* 🌟 RESPONSIVE DOCK 🌟 */}
-      <div className="floating-dock">
-        {dockItems.map((item, i) => (
-          <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
+      <div className="dock">
+        {sections.map((item, i) => (
+          <div key={item.id} className={`dock-btn ${activeSection === i ? 'active' : ''}`} onClick={() => navigateTo(i)}>
             {item.icon}
             <div className="dock-tooltip">{item.label}</div>
           </div>
         ))}
       </div>
 
-      {/* 🌟 HAPTIC SCROLL ENGINE 🌟 */}
-      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
-        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>{renderFunds()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`}>{renderVault()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`}>{renderGallery()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
+      <div className="scroll-container" ref={scrollRef} onScroll={handleScroll}>
+        <section className={`section ${activeSection === 0 ? 'active' : ''}`}>{renderDashboard()}</section>
+        <section className={`section ${activeSection === 1 ? 'active' : ''}`}>{renderCrew()}</section>
+        <section className={`section ${activeSection === 2 ? 'active' : ''}`}>{renderFunds()}</section>
+        <section className={`section ${activeSection === 3 ? 'active' : ''}`}>{renderVault()}</section>
+        <section className={`section ${activeSection === 4 ? 'active' : ''}`}>{renderGallery()}</section>
+        <section className={`section ${activeSection === 5 ? 'active' : ''}`}>{renderNews()}</section>
+        <section className={`section ${activeSection === 6 ? 'active' : ''}`}>{renderUnitCouncil()}</section>
+        <section className={`section ${activeSection === 7 ? 'active' : ''}`}>{renderAI()}</section>
       </div>
 
-      {/* 🌟 OPERATIVE VIEW/DOSSIER MODAL 🌟 */}
-      {viewingCrew && (
-        <div className="modal-overlay pointer-events-auto">
-          <div className="modal-window">
+      {/* VIEW MEMBER MODAL */}
+      {viewingProfile && (
+        <div className="overlay pointer-events-auto">
+          <div className="modal">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h2 className="text-title" style={{ fontSize: '2.5rem' }}>Operative Dossier</h2>
-              <button className="btn-icon" onClick={() => setViewingCrew(null)}><X size={24}/></button>
+              <h2 className="title" style={{ fontSize: '2.5rem' }}>Profile</h2>
+              <button className="icon-btn" onClick={() => setViewingProfile(null)}><X size={24}/></button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:'16px', marginBottom:'32px' }}>
-              <div><span className="text-subtitle">Identity</span><div style={{fontSize:'1.8rem', fontWeight:'600', fontFamily:'var(--font-heading)', fontStyle:'italic'}}>{viewingCrew.name}</div></div>
-              <div><span className="text-subtitle">Role Assignment</span><div className="status-pill" style={{color:'var(--neon-cyan)', borderColor:'rgba(0,240,255,0.3)'}}>{viewingCrew.role}</div></div>
-              {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department Matrix</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType} Vector</div></div>}
-              <div><span className="text-subtitle">Generation Group</span><div style={{fontSize:'1.1rem'}}>Batch Vector: Year {viewingCrew.year}</div></div>
+              <div><span className="subtitle">Name</span><div style={{fontSize:'1.6rem', fontWeight:'700', color:'#fff'}}>{viewingProfile.name}</div></div>
+              <div><span className="subtitle">Role</span><div className="tag">{viewingProfile.role}</div></div>
+              {viewingProfile.coordinatorType && <div><span className="subtitle">Department</span><div style={{fontSize:'1.1rem', color:'#fff'}}>{viewingProfile.coordinatorType} Head</div></div>}
+              <div><span className="subtitle">Year of Study</span><div style={{fontSize:'1.1rem', color:'#fff'}}>Year {viewingProfile.year}</div></div>
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                <a href={`mailto:${viewingCrew.email}`} className="btn-primary" style={{ flex: 1 }}><Mail size={16}/> Comms</a>
-                {viewingCrew.phone && <a href={`tel:${viewingCrew.phone}`} className="btn-primary" style={{ flex: 1 }}><Phone size={16}/> Mobile</a>}
+                <a href={`mailto:${viewingProfile.email}`} className="btn" style={{ flex: 1, textDecoration: 'none' }}><Mail size={16}/> Email</a>
+                {viewingProfile.phone && <a href={`tel:${viewingProfile.phone}`} className="btn" style={{ flex: 1, textDecoration: 'none' }}><Phone size={16}/> Call</a>}
               </div>
             </div>
             
             <div style={{ display: 'flex', gap: '12px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-              {isLeadershipMode ? (
+              {isAdmin ? (
                 <>
-                  <button className="btn-primary btn-secondary" style={{flex: 1}} onClick={() => { setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Override Data</button>
-                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Erase Node</button>
+                  <button className="btn btn-outline" style={{flex: 1}} onClick={() => { setFormData(viewingProfile); setModalMode('crew'); }}><Pencil size={16}/> Edit</button>
+                  <button className="btn btn-outline" style={{color:'var(--danger)', borderColor:'rgba(255,0,85,0.3)'}} onClick={() => deleteRecord('crew', viewingProfile.id)}><Trash2 size={16}/> Delete</button>
                 </>
               ) : (
-                <div style={{fontSize:'0.8rem', color:'var(--text-secondary)', fontStyle:'italic'}}><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Elevate system status to lock/unlock editing authorizations.</div>
+                <div style={{fontSize:'0.85rem', color:'var(--text-secondary)'}}><Lock size={14} style={{display:'inline', marginBottom:'-2px'}}/> Admin access required to edit.</div>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {/* 🌟 SYNCHRONIZATION CONFIGURATION MODAL 🌟 */}
+      {/* ADD/EDIT FORM MODAL */}
       {modalMode && (
-        <div className="modal-overlay pointer-events-auto">
-          <div className="modal-window">
+        <div className="overlay pointer-events-auto">
+          <div className="modal">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
-              <h2 className="text-title" style={{ fontSize: '2rem' }}>{formPayload.id ? 'Configure' : 'Initialize'} Node</h2>
-              <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
+              <h2 className="title" style={{ fontSize: '2.5rem' }}>{formData.id ? 'Edit Data' : 'Add New'}</h2>
+              <button className="icon-btn" onClick={() => setModalMode(null)}><X size={24}/></button>
             </div>
             
-            <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(modalMode); }}>
+            <form onSubmit={(e) => { e.preventDefault(); saveToDatabase(); }}>
               
               {modalMode === 'crew' && (
                 <>
-                  <input required placeholder="Full Identity Name" className="mb-4" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
-                  <input type="email" placeholder="Email Endpoint" className="mb-4" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
-                  <input type="tel" placeholder="Mobile Number Array" className="mb-4" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
+                  <span className="subtitle">Full Name</span>
+                  <input required className="mb-4" value={formData.name||''} onChange={e=>setFormData({...formData, name:e.target.value})} />
+                  <span className="subtitle">Email Address</span>
+                  <input type="email" className="mb-4" value={formData.email||''} onChange={e=>setFormData({...formData, email:e.target.value})} />
+                  <span className="subtitle">Phone Number (Optional)</span>
+                  <input type="tel" className="mb-4" value={formData.phone||''} onChange={e=>setFormData({...formData, phone:e.target.value})} />
                   
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Hierarchy Assignment</span>
-                  <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
-                    <option value="" disabled>Select Matrix Position...</option>
-                    <option value="Member">Standard Member</option>
+                  <span className="subtitle">Role</span>
+                  <select required className="mb-4" value={formData.role||''} onChange={e=>setFormData({...formData, role:e.target.value})}>
+                    <option value="" disabled>Select Role...</option>
+                    <option value="Member">Student Member</option>
                     <option value="UD">Unit Designee (UD)</option>
                     <option value="USEC">Unit Secretary (USEC)</option>
-                    <option value="Coordinator">Executive Coordinator</option>
+                    <option value="Coordinator">Coordinator</option>
                   </select>
 
-                  {formPayload.role === 'Coordinator' && (
-                    <input required placeholder="Coordinator Vector Type (e.g., Design, Documentation)" className="mb-4" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
+                  {formData.role === 'Coordinator' && (
+                    <>
+                      <span className="subtitle">Department (e.g. Design, Events)</span>
+                      <input required className="mb-4" value={formData.coordinatorType||''} onChange={e=>setFormData({...formData, coordinatorType:e.target.value})} />
+                    </>
                   )}
 
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Generation Matrix</span>
-                  <select className="mb-4" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
+                  <span className="subtitle">Year of Study</span>
+                  <select className="mb-4" value={formData.year||'1'} onChange={e=>setFormData({...formData, year:e.target.value})}>
                     <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
                   </select>
                 </>
@@ -778,36 +668,46 @@ export default function App() {
 
               {modalMode === 'finances' && (
                 <>
-                  <span className="text-subtitle">Transaction Class</span>
-                  <select className="mb-4" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
-                    <option value="income">CREDIT (+) Incoming Pool</option>
-                    <option value="expense">DEBIT (-) Outgoing Expenditure</option>
+                  <span className="subtitle">Money Type</span>
+                  <select className="mb-4" value={formData.type||'income'} onChange={e=>setFormData({...formData, type:e.target.value})}>
+                    <option value="income">Income (Money In)</option>
+                    <option value="expense">Expense (Money Out)</option>
                   </select>
-                  <span className="text-subtitle">Narrative Descriptor</span>
-                  <input required placeholder="Transaction Matrix Description" className="mb-4" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
-                  <span className="text-subtitle">Volume Transferred (INR)</span>
-                  <input required type="number" placeholder="Value Amount (INR)" className="mb-4" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
+                  <span className="subtitle">Description</span>
+                  <input required className="mb-4" value={formData.description||''} onChange={e=>setFormData({...formData, description:e.target.value})} />
+                  <span className="subtitle">Amount (INR)</span>
+                  <input required type="number" className="mb-4" value={formData.amount||''} onChange={e=>setFormData({...formData, amount:e.target.value})} />
                 </>
               )}
 
               {modalMode === 'hq' && (
                 <>
-                  <input placeholder="Unit Ident Code (e.g. Z649)" className="mb-4" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
-                  <input placeholder="Core Gateway Email Endpoint" className="mb-4" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
-                  <input type="number" placeholder="Target Financial Goal (INR)" className="mb-4" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
+                  <span className="subtitle">Unit Code</span>
+                  <input className="mb-4" value={formData.unitCode||''} onChange={e=>setFormData({...formData, unitCode:e.target.value})} />
+                  <span className="subtitle">Official College Email</span>
+                  <input className="mb-4" value={formData.officialEmail||''} onChange={e=>setFormData({...formData, officialEmail:e.target.value})} />
+                  <span className="subtitle">Financial Goal (INR)</span>
+                  <input type="number" className="mb-4" value={formData.financialGoal||''} onChange={e=>setFormData({...formData, financialGoal:e.target.value})} />
                 </>
               )}
 
               {['vault', 'gallery', 'news'].includes(modalMode) && (
                 <>
-                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  {modalMode !== 'news' && <input placeholder="Data Link / URL Target" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
-                  <textarea placeholder="Write content payload description..." className="mb-4" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
+                  <span className="subtitle">Title</span>
+                  <input required className="mb-4" value={formData.title||''} onChange={e=>setFormData({...formData, title:e.target.value})} />
+                  {modalMode !== 'news' && (
+                    <>
+                      <span className="subtitle">Link / URL</span>
+                      <input className="mb-4" value={formData.link||''} onChange={e=>setFormData({...formData, link:e.target.value})} />
+                    </>
+                  )}
+                  <span className="subtitle">Description</span>
+                  <textarea className="mb-4" rows="4" value={formData.description||formData.content||''} onChange={e=>setFormData({...formData, description:e.target.value, content:e.target.value})}></textarea>
                 </>
               )}
 
-              <button type="submit" className="btn-primary w-full justify-center mt-4" style={{ padding: '18px', fontSize: '1rem', letterSpacing: '0.1em' }}>
-                <TerminalSquare size={18}/> COMMIT CONFIGURATION
+              <button type="submit" className="btn" style={{ width: '100%', marginTop: '20px', padding: '16px' }}>
+                Save Data
               </button>
             </form>
           </div>
