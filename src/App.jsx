@@ -5,7 +5,7 @@ import emailjs from '@emailjs/browser';
 import { 
   Shield, ShieldAlert, Plus, Trash2, Users, Wallet, 
   Archive, FileImage, Rss, LayoutDashboard, Settings, 
-  X, ArrowUpRight, Component, Radio, Mail, Globe, Target
+  X, ArrowUpRight, Component, Radio, Mail, Globe
 } from 'lucide-react';
 
 // ==========================================
@@ -23,7 +23,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// AUTHORIZED COMMAND CREDENTIAL
+// AUTHORIZED COMMAND CREDENTIAL (UPDATED)
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
@@ -114,7 +114,6 @@ const GLOBAL_STYLES = `
   .dock-item.active { color: #000; transform: translateY(-8px); }
   .dock-item.active::before { opacity: 1; transform: scale(1); box-shadow: 0 10px 20px rgba(255,255,255,0.3); }
   
-  /* Icon Ripple Click Effect */
   .dock-item:active::after {
     content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 2px solid var(--accent);
     animation: iconRipple 0.5s ease-out forwards;
@@ -152,10 +151,9 @@ const GLOBAL_STYLES = `
   .input-element:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); }
   
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(30px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: modalFade 0.4s var(--ease-apple); }
-  .modal-window { background: #08080a; border: 1px solid var(--border-subtle); width: 100%; max-width: 540px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); }
+  .modal-window { background: #08080a; border: 1px solid var(--border-subtle); width: 100%; max-width: 540px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
   @keyframes modalFade { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-  /* Coordinator Input Slide Animation */
   .slide-in-input { animation: slideDown 0.4s var(--ease-apple) forwards; transform-origin: top; }
   @keyframes slideDown { from { opacity: 0; transform: scaleY(0.8) translateY(-10px); } to { opacity: 1; transform: scaleY(1) translateY(0); } }
 
@@ -184,13 +182,15 @@ export default function App() {
   const [formPayload, setFormPayload] = useState({});
   const scrollEngineRef = useRef(null);
 
+  // SEVEN SECTIONS: Dashboard, Crew, Funds, Vault, Gallery, News, Council
   const dockItems = [
-    { id: 'core', icon: <LayoutDashboard size={20} strokeWidth={1.5} />, label: 'Command' },
-    { id: 'crew', icon: <Users size={20} strokeWidth={1.5} />, label: 'Personnel' },
+    { id: 'core', icon: <LayoutDashboard size={20} strokeWidth={1.5} />, label: 'Dashboard' },
+    { id: 'crew', icon: <Users size={20} strokeWidth={1.5} />, label: 'Unit Crew' },
     { id: 'funds', icon: <Wallet size={20} strokeWidth={1.5} />, label: 'Treasury' },
     { id: 'vault', icon: <Archive size={20} strokeWidth={1.5} />, label: 'Vault' },
     { id: 'gallery', icon: <FileImage size={20} strokeWidth={1.5} />, label: 'Gallery' },
-    { id: 'hq', icon: <Settings size={20} strokeWidth={1.5} />, label: 'HQ Config' }
+    { id: 'news', icon: <Rss size={20} strokeWidth={1.5} />, label: 'Live News' },
+    { id: 'hq', icon: <Settings size={20} strokeWidth={1.5} />, label: 'Unit Council' }
   ];
 
   useEffect(() => {
@@ -260,10 +260,6 @@ export default function App() {
           <div className="text-metric">{newsData.length}</div>
         </div>
       </div>
-      <div className="bento-card" style={{ marginTop: '10px' }}>
-        <span className="text-subtitle">System Status Log</span>
-        <div style={{ color: 'var(--income)', fontFamily: 'monospace', fontSize: '0.9rem', marginTop: '16px' }}>&gt; Core Initialization Complete.<br/>&gt; Real-time Database Socket: CONNECTED.<br/>&gt; NASA Comm Relay: STANDBY.</div>
-      </div>
     </div>
   );
 
@@ -274,7 +270,7 @@ export default function App() {
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="text-subtitle">Database</span><h1 className="text-title">Unit Crew</h1></div>
+          <div><span className="text-subtitle">Personnel</span><h1 className="text-title">Unit Crew</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member' }); setModalMode('crew'); }}><Plus size={16}/> Assign Role</button>}
         </div>
         {order.map(roleKey => allocation[roleKey] && (
@@ -307,14 +303,13 @@ export default function App() {
     const net = income - expense;
     const goal = Number(leadership.financialGoal) || 1; 
 
-    // Donut SVG Math
     const incPercent = total === 0 ? 0 : (income / total) * 100;
     const expPercent = total === 0 ? 0 : (expense / total) * 100;
 
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="text-subtitle">Economics</span><h1 className="text-title">Treasury Matrix</h1></div>
+          <div><span className="text-subtitle">Economics</span><h1 className="text-title">Treasury</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Log Entry</button>}
         </div>
 
@@ -344,7 +339,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* EXPENSE DATA TABLE */}
         <div className="bento-card" style={{ padding: '0', overflowX: 'auto' }}>
            <table className="pro-table">
              <thead><tr><th>Transaction Matrix</th><th>Description Detail</th><th>Value Flow</th>{isLeadershipMode && <th>Action</th>}</tr></thead>
@@ -370,7 +364,7 @@ export default function App() {
   const renderVault = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between' }}>
-        <div><span className="text-subtitle">Storage</span><h1 className="text-title">Knowledge Vault</h1></div>
+        <div><span className="text-subtitle">Storage</span><h1 className="text-title">Vault</h1></div>
         {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Design' }); setModalMode('vault'); }}><Plus size={16}/> Upload</button>}
       </div>
       <div className="bento-grid-3">
@@ -391,13 +385,13 @@ export default function App() {
   const renderGallery = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between' }}>
-        <div><span className="text-subtitle">Showcase</span><h1 className="text-title">Portfolio Hub</h1></div>
+        <div><span className="text-subtitle">Showcase</span><h1 className="text-title">Gallery Hub</h1></div>
         {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Project</button>}
       </div>
       <div className="bento-grid-2">
         {galleryData.map(g => (
           <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-            {/* Safely rendering background images without breaking Vite compiler */}
+            {/* React syntax safe inline style using string concatenation */}
             <div style={{ height: '220px', background: g.fileType === 'Image' ? 'url("' + g.link + '") center/cover' : 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {g.fileType !== 'Image' && <Component size={32} color="var(--text-tertiary)" />}
             </div>
@@ -415,10 +409,35 @@ export default function App() {
     </div>
   );
 
+  const renderNews = () => (
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Communications</span><h1 className="text-title">Live News Feed</h1></div>
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Radio size={16}/> New Broadcast</button>}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '16px' }}>
+        {newsData.length === 0 && <div className="text-body" style={{padding:'0 16px'}}>No active broadcasts on the network.</div>}
+        {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
+          <div key={n.id} className="bento-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <span className="status-pill">{n.tag}</span>
+              {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={16}/></button>}
+            </div>
+            <div style={{ fontSize: '1.75rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginBottom: '16px' }}>{n.title}</div>
+            <div className="text-body" style={{ whiteSpace: 'pre-wrap' }}>{n.content}</div>
+            <div className="text-subtitle" style={{ marginTop: '32px', borderTop: '1px solid var(--border-subtle)', paddingTop: '24px', marginBottom: 0 }}>
+              Published: {new Date(n.timestamp).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const renderHQ = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between' }}>
-        <div><span className="text-subtitle">Administration</span><h1 className="text-title">HQ Config</h1></div>
+        <div><span className="text-subtitle">Administration</span><h1 className="text-title">Unit Council</h1></div>
         {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Config</button>}
       </div>
       <div className="bento-grid-2">
@@ -487,14 +506,15 @@ export default function App() {
         ))}
       </div>
 
-      {/* KINETIC ENGINE WIPE CONTAINER */}
+      {/* KINETIC ENGINE WIPE CONTAINER (All 7 Sections Included) */}
       <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
         <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>{renderFunds()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`}>{renderVault()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`}>{renderGallery()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderHQ()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderHQ()}</section>
       </div>
 
       {/* PRO DATA MODAL */}
@@ -519,7 +539,7 @@ export default function App() {
                     <option value="" disabled>Select Core Role...</option>
                     <option value="UD">Unit Designee (UD)</option>
                     <option value="USEC">Unit Secretary (USEC)</option>
-                    <option value="Coordinator">Coordinator Array</option>
+                    <option value="Coordinator">Coordinator</option>
                     <option value="Member">Standard Member</option>
                   </select>
 
@@ -568,7 +588,16 @@ export default function App() {
                 </>
               )}
 
-              {/* HQ CONFIG FORM */}
+              {/* LIVE NEWS FEED FORM */}
+              {modalMode === 'news' && (
+                <>
+                  <input required placeholder="Broadcast Group Tag" className="input-element" value={formPayload.tag||''} onChange={e=>setFormPayload({...formPayload, tag:e.target.value})} />
+                  <input required placeholder="Transmission Headline" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <textarea rows="5" placeholder="Network-wide Broadcast Message Body Payload Data..." className="input-element" value={formPayload.content||''} onChange={e=>setFormPayload({...formPayload, content:e.target.value})}></textarea>
+                </>
+              )}
+
+              {/* UNIT COUNCIL / HQ CONFIG FORM */}
               {modalMode === 'hq' && (
                 <>
                   <span className="text-subtitle">Institution Settings</span>
