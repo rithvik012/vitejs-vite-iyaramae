@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch } from "firebase/firestore";
-import emailjs from '@emailjs/browser';
 import { 
   Shield, ShieldAlert, Plus, Trash2, Users, Wallet, 
   Archive, FileImage, Rss, LayoutDashboard, Settings, 
-  X, ArrowUpRight, Component, Radio, Mail, Globe
+  X, ArrowUpRight, Component, Radio, Mail, Globe, 
+  Menu, ChevronRight, Activity, Calendar, Award
 } from 'lucide-react';
 
 // ==========================================
@@ -23,7 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// AUTHORIZED COMMAND CREDENTIAL (UPDATED)
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
@@ -35,105 +34,100 @@ const GLOBAL_STYLES = `
   :root {
     color-scheme: dark !important; 
     --bg-base: #020204;
-    --bg-surface: rgba(10, 10, 12, 0.45);
-    --bg-surface-hover: rgba(22, 22, 26, 0.7);
+    --bg-surface: rgba(12, 12, 16, 0.5);
+    --bg-surface-hover: rgba(22, 22, 28, 0.8);
     --text-primary: #ffffff;
     --text-secondary: #a1a1aa;
     --border-subtle: rgba(255, 255, 255, 0.08);
     --accent: #ffffff;
     --danger: #f43f5e;
     --income: #10b981;
+    --council: #eab308;
+    --nasa: #3b82f6;
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
     --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-  body, html { 
-    background-color: var(--bg-base); color: var(--text-primary);
-    font-family: var(--font-body); overflow: hidden; height: 100dvh;
-  }
+  body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; }
   input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; }
   ::-webkit-scrollbar { width: 0px; }
 
-  /* Ambient Blur */
-  .ambient-aurora { position: fixed; inset: 0; z-index: -3; pointer-events: none; background: #020204; overflow: hidden; }
-  .ambient-aurora::before, .ambient-aurora::after {
-    content: ''; position: absolute; width: 700px; height: 700px; border-radius: 50%; filter: blur(140px); opacity: 0.12;
-    animation: auroraFloat 25s infinite alternate var(--ease-apple);
+  /* 🌟 BACKGROUND ANIMATRONICS (CYBER-GRID) 🌟 */
+  .animatronic-bg { position: fixed; inset: 0; z-index: -4; background: linear-gradient(to bottom, #020204, #050508); overflow: hidden; }
+  .cyber-grid {
+    position: absolute; width: 200vw; height: 200vh; top: -50vh; left: -50vw;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+    animation: gridMove 20s linear infinite;
   }
-  .ambient-aurora::before { background: #2563eb; top: -150px; left: -150px; }
-  .ambient-aurora::after { background: #7c3aed; bottom: -150px; right: -150px; animation-delay: -8s; }
-  @keyframes auroraFloat { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(80px, 60px) scale(1.15); } }
+  @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
+  
+  .ambient-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15; animation: orbFloat 20s infinite alternate var(--ease-apple); }
+  .orb-1 { width: 600px; height: 600px; background: #2563eb; top: -100px; left: -100px; }
+  .orb-2 { width: 500px; height: 500px; background: #7c3aed; bottom: -100px; right: -100px; animation-delay: -5s; }
+  @keyframes orbFloat { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(100px, 50px) scale(1.2); } }
 
-  /* 🌟 ADVANCED RISING IRIS WIPE TRANSITION 🌟 */
-  .kinetic-scroll-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; padding-right: 320px; }
+  /* 🌟 GLOBAL BOOT SPLASH SCREEN 🌟 */
+  .global-splash { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1.5s ease-in-out, visibility 1.5s; }
+  .global-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .boot-logo { font-family: var(--font-heading); font-size: 3rem; letter-spacing: 0.3em; margin-bottom: 30px; animation: pulse 2s infinite; }
+  .progress-container { width: 300px; height: 2px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent); width: 0%; animation: loadBar 3s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
+  @keyframes loadBar { 0% { width: 0%; } 40% { width: 30%; } 70% { width: 80%; } 100% { width: 100%; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); } 50% { opacity: 0.5; filter: drop-shadow(0 0 0px transparent); } }
+
+  /* 🌟 RISING IRIS WIPE TRANSITION 🌟 */
+  .kinetic-scroll-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; transition: padding 0.5s var(--ease-apple); }
   .scrolling-section {
     min-height: 100vh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 24px 120px 24px;
-    opacity: 0; filter: blur(20px); transform: translateY(30px) scale(0.95);
-    clip-path: circle(0% at 50% 100%);
+    opacity: 0; filter: blur(20px); transform: translateY(30px) scale(0.95); clip-path: circle(0% at 50% 100%);
     transition: clip-path 1.2s var(--ease-apple), opacity 0.8s var(--ease-apple), filter 0.8s var(--ease-apple), transform 1s var(--ease-apple);
   }
   .scrolling-section.view-active { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); clip-path: circle(180% at 50% 100%); }
 
   /* Layout */
-  .bento-container { width: 100%; max-width: 1050px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scrollbar-width: none; }
+  .bento-container { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scrollbar-width: none; }
   .bento-card { background: var(--bg-surface); backdrop-filter: blur(40px); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; transition: all 0.4s var(--ease-apple); position: relative; overflow: hidden; }
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
 
-  /* 🌟 NASA LIVE FEED SIDEBAR 🌟 */
+  /* 🌟 COLLAPSIBLE NASA SIDEBAR 🌟 */
   .nasa-sidebar {
-    position: fixed; right: 0; top: 0; bottom: 0; width: 320px;
-    background: rgba(5, 5, 8, 0.7); backdrop-filter: blur(50px);
-    border-left: 1px solid var(--border-subtle); z-index: 80;
+    position: fixed; right: -360px; top: 0; bottom: 0; width: 360px;
+    background: rgba(8, 8, 12, 0.85); backdrop-filter: blur(60px);
+    border-left: 1px solid var(--border-subtle); z-index: 95;
     padding: 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -20px 0 60px rgba(0,0,0,0.6); transition: transform 0.4s var(--ease-apple);
+    box-shadow: -20px 0 60px rgba(0,0,0,0.8); transition: right 0.6s var(--ease-apple);
   }
-  .nasa-feed-item {
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
-    padding: 16px; border-radius: 12px; margin-bottom: 12px;
-    transition: all 0.3s var(--ease-apple); cursor: pointer; position: relative; overflow: hidden;
+  .nasa-sidebar.open { right: 0; }
+  .sidebar-toggle {
+    position: fixed; right: 24px; top: 24px; z-index: 96;
+    background: var(--bg-surface); border: 1px solid var(--border-subtle); backdrop-filter: blur(20px);
+    border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.3s;
   }
+  .sidebar-toggle:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+  .nasa-feed-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); padding: 16px; border-radius: 12px; margin-bottom: 12px; transition: all 0.3s var(--ease-apple); cursor: pointer; position: relative; overflow: hidden; }
   .nasa-feed-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: background 0.3s; }
   .nasa-feed-item:hover { transform: translateX(-5px); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); }
-  .nasa-feed-item:hover::before { background: var(--accent); }
+  .nasa-feed-item:hover::before { background: var(--nasa); }
 
-  /* 🌟 LIQUID SPLASH DOCK ICONS 🌟 */
+  /* 🌟 DOCK ICONS 🌟 */
   .floating-dock {
-    position: fixed; bottom: 32px; left: calc(50% - 160px); transform: translateX(-50%);
-    background: rgba(10, 10, 12, 0.7); backdrop-filter: blur(30px); border: 1px solid var(--border-subtle); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(40px); border: 1px solid var(--border-subtle); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.8);
   }
-  .dock-item {
-    width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .dock-item::before {
-    content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--accent); opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-apple); z-index: -1;
-  }
+  .dock-item { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .dock-item::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--accent); opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-apple); z-index: -1; }
   .dock-item.active { color: #000; transform: translateY(-8px); }
   .dock-item.active::before { opacity: 1; transform: scale(1); box-shadow: 0 10px 20px rgba(255,255,255,0.3); }
-  
-  .dock-item:active::after {
-    content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 2px solid var(--accent);
-    animation: iconRipple 0.5s ease-out forwards;
-  }
-  @keyframes iconRipple { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 
-  .dock-tooltip { position: absolute; top: -46px; background: rgba(5,5,8,0.95); padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border-subtle); opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; color: var(--text-primary); pointer-events: none; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
-  .dock-item:hover .dock-tooltip { opacity: 1; top: -52px; }
-
-  /* 🌟 PRO TREASURY TABLE & PIE CHART 🌟 */
-  .pro-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  .pro-table th { text-align: left; padding: 16px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
-  .pro-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 0.95rem; }
-  .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
-  
-  .donut-chart { width: 180px; height: 180px; transform: rotate(-90deg); filter: drop-shadow(0px 0px 10px rgba(0,0,0,0.5)); }
-  .donut-segment-income { stroke: var(--income); fill: transparent; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 1.5s var(--ease-apple); }
-  .donut-segment-expense { stroke: var(--danger); fill: transparent; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 1.5s var(--ease-apple); }
-
-  /* Typography & Forms */
+  /* Typography & Utilities */
   .text-title { font-family: var(--font-heading); font-weight: 500; font-size: 3.2rem; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-primary); }
   .text-subtitle { font-family: var(--font-body); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.12em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 12px; display: block;}
   .text-metric { font-family: var(--font-heading); font-weight: 300; font-size: 3.2rem; letter-spacing: -0.04em; color: var(--text-primary); }
@@ -144,9 +138,14 @@ const GLOBAL_STYLES = `
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s;}
   .btn-icon:hover { color: var(--text-primary); background: rgba(255,255,255,0.08); }
   .btn-icon.danger:hover { color: var(--danger); background: rgba(244, 63, 94, 0.12); }
-  .status-pill { display: inline-flex; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); }
   
-  .top-bar { position: fixed; top: 0; left: 0; right: 320px; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; }
+  .status-pill { display: inline-flex; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); }
+  .council-tag { background: rgba(234, 179, 8, 0.15); color: var(--council); border-color: rgba(234, 179, 8, 0.3); box-shadow: 0 0 15px rgba(234, 179, 8, 0.2); }
+  
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
+  .top-bar > * { pointer-events: auto; }
+  .logo-text { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; }
+  
   .input-element { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 14px; margin-bottom: 16px; transition: all 0.3s; font-size: 0.95rem; }
   .input-element:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); }
   
@@ -154,21 +153,25 @@ const GLOBAL_STYLES = `
   .modal-window { background: #08080a; border: 1px solid var(--border-subtle); width: 100%; max-width: 540px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
   @keyframes modalFade { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-  .slide-in-input { animation: slideDown 0.4s var(--ease-apple) forwards; transform-origin: top; }
-  @keyframes slideDown { from { opacity: 0; transform: scaleY(0.8) translateY(-10px); } to { opacity: 1; transform: scaleY(1) translateY(0); } }
+  /* Donut Chart */
+  .donut-chart { width: 180px; height: 180px; transform: rotate(-90deg); filter: drop-shadow(0px 0px 10px rgba(0,0,0,0.5)); }
+  .donut-segment-income { stroke: var(--income); fill: transparent; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 1.5s var(--ease-apple); }
+  .donut-segment-expense { stroke: var(--danger); fill: transparent; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 1.5s var(--ease-apple); }
+  .pro-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .pro-table th { text-align: left; padding: 16px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+  .pro-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 0.95rem; }
 
-  @media (max-width: 1024px) {
-    .nasa-sidebar { display: none; }
-    .kinetic-scroll-engine { padding-right: 0; }
-    .floating-dock { left: 50%; }
-    .top-bar { right: 0; }
-  }
+  /* Live Telemetry Feed */
+  .telemetry-feed { display: flex; flex-direction: column; gap: 12px; height: 100%; overflow-y: auto; padding-right: 10px; }
+  .telemetry-card { background: rgba(59, 130, 246, 0.05); border-left: 3px solid var(--nasa); padding: 16px; border-radius: 0 12px 12px 0; }
 `;
 
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [liveNasaIndex, setLiveNasaIndex] = useState(0);
 
   // Data States
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
@@ -182,19 +185,33 @@ export default function App() {
   const [formPayload, setFormPayload] = useState({});
   const scrollEngineRef = useRef(null);
 
-  // SEVEN SECTIONS: Dashboard, Crew, Funds, Vault, Gallery, News, Council
+  // Simulated Live NASA API Data
+  const nasaLiveTelemetry = [
+    { type: 'EVENT', title: '68th Annual NASA Convention', date: 'Upcoming: 2026', desc: 'National Association of Students of Architecture main convention.' },
+    { type: 'TROPHY', title: 'Louis I. Kahn Trophy', date: 'Submission Open', desc: 'Documentation of architectural heritage and built environment.' },
+    { type: 'PROGRAM', title: 'Observer Program Cycle 3', date: 'Active Now', desc: 'Integration protocol for newly instituted architecture colleges.' },
+    { type: 'TROPHY', title: 'Reubens Trophy', date: 'Evaluation Phase', desc: 'Academic excellence and portfolio showcase evaluation.' }
+  ];
+
   const dockItems = [
-    { id: 'core', icon: <LayoutDashboard size={20} strokeWidth={1.5} />, label: 'Dashboard' },
-    { id: 'crew', icon: <Users size={20} strokeWidth={1.5} />, label: 'Unit Crew' },
-    { id: 'funds', icon: <Wallet size={20} strokeWidth={1.5} />, label: 'Treasury' },
-    { id: 'vault', icon: <Archive size={20} strokeWidth={1.5} />, label: 'Vault' },
-    { id: 'gallery', icon: <FileImage size={20} strokeWidth={1.5} />, label: 'Gallery' },
-    { id: 'news', icon: <Rss size={20} strokeWidth={1.5} />, label: 'Live News' },
-    { id: 'hq', icon: <Settings size={20} strokeWidth={1.5} />, label: 'Unit Council' }
+    { id: 'core', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+    { id: 'crew', icon: <Users size={20} />, label: 'Unit Crew' },
+    { id: 'funds', icon: <Wallet size={20} />, label: 'Treasury' },
+    { id: 'vault', icon: <Archive size={20} />, label: 'Vault' },
+    { id: 'gallery', icon: <FileImage size={20} />, label: 'Gallery' },
+    { id: 'news', icon: <Rss size={20} />, label: 'Live News' },
+    { id: 'hq', icon: <Settings size={20} />, label: 'Unit Council' }
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 1500);
+    // Cinematic Boot Sequence
+    setTimeout(() => setIsBooting(false), 3500);
+
+    // Live NASA Feed Rotator
+    const feedInterval = setInterval(() => {
+      setLiveNasaIndex(prev => (prev + 1) % nasaLiveTelemetry.length);
+    }, 6000);
+
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -203,7 +220,7 @@ export default function App() {
       onSnapshot(collection(db, "gallery"), s => setGalleryData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(collection(db, "news"), s => setNewsData(s.docs.map(d => ({ id: d.id, ...d.data() }))))
     ];
-    return () => unsubs.forEach(unsub => unsub());
+    return () => { unsubs.forEach(unsub => unsub()); clearInterval(feedInterval); };
   }, []);
 
   const handleEngineScroll = () => {
@@ -247,48 +264,50 @@ export default function App() {
     <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">System Overview</span><h1 className="text-title">Command Center</h1></div>
       <div className="bento-grid-3">
-        <div className="bento-card">
-          <span className="text-subtitle">Active Personnel</span>
-          <div className="text-metric">{crewData.length}</div>
-        </div>
-        <div className="bento-card">
-          <span className="text-subtitle">Vault Assets</span>
-          <div className="text-metric">{vaultData.length}</div>
-        </div>
-        <div className="bento-card">
-          <span className="text-subtitle">Broadcasts</span>
-          <div className="text-metric">{newsData.length}</div>
-        </div>
+        <div className="bento-card"><span className="text-subtitle">Active Personnel</span><div className="text-metric">{crewData.length}</div></div>
+        <div className="bento-card"><span className="text-subtitle">Vault Assets</span><div className="text-metric">{vaultData.length}</div></div>
+        <div className="bento-card"><span className="text-subtitle">Broadcasts</span><div className="text-metric">{newsData.length}</div></div>
       </div>
     </div>
   );
 
   const renderCrew = () => {
-    const allocation = crewData.reduce((acc, u) => { const r = u.role||"Member"; if(!acc[r]) acc[r]=[]; acc[r].push(u); return acc; }, {});
-    const order = ['UD', 'USEC', 'Coordinator', 'Member']; // Hierarchy Sort
-    
+    // Sort logic: 1st Year to 5th Year, then Alumni.
+    const sortedCrew = [...crewData].sort((a, b) => {
+      const order = { "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "Alumni": 6 };
+      return (order[a.year] || 99) - (order[b.year] || 99);
+    });
+
+    // Group by Year for display
+    const allocation = sortedCrew.reduce((acc, u) => { const y = u.year||"Unassigned"; if(!acc[y]) acc[y]=[]; acc[y].push(u); return acc; }, {});
+
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="text-subtitle">Personnel</span><h1 className="text-title">Unit Crew</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member' }); setModalMode('crew'); }}><Plus size={16}/> Assign Role</button>}
+          <div><span className="text-subtitle">Public Roster</span><h1 className="text-title">Unit Crew</h1></div>
+          {/* PUBLIC BUTTON: Anyone can add themselves */}
+          <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Your Profile</button>
         </div>
-        {order.map(roleKey => allocation[roleKey] && (
-          <div key={roleKey} style={{ marginTop: '24px' }}>
-            <span className="text-subtitle" style={{ padding: '0 16px' }}>{roleKey === 'UD' ? 'Unit Designee' : roleKey === 'USEC' ? 'Unit Secretary' : roleKey}</span>
+        
+        {Object.keys(allocation).map(year => (
+          <div key={year} style={{ marginTop: '24px' }}>
+            <span className="text-subtitle" style={{ padding: '0 16px' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `Year ${year}`}</span>
             <div className="bento-grid-2" style={{ marginTop: '16px' }}>
-              {allocation[roleKey].map(m => (
-                <div key={m.id} className="bento-card" style={{ padding: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                    <span className="status-pill" style={{ color: roleKey==='UD'||roleKey==='USEC' ? 'var(--income)' : 'var(--text-primary)' }}>
-                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                    </span>
-                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('crew', m.id)}><Trash2 size={14}/></button>}
+              {allocation[year].map(m => {
+                const isCouncil = ['UD', 'USEC', 'Coordinator'].includes(m.role);
+                return (
+                  <div key={m.id} className="bento-card" style={{ padding: '24px', border: isCouncil ? '1px solid rgba(234, 179, 8, 0.3)' : '1px solid var(--border-subtle)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                      <span className={`status-pill ${isCouncil ? 'council-tag' : ''}`}>
+                        {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                      </span>
+                      {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('crew', m.id)}><Trash2 size={14}/></button>}
+                    </div>
+                    <div style={{ fontSize: '1.4rem', fontWeight: '600' }}>{m.name}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>{m.email}</div>
                   </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '600' }}>{m.name}</div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>{m.email}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
@@ -391,7 +410,6 @@ export default function App() {
       <div className="bento-grid-2">
         {galleryData.map(g => (
           <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-            {/* React syntax safe inline style using string concatenation */}
             <div style={{ height: '220px', background: g.fileType === 'Image' ? 'url("' + g.link + '") center/cover' : 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {g.fileType !== 'Image' && <Component size={32} color="var(--text-tertiary)" />}
             </div>
@@ -410,67 +428,125 @@ export default function App() {
   );
 
   const renderNews = () => (
-    <div className="bento-container">
+    <div className="bento-container" style={{ maxWidth: '1200px' }}>
       <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
         <div><span className="text-subtitle">Communications</span><h1 className="text-title">Live News Feed</h1></div>
         {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Radio size={16}/> New Broadcast</button>}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '16px' }}>
-        {newsData.length === 0 && <div className="text-body" style={{padding:'0 16px'}}>No active broadcasts on the network.</div>}
-        {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-          <div key={n.id} className="bento-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <span className="status-pill">{n.tag}</span>
-              {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={16}/></button>}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginTop: '16px' }}>
+        {/* Left Side: Unit Broadcasts */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <span className="text-subtitle">Unit Local Broadcasts</span>
+          {newsData.length === 0 && <div className="text-body">No active broadcasts on the network.</div>}
+          {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
+            <div key={n.id} className="bento-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <span className="status-pill">{n.tag}</span>
+                {isLeadershipMode && <button className="btn-icon danger" style={{margin:'-6px'}} onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={16}/></button>}
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginBottom: '16px' }}>{n.title}</div>
+              <div className="text-body" style={{ whiteSpace: 'pre-wrap' }}>{n.content}</div>
+              <div className="text-subtitle" style={{ marginTop: '32px', borderTop: '1px solid var(--border-subtle)', paddingTop: '24px', marginBottom: 0 }}>
+                Published: {new Date(n.timestamp).toLocaleString()}
+              </div>
             </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginBottom: '16px' }}>{n.title}</div>
-            <div className="text-body" style={{ whiteSpace: 'pre-wrap' }}>{n.content}</div>
-            <div className="text-subtitle" style={{ marginTop: '32px', borderTop: '1px solid var(--border-subtle)', paddingTop: '24px', marginBottom: 0 }}>
-              Published: {new Date(n.timestamp).toLocaleString()}
-            </div>
+          ))}
+        </div>
+
+        {/* Right Side: NASA Auto-Uplink */}
+        <div className="bento-card" style={{ background: 'rgba(5,5,8,0.6)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
+             <Activity size={20} color="var(--nasa)" />
+             <span className="text-subtitle" style={{ margin: 0, color: 'var(--nasa)' }}>NASA Official Uplink</span>
           </div>
-        ))}
+          <div className="telemetry-feed">
+             {nasaLiveTelemetry.map((item, i) => (
+                <div key={i} className="telemetry-card" style={{ opacity: i === liveNasaIndex ? 1 : 0.5, transform: i === liveNasaIndex ? 'scale(1.02)' : 'scale(1)', transition: 'all 0.5s' }}>
+                  <span className="status-pill" style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--nasa)', border: 'none', marginBottom: '8px' }}>{item.type}</span>
+                  <div style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '4px' }}>{item.title}</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12}/> {item.date}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>{item.desc}</div>
+                </div>
+             ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 
-  const renderHQ = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between' }}>
-        <div><span className="text-subtitle">Administration</span><h1 className="text-title">Unit Council</h1></div>
-        {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Config</button>}
-      </div>
-      <div className="bento-grid-2">
+  const renderUnitCouncil = () => {
+    // Dynamically fetch UD, USEC, and Coordinators for the HQ Page
+    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
+    
+    return (
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between' }}>
+          <div><span className="text-subtitle">Executive Board</span><h1 className="text-title">Unit Council</h1></div>
+          {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Config</button>}
+        </div>
+
         <div className="bento-card">
-          <span className="text-subtitle">Institution Hash</span>
+          <span className="text-subtitle">Institution Routing</span>
           <div style={{ fontSize: '2.5rem', fontWeight: '600', margin: '10px 0' }}>Unit {leadership.unitCode}</div>
           <div className="text-body" style={{fontFamily: 'monospace'}}>{leadership.officialEmail}</div>
         </div>
-        <div className="bento-card">
-          <span className="text-subtitle">Financial Goal Target</span>
-          <div style={{ fontSize: '2.5rem', fontWeight: '600', margin: '10px 0', color: 'var(--income)' }}>₹{Number(leadership.financialGoal || 0).toLocaleString()}</div>
-          <div className="text-body">Annual Operations Target</div>
+
+        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '20px' }}>Active Council Members</span>
+        <div className="bento-grid-2">
+          {councilMembers.length === 0 && <div className="text-body" style={{padding:'0 16px'}}>No council members assigned yet. Use the Crew tab to assign roles.</div>}
+          {councilMembers.map(m => (
+            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(234, 179, 8, 0.3)', background: 'linear-gradient(145deg, rgba(10,10,12,0.8), rgba(234,179,8,0.05))' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <span className="status-pill council-tag">
+                  {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                </span>
+                <Award size={20} color="var(--council)" opacity={0.5} />
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: '600' }}>{m.name}</div>
+              <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>{m.email}</div>
+              {m.phone && <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>{m.phone}</div>}
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
-      <div className="ambient-aurora"></div>
+      
+      {/* 🌟 BACKGROUND ANIMATRONICS 🌟 */}
+      <div className="animatronic-bg">
+        <div className="cyber-grid"></div>
+        <div className="ambient-orb orb-1"></div>
+        <div className="ambient-orb orb-2"></div>
+      </div>
 
-      {/* NASA INDIA LIVE SIDEBAR */}
-      <div className="nasa-sidebar">
+      {/* 🌟 FULL SCREEN BOOT SPLASH 🌟 */}
+      <div className={`global-splash ${!isBooting ? 'hidden' : ''}`}>
+         <div className="boot-logo">RSA CORE</div>
+         <div className="text-subtitle" style={{ marginBottom: '20px', color: 'var(--nasa)' }}>INITIALIZING TELEMETRY...</div>
+         <div className="progress-container"><div className="progress-bar"></div></div>
+      </div>
+
+      {/* 🌟 SIDEBAR TOGGLE BUTTON 🌟 */}
+      <div className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+        {sidebarOpen ? <ChevronRight size={24} color="var(--text-primary)" /> : <Menu size={24} color="var(--text-primary)" />}
+      </div>
+
+      {/* 🌟 COLLAPSIBLE NASA SIDEBAR 🌟 */}
+      <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-           <Globe size={24} color="var(--accent)" />
+           <Globe size={24} color="var(--nasa)" />
            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.4rem', margin: 0 }}>NASA India</h2>
         </div>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '30px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>Secure Communications Relay & Operations Portal</p>
         
         <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div className="nasa-feed-item">
-            <span className="text-subtitle" style={{ color: '#3b82f6', marginBottom: '8px' }}>Official Portal</span>
+            <span className="text-subtitle" style={{ color: 'var(--nasa)', marginBottom: '8px' }}>Official Portal</span>
             <div style={{ fontSize: '0.95rem', fontWeight: '500', display:'flex', alignItems:'center', justifyContent: 'space-between' }}>Access Network <ArrowUpRight size={16}/></div>
           </div>
         </a>
@@ -484,14 +560,14 @@ export default function App() {
 
         <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', color: 'var(--text-tertiary)', fontFamily: 'monospace' }}>
            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--income)' }}></div>
-           LINK STABLE
+           LINK STABLE | PORT 443
         </div>
       </div>
 
       {/* TOP NAVIGATION */}
       <div className="top-bar">
         <div className="logo-text">RSA CORE</div>
-        <button className="btn-icon" onClick={challengeAdmin}>
+        <button className="btn-icon" onClick={challengeAdmin} style={{ pointerEvents: 'auto' }}>
           {isLeadershipMode ? <Shield size={22} color="var(--income)"/> : <ShieldAlert size={22} color="var(--text-secondary)"/>}
         </button>
       </div>
@@ -506,15 +582,15 @@ export default function App() {
         ))}
       </div>
 
-      {/* KINETIC ENGINE WIPE CONTAINER (All 7 Sections Included) */}
-      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
+      {/* KINETIC ENGINE WIPE CONTAINER */}
+      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll} style={{ paddingRight: sidebarOpen ? '360px' : '0px' }}>
         <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>{renderFunds()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`}>{renderVault()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`}>{renderGallery()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderHQ()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
       </div>
 
       {/* PRO DATA MODAL */}
@@ -528,19 +604,21 @@ export default function App() {
             
             <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(modalMode); }}>
               
-              {/* PERSONNEL FORM (With Conditional Coordinator Logic) */}
+              {/* PERSONNEL FORM (With Conditional Coordinator Logic & Public Access) */}
               {modalMode === 'crew' && (
                 <>
                   <input required placeholder="Full Identity Name" className="input-element" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
                   <input type="email" placeholder="Email Address Endpoint" className="input-element" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
+                  <input type="tel" placeholder="Phone Link (Optional)" className="input-element" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
                   
                   <span className="text-subtitle">Hierarchy Designation</span>
                   <select required className="input-element" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
                     <option value="" disabled>Select Core Role...</option>
-                    <option value="UD">Unit Designee (UD)</option>
-                    <option value="USEC">Unit Secretary (USEC)</option>
-                    <option value="Coordinator">Coordinator</option>
                     <option value="Member">Standard Member</option>
+                    {/* Admin only can assign high roles */}
+                    {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
+                    {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
+                    {isLeadershipMode && <option value="Coordinator">Coordinator Array</option>}
                   </select>
 
                   {formPayload.role === 'Coordinator' && (
@@ -549,10 +627,15 @@ export default function App() {
                       <input required placeholder="e.g., Design, Tech, Events..." className="input-element" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} style={{borderColor: 'rgba(255,255,255,0.2)'}} />
                     </div>
                   )}
+
+                  <span className="text-subtitle">Academic Year</span>
+                  <select className="input-element" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
+                    <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
+                  </select>
                 </>
               )}
 
-              {/* TREASURY FORM (Credit/Debit Split) */}
+              {/* TREASURY FORM */}
               {modalMode === 'finances' && (
                 <>
                   <span className="text-subtitle">Transaction Flow Protocol</span>
@@ -565,39 +648,7 @@ export default function App() {
                 </>
               )}
 
-              {/* VAULT FORM */}
-              {modalMode === 'vault' && (
-                <>
-                  <input required placeholder="Document Asset Title" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <input placeholder="Cloud URI Source Endpoint Link" className="input-element" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
-                  <select className="input-element" value={formPayload.type||'Design'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
-                    <option value="Design">Design Asset</option><option value="Finance">Financial Matrix</option><option value="Admin">Administrative</option>
-                  </select>
-                </>
-              )}
-
-              {/* GALLERY FORM */}
-              {modalMode === 'gallery' && (
-                <>
-                  <input required placeholder="Project Identifier" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <select className="input-element" value={formPayload.fileType||'Image'} onChange={e=>setFormPayload({...formPayload, fileType:e.target.value})}>
-                    <option value="Image">Direct Image Target (.jpg/.png)</option><option value="Drive Link">Shared Node Array Folder</option>
-                  </select>
-                  <input required placeholder="Asset URL Target" className="input-element" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
-                  <textarea placeholder="Morphological Context Summary" className="input-element" rows="3" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})}></textarea>
-                </>
-              )}
-
-              {/* LIVE NEWS FEED FORM */}
-              {modalMode === 'news' && (
-                <>
-                  <input required placeholder="Broadcast Group Tag" className="input-element" value={formPayload.tag||''} onChange={e=>setFormPayload({...formPayload, tag:e.target.value})} />
-                  <input required placeholder="Transmission Headline" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <textarea rows="5" placeholder="Network-wide Broadcast Message Body Payload Data..." className="input-element" value={formPayload.content||''} onChange={e=>setFormPayload({...formPayload, content:e.target.value})}></textarea>
-                </>
-              )}
-
-              {/* UNIT COUNCIL / HQ CONFIG FORM */}
+              {/* HQ CONFIG FORM */}
               {modalMode === 'hq' && (
                 <>
                   <span className="text-subtitle">Institution Settings</span>
@@ -605,6 +656,14 @@ export default function App() {
                   <input placeholder="Core Gateway Email" className="input-element" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
                   <span className="text-subtitle" style={{marginTop:'10px'}}>Treasury Logic</span>
                   <input type="number" placeholder="Annual Financial Goal (INR)" className="input-element" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
+                </>
+              )}
+
+              {/* OTHER FORMS (Vault, Gallery, News) */}
+              {['vault', 'gallery', 'news'].includes(modalMode) && (
+                <>
+                  <input required placeholder="Title / Identifier" className="input-element" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <textarea placeholder="Description Payload..." className="input-element" rows="3" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
                 </>
               )}
 
