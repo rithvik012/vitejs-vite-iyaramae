@@ -4,9 +4,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   build: {
-    // This entirely bypasses the lightningcss Vercel bug
-    cssMinify: 'esbuild',
-    // Ensures large files don't trip up the compiler
+    // Completely turns off the CSS compressor so Vercel stops crashing!
+    cssMinify: false,
     chunkSizeWarningLimit: 2000, 
   }
 });
