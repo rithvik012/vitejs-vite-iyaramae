@@ -5,12 +5,12 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil,
+  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye,
   HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown
 } from 'lucide-react';
 
 // ==========================================
-// 1. FIREBASE SECURE KERNEL
+// FIREBASE SECURE KERNEL
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -26,7 +26,7 @@ const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
-// 2. QUANTUM-LITHOS AESTHETIC ENGINE
+// QUANTUM-LITHOS AESTHETIC ENGINE
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -35,15 +35,13 @@ const GLOBAL_STYLES = `
     --bg-base: #010103;
     --glass-bg: rgba(8, 10, 15, 0.65);
     --glass-border: rgba(255, 255, 255, 0.08);
-    
     --text-primary: #ffffff;
     --text-secondary: #8b9bb4;
-    
     --neon-cyan: #00f0ff;
     --neon-purple: #7000ff;
     --neon-gold: #ffbe0b;
     --neon-pink: #ff0055;
-    
+    --neon-green: #00ff66;
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -52,11 +50,10 @@ const GLOBAL_STYLES = `
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
   body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
-  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(0,0,0,0.4) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); }
+  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(0,0,0,0.5) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
   input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
   ::-webkit-scrollbar { width: 0px; }
 
-  /* 🌟 DYNAMIC ANIMATRONICS BACKGROUND 🌟 */
   .animatronic-bg { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.35; animation: plasmaDrift 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
   .orb-c { width: 65vw; height: 65vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
@@ -72,12 +69,10 @@ const GLOBAL_STYLES = `
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
   @keyframes gridMotion { 0% { transform: perspective(800px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(800px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
 
-  /* 🌟 BOOT SPLASH 🌟 */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; overflow: hidden; }
+  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; }
 
-  /* 🌟 HAPTIC SCROLL ENGINE 🌟 */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
     min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
@@ -86,7 +81,7 @@ const GLOBAL_STYLES = `
   }
   .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
 
-  .bento-container { width: 100%; max-width: 1200px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scrollbar-width: none; padding: 20px 0; }
+  .bento-container { width: 100%; max-width: 1200px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
   
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
@@ -99,8 +94,7 @@ const GLOBAL_STYLES = `
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
-  /* 🌟 TOP NAVIGATION & HUD (RIGHT ALIGNED TO PREVENT OVERLAP) 🌟 */
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: flex-end; align-items: center; gap: 24px; z-index: 90; pointer-events: none;}
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
   .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 600; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
@@ -113,10 +107,9 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
-  /* 🌟 COLLAPSIBLE SIDEBAR 🌟 */
   .nasa-sidebar {
     position: fixed; right: -380px; top: 0; bottom: 0; width: 380px;
-    background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(50px);
+    background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(50px);
     border-left: 1px solid var(--glass-border); z-index: 85;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
     box-shadow: -20px 0 60px rgba(0,0,0,0.8); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -125,7 +118,6 @@ const GLOBAL_STYLES = `
   .nasa-feed-item { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 16px; border-radius: 12px; margin-bottom: 12px; transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
   .nasa-feed-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); transform: translateX(-4px); }
 
-  /* 🌟 RESPONSIVE DOCK 🌟 */
   .floating-dock {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: rgba(10, 12, 18, 0.85); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
@@ -136,7 +128,6 @@ const GLOBAL_STYLES = `
   .dock-tooltip { position: absolute; top: -45px; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; transform: translateY(10px); }
   .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(0); }
 
-  /* 🌟 TYPOGRAPHY & BUTTONS 🌟 */
   .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 3.8rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; }
   .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
@@ -146,36 +137,35 @@ const GLOBAL_STYLES = `
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
   
-  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s;}
+  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
-  .council-tag { background: rgba(255, 190, 11, 0.1); color: var(--neon-gold); border-color: rgba(255, 190, 11, 0.3); box-shadow: 0 0 15px rgba(255, 190, 11, 0.15); }
   
-  /* 🌟 AI TERMINAL 🌟 */
-  .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 100%; min-height: 350px;}
+  .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
+  .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
+  .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
   .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
   .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
-  .ai-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 14px 16px; border-radius: 12px; color: #fff; font-family: var(--font-body); }
   
-  /* Modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: modalFade 0.3s ease-out; }
-  .modal-window { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 550px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
-  @keyframes modalFade { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal-window { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 550px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
 
-  /* 🌟 MOBILE OPTIMIZATIONS 🌟 */
   @media (max-width: 768px) {
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
     .text-title { font-size: 2.8rem; }
-    .floating-dock { width: 92%; overflow-x: auto; justify-content: flex-start; padding: 10px; border-radius: 20px; -webkit-overflow-scrolling: touch; }
+    .floating-dock { width: 92%; overflow-x: auto; justify-content: flex-start; padding: 10px; border-radius: 20px; }
     .dock-item { min-width: 46px; height: 46px; }
-    .scrolling-section { padding: 120px 16px 120px 16px; scroll-snap-align: start; }
+    .scrolling-section { padding: 120px 16px; scroll-snap-align: start; }
     .modal-window { padding: 24px; }
-    .top-bar { padding: 16px 20px; justify-content: space-between; }
+    .top-bar { padding: 16px 20px; }
     .logo-toggle { font-size: 1.8rem; }
     .nasa-sidebar { width: 100%; right: -100%; }
   }
@@ -187,7 +177,7 @@ export default function App() {
   const [isBooting, setIsBooting] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Core Data
+  // Core Synchronization Arrays
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
   const [financialLog, setFinancialLog] = useState([]);
@@ -195,31 +185,32 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
-  // AI Cognitive Engine State
+  // AI Interface Configuration
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Cognitive Engine online. Accessing architectural archives and unit scheduling patterns. Awaiting directive.' }
+    { sender: 'bot', text: 'RSA Executive Core Matrix operational. Syncing National Association of Students of Architecture (NASA) telemetry data and ongoing studio milestones. Input prompt.' }
   ]);
   const chatEndRef = useRef(null);
 
+  // Form & View Controllers
   const [modalMode, setModalMode] = useState(null); 
+  const [viewingCrew, setViewingCrew] = useState(null);
   const [formPayload, setFormPayload] = useState({});
   const scrollEngineRef = useRef(null);
 
-  // 🌟 DESIGNER DOCK ICONS 🌟
   const dockItems = [
     { id: 'core', icon: <Hexagon size={22} strokeWidth={1.5}/>, label: 'Omni-View' },
     { id: 'crew', icon: <UsersRound size={22} strokeWidth={1.5}/>, label: 'Architects Array' },
     { id: 'funds', icon: <CircleDollarSign size={22} strokeWidth={1.5}/>, label: 'Capital Ledger' },
     { id: 'vault', icon: <HardDrive size={22} strokeWidth={1.5}/>, label: 'Deep Archives' },
     { id: 'gallery', icon: <Aperture size={22} strokeWidth={1.5}/>, label: 'Morphological Gallery' },
-    { id: 'news', icon: <Activity size={22} strokeWidth={1.5}/>, label: 'Frequency Relay' },
+    { id: 'news', icon: <RadioTower size={22} strokeWidth={1.5}/>, label: 'Frequency Relay' },
     { id: 'hq', icon: <Crown size={22} strokeWidth={1.5}/>, label: 'Executive Core' },
-    { id: 'ai', icon: <BrainCircuit size={22} strokeWidth={1.5}/>, label: 'RSA Core AI' }
+    { id: 'ai', icon: <BrainCircuit size={22} strokeWidth={1.5}/>, label: 'RSA Intel AI' }
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 2000);
+    setTimeout(() => setIsBooting(false), 1500);
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -247,76 +238,97 @@ export default function App() {
   };
 
   const handleSecurityToggle = () => {
-    if (isLeadershipMode) setIsLeadershipMode(false); 
-    else {
-      const pass = prompt("RSA SECURITY: Enter Override Code");
+    if (isLeadershipMode) {
+      setIsLeadershipMode(false);
+    } else {
+      const pass = prompt("RSA COGNITIVE OVERRIDE: Input Secure Credentials");
       if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
-      else if (pass) alert("AUTHORIZATION FAILED.");
+      else if (pass) alert("SECURITY WARNING: AUTHORIZATION DENIED.");
     }
   };
 
   const handleSaveToCloud = async (collectionName) => {
     try {
-      if (collectionName === 'hq') await setDoc(doc(db, "unit", "hq"), formPayload);
-      else if (formPayload.id) {
+      if (collectionName === 'hq') {
+        await setDoc(doc(db, "unit", "hq"), formPayload);
+      } else if (formPayload.id) {
         const { id, ...data } = formPayload;
         await updateDoc(doc(db, collectionName, id), data);
-      } else await addDoc(collection(db, collectionName), { ...formPayload, timestamp: Date.now() });
-      setModalMode(null); setFormPayload({});
-    } catch (e) { alert("Data Sync Failed."); }
+      } else {
+        await addDoc(collection(db, collectionName), { ...formPayload, timestamp: Date.now() });
+      }
+      setModalMode(null); 
+      setViewingCrew(null);
+      setFormPayload({});
+    } catch (e) { 
+      alert("Database Synchronization Interrupted."); 
+    }
   };
 
   const deleteDocRecord = async (col, id) => {
-    if (window.confirm("Permanently erase node from databank?")) await deleteDoc(doc(db, col, id));
+    if (window.confirm("Confirm vector deletion from cloud network?")) {
+      await deleteDoc(doc(db, col, id));
+      setModalMode(null);
+      setViewingCrew(null);
+    }
   };
 
-  // 🌟 AI INTERACTION HANDLER 🌟
+  // ==========================================
+  // HIGH LEVEL SEMANTIC AI ENGINE
+  // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
     if (!aiInput.trim()) return;
     
-    const currentInput = aiInput.trim();
-    setAiMessages(prev => [...prev, { sender: 'user', text: currentInput }]);
+    const textRaw = aiInput.trim();
+    setAiMessages(prev => [...prev, { sender: 'user', text: textRaw }]);
     setAiInput('');
 
     setTimeout(() => {
-      const inputLower = currentInput.toLowerCase();
+      const tokens = textRaw.toLowerCase();
       let botResponse = "";
 
-      if (inputLower.includes("troph") || inputLower.includes("participate")) {
-        botResponse = "Currently active vectors: Louis I. Kahn Trophy (Submission Open) and Reubens Showcase (Evaluation Phase). Check the NASA Uplink for live status.";
-      } else if (inputLower.includes("remind") || inputLower.includes("schedule")) {
-        botResponse = "Temporal anchor set. The network will retain this schedule parameter.";
-      } else if (inputLower.includes("history") || inputLower.includes("past")) {
-        botResponse = "Querying deep storage... Unit Z649 archive spans multiple generations. Specify a morphological parameter to extract.";
-      } else if (inputLower.includes("hello") || inputLower.includes("hi")) {
-        botResponse = "Awaiting command sequence. How shall we proceed?";
+      if (tokens.includes("nasa") || tokens.includes("national association")) {
+        botResponse = "National Association of Students of Architecture (NASA), India framework identified. Unit Z649 telemetry is operating nominally. Current national focus points are targeted toward active convention design modules, verification of regional registrations, and tracking of structural student dossiers.";
+      } else if (tokens.includes("louis i kahn") || tokens.includes("lik")) {
+        botResponse = "Louis I. Kahn (LIK) Trophy sub-routine isolated. Historical documentation metrics emphasize thorough analysis of heritage architecture. The submission compilation matrix is open. Ensure that all base maps, section renderings, and vernacular spatial configurations adhere to the strict presentation standards.";
+      } else if (tokens.includes("shaheer") || tokens.includes("msl") || tokens.includes("landscape")) {
+        botResponse = "Mohammad Shaheer Landscape Trophy algorithm initialized. Site vectors proximate to Velachery Railway Station ('The Hydro-Social Connector') loaded. Project is optimized as a high-fidelity biological landscape machine designed to seamlessly alleviate flash urban flooding conditions through precise environmental topography adjustments.";
+      } else if (tokens.includes("varyankaval") || tokens.includes("rural") || tokens.includes("ariyalur")) {
+        botResponse = "Rural documentation database accessed for Varyankaval Village (Ariyalur, Tamil Nadu). Morphological data clusters, land-use zoning parameters, and community-driven developmental blueprints are stored securely. Ready to output cross-sectional vernacular details upon request.";
+      } else if (tokens.includes("kanchipuram") || tokens.includes("vernacular")) {
+        botResponse = "Kanchipuram housing typologies documented. Structural logs emphasize complex timber jointing systems, thinnai entrance configurations, and central open-sky courtyards customized for local Micro-Climate Modulation.";
+      } else if (tokens.includes("roof") || tokens.includes("pavilion") || tokens.includes("kinetic")) {
+        botResponse = "Kinetic Design Profile: International Student Center pavilion. Mathematical logic for the motorized, bi-folding roof mechanism is verified. Actuators will coordinate roof transformation based on environmental daylight levels.";
+      } else if (tokens.includes("status") || tokens.includes("diagnostics") || tokens.includes("ledger")) {
+        const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
+        botResponse = `System Diagnostics: Active Operatives inside array total [${crewData.length}]. Ledger status shows a current net balance of ₹${net.toLocaleString()}. Mainframe storage is uncompromised.`;
       } else {
-        botResponse = `Directive "${currentInput}" logged. Processing via backend matrices... Pending manual oversight.`;
+        botResponse = `Directive registered: "${textRaw}". Operational parameters analyzed. No immediate abnormalities detected across Unit Z649 databases. Systems continue running at peak structural efficiency.`;
       }
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 800);
+    }, 750);
   };
 
   // ==========================================
-  // RENDER BLOCKS
+  // VIEW RENDER BLOCKS
   // ==========================================
   
   const renderDashboard = () => (
     <div className="bento-container">
-      <div style={{ padding: '0 16px' }}><span className="text-subtitle">Global Diagnostics</span><h1 className="text-title">Omni-View</h1></div>
+      <div style={{ padding: '0 16px' }}><span className="text-subtitle">Mainframe Telemetry</span><h1 className="text-title">Omni-View</h1></div>
       <div className="bento-grid-3">
         <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Active Operatives</span>
+          <span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Active Architects</span>
           <div className="text-metric">{crewData.length}</div>
         </div>
         <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Encrypted Nodes</span>
+          <span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Node Repositories</span>
           <div className="text-metric">{vaultData.length}</div>
         </div>
         <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><Activity size={14}/> Network Comms</span>
+          <span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> Frequency Transmissions</span>
           <div className="text-metric">{newsData.length}</div>
         </div>
       </div>
@@ -329,35 +341,30 @@ export default function App() {
     
     return (
       <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ padding: '0 16px', display: 'flex', justifyBetween: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Identity Matrix</span><h1 className="text-title">Architects Array</h1></div>
-          <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
+          {isLeadershipMode && (
+            <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
+          )}
         </div>
+        
         {order.map(year => allocation[year] && (
           <div key={year} style={{ marginTop: '24px' }}>
             <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `Generation 0${year}`}</span>
             <div className="bento-grid-2" style={{ marginTop: '16px' }}>
-              {allocation[year].map(m => {
-                const isCouncil = ['UD', 'USEC', 'Coordinator'].includes(m.role);
-                return (
-                  <div key={m.id} className="bento-card" style={{ padding: '24px', border: isCouncil ? '1px solid var(--neon-gold)' : '' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                      <span className="status-pill">
-                        {isCouncil && <Crown size={12}/>}
-                        {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                      </span>
-                      {isLeadershipMode && (
-                        <div style={{ display: 'flex', gap: '8px', margin: '-8px' }}>
-                          <button className="btn-icon" onClick={() => { setFormPayload(m); setModalMode('crew'); }}><Pencil size={14}/></button>
-                          <button className="btn-icon danger" onClick={() => deleteDocRecord('crew', m.id)}><Trash2 size={14}/></button>
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', display:'flex', alignItems:'center', gap:'6px', fontFamily: 'var(--font-mono)' }}><Mail size={12}/> {m.email}</div>
+              {allocation[year].map(m => (
+                <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: ['UD', 'USEC', 'Coordinator'].includes(m.role) ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <span className="status-pill">
+                      {['UD', 'USEC', 'Coordinator'].includes(m.role) && <Crown size={12} style={{marginRight:4}}/>}
+                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> View Profile</span>
                   </div>
-                );
-              })}
+                  <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
+                </div>
+              ))}
             </div>
           </div>
         ))}
@@ -371,57 +378,63 @@ export default function App() {
     const total = income + expense;
     const net = income - expense;
     const goal = Number(leadership.financialGoal) || 1; 
-    const incPercent = total === 0 ? 0 : (income / total) * 100;
-    const expPercent = total === 0 ? 0 : (expense / total) * 100;
 
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Economic Flow</span><h1 className="text-title">Capital Ledger</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Inject Node</button>}
+          {isLeadershipMode && (
+            <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Inject Transaction</button>
+          )}
         </div>
 
         <div className="bento-grid-2">
-          <div className="bento-card" style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-            <svg viewBox="0 0 36 36" className="donut-chart" style={{width: '120px', height: '120px'}}>
-               <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
-               {total > 0 && <circle className="donut-segment-income" strokeDasharray={`${incPercent} ${100 - incPercent}`} strokeDashoffset="25" cx="18" cy="18" r="15.915" />}
-               {total > 0 && <circle className="donut-segment-expense" strokeDasharray={`${expPercent} ${100 - expPercent}`} strokeDashoffset={25 - incPercent} cx="18" cy="18" r="15.915" />}
-            </svg>
-            <div>
-              <div style={{ marginBottom: '16px' }}><span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Credit</span><div style={{fontSize:'1.8rem', fontWeight:'600'}}>₹{income.toLocaleString()}</div></div>
-              <div><span className="text-subtitle" style={{color:'var(--neon-pink)'}}>Gross Debit</span><div style={{fontSize:'1.8rem', fontWeight:'600'}}>₹{expense.toLocaleString()}</div></div>
+          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
+            <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
+              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>CREDITS</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-green)'}}>₹{income.toLocaleString()}</div></div>
+              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>DEBITS</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-pink)'}}>₹{expense.toLocaleString()}</div></div>
             </div>
           </div>
           
           <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Liquid Yield</span>
+            <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Main Net Pool Account</span>
             <div className="text-metric">₹{net.toLocaleString()}</div>
             <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '20px' }}>
-               <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff', transition: 'width 1s ease-out' }}></div>
+               <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
             </div>
-            <span style={{ marginTop: '10px', textAlign: 'right', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontFamily:'var(--font-mono)' }}>Target: ₹{goal.toLocaleString()}</span>
+            <div style={{ display:'flex', justifyContent:'space-between', marginTop: '10px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontFamily:'var(--font-mono)' }}>
+              <span>Target Metric</span>
+              <span>₹{goal.toLocaleString()}</span>
+            </div>
           </div>
         </div>
 
-        <div className="bento-card" style={{ padding: '0 24px 24px 24px', overflowX: 'auto' }}>
+        <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
            <table className="pro-table">
-             <thead><tr><th>Direction</th><th>Descriptor</th><th>Volume</th>{isLeadershipMode && <th>Auth</th>}</tr></thead>
+             <thead>
+               <tr>
+                 <th>Classification</th>
+                 <th>Transaction Narrative / Description</th>
+                 <th>Value Magnitude</th>
+                 <th>Action Configuration</th>
+               </tr>
+             </thead>
              <tbody>
                {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>Ledger Empty.</td></tr>}
                {financialLog.map(f => (
                  <tr key={f.id}>
                    <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)', borderColor: f.type==='income'?'rgba(0,255,102,0.2)':'rgba(255,0,85,0.2)' }}>{f.type}</span></td>
                    <td style={{ fontWeight: '500' }}>{f.description}</td>
-                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'var(--text-secondary)' }}>
-                      {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
+                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>
+                      {f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}
                    </td>
-                   {isLeadershipMode && (
-                     <td style={{ display: 'flex', gap: '8px' }}>
-                       <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }}><Pencil size={16}/></button>
-                       <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={16}/></button>
-                     </td>
-                   )}
+                   <td>
+                     <div style={{ display: 'flex', gap: '8px' }}>
+                       <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Open node configurations"><Pencil size={14}/></button>
+                       {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={14}/></button>}
+                     </div>
+                   </td>
                  </tr>
                ))}
              </tbody>
@@ -442,12 +455,10 @@ export default function App() {
           <div key={v.id} className="bento-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
               <span className="status-pill"><HardDrive size={12}/> {v.type}</span>
-              {isLeadershipMode && (
-                <div style={{ display: 'flex', gap: '8px', margin: '-8px' }}>
-                  <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>
-                  <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>
-                </div>
-              )}
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>
+                {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
+              </div>
             </div>
             <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
             <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%' }}>Extract Link <ArrowUpRight size={14}/></a>
@@ -466,18 +477,16 @@ export default function App() {
       <div className="bento-grid-2">
         {galleryData.map(g => (
           <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-            <div style={{ height: '250px', background: g.fileType === 'Image URL' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ height: '250px', background: g.fileType === 'Image URL' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
               {g.fileType !== 'Image URL' && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
             </div>
             <div style={{ padding: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill">{g.category}</span>
-                {isLeadershipMode && (
-                  <div style={{ display: 'flex', gap: '8px', margin: '-6px' }}>
-                    <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={16}/></button>
-                    <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={16}/></button>
-                  </div>
-                )}
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                </div>
               </div>
               <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
               <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
@@ -500,12 +509,10 @@ export default function App() {
           <div key={n.id} className="bento-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
               <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag}</span>
-              {isLeadershipMode && (
-                <div style={{ display: 'flex', gap: '8px', margin: '-6px' }}>
-                  <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={16}/></button>
-                  <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={16}/></button>
-                </div>
-              )}
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>
+                {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
+              </div>
             </div>
             <div style={{ fontSize: '2rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
             <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>{n.content}</div>
@@ -515,24 +522,21 @@ export default function App() {
     </div>
   );
 
-  const renderUnitCouncil = () => {
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Core Config</button>}
-          </div>
-        </div>
-
-        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)' }}>
-          <span className="text-subtitle" style={{color: '#fff'}}>Network Hash Identity</span>
-          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
-          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+  const renderUnitCouncil = () => (
+    <div className="bento-container">
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Configure Core Parameters</button>
         </div>
       </div>
-    );
-  };
+      <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)' }}>
+        <span className="text-subtitle" style={{color: '#fff'}}>Network Operational Identity</span>
+        <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
+        <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+      </div>
+    </div>
+  );
 
   const renderRSAIntel = () => {
     const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
@@ -543,7 +547,6 @@ export default function App() {
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginTop: '16px' }}>
           
-          {/* AI ASSISTANT TERMINAL */}
           <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
             <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> RSA Neural Interface</span>
             <div className="ai-terminal" style={{ marginTop: '16px' }}>
@@ -558,7 +561,7 @@ export default function App() {
               <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
                 <input 
                   className="ai-input" 
-                  placeholder="Enter directive..." 
+                  placeholder="Query NASA India status, trophies (LIK/MSL), or rural data clusters..." 
                   value={aiInput}
                   onChange={(e) => setAiInput(e.target.value)}
                 />
@@ -567,11 +570,10 @@ export default function App() {
             </div>
           </div>
 
-          {/* COUNCIL CONTACT DIRECTORY */}
           <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
             <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Crown size={14}/> High Command Directory</span>
             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '450px', overflowY: 'auto', paddingRight: '10px' }}>
-              {councilMembers.length === 0 && <div className="text-sm text-white/50">No executives available.</div>}
+              {councilMembers.length === 0 && <div className="text-sm text-white/50">No executives initialized inside the matrix.</div>}
               {councilMembers.map(m => (
                 <div key={m.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
@@ -580,16 +582,9 @@ export default function App() {
                     </span>
                   </div>
                   <div style={{ fontSize: '1.4rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-                  
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <a href={`mailto:${m.email}`} className="btn-primary btn-secondary" style={{ flex: 1 }}>
-                      <Mail size={14}/> Mail
-                    </a>
-                    {m.phone && (
-                      <a href={`tel:${m.phone}`} className="btn-primary btn-secondary" style={{ flex: 1 }}>
-                        <Phone size={14}/> Call
-                      </a>
-                    )}
+                    <a href={`mailto:${m.email}`} className="btn-primary btn-secondary" style={{ flex: 1 }}><Mail size={14}/> Mail</a>
+                    {m.phone && <a href={`tel:${m.phone}`} className="btn-primary btn-secondary" style={{ flex: 1 }}><Phone size={14}/> Call</a>
                   </div>
                 </div>
               ))}
@@ -605,40 +600,34 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 HARDWARE ACCELERATED ANIMATRONICS 🌟 */}
       <div className="animatronic-bg">
         <div className="laser-grid"></div>
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
       </div>
 
-      {/* 🌟 CINEMATIC BOOT SPLASH 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-brand">RSA_CORE</div>
       </div>
 
-      {/* 🌟 LOGO TOGGLE & SECURITY HUD (TOP BAR) 🌟 */}
       <nav className="top-bar">
-        {/* Left Side: Security Lock (cleared out to not block titles) */}
         <div className="pointer-events-auto">
           <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
             <div className="hud-icon-box">
                {isLeadershipMode ? <Unlock size={14} strokeWidth={2.5}/> : <Lock size={14} strokeWidth={2.5}/>}
             </div>
             <div className="hud-text">
-               [ SYS: {isLeadershipMode ? 'UNLOCKED' : 'LOCKED'} ]
+               [ ADMIN PORTAL: {isLeadershipMode ? 'UNLOCKED' : 'LOCKED'} ]
             </div>
           </div>
         </div>
         
-        {/* Right Side: Logo Acting as Sidebar Toggle */}
         <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
           RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
-          {sidebarOpen ? <X size={28} color="#fff"/> : <Menu size={28} color="#fff"/>}
+          {sidebarOpen ? <X size={26} color="#fff"/> : <Menu size={26} color="#fff"/>}
         </div>
       </nav>
 
-      {/* 🌟 COLLAPSIBLE NASA SIDEBAR 🌟 */}
       <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', marginTop: '40px' }}>
            <Globe size={28} color="#fff" />
@@ -651,25 +640,24 @@ export default function App() {
           <div className="nasa-feed-item">
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>EVENT</span><CalendarClock size={14}/></div>
             <div style={{ fontSize: '1.1rem', fontWeight: '600', marginTop: '4px' }}>68th Annual Convention</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Upcoming: 2026</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Status: Active Preparation</div>
           </div>
 
           <div className="nasa-feed-item">
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHY</span><Shield size={14}/></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHY SYSTEM</span><Shield size={14}/></div>
             <div style={{ fontSize: '1.1rem', fontWeight: '600', marginTop: '4px' }}>Louis I. Kahn Trophy</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Submission Open</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Compilation Open</div>
           </div>
 
-          <span className="text-subtitle" style={{ color: 'var(--text-secondary)', marginTop: '30px' }}><Zap size={12}/> Action Nodes</span>
+          <span className="text-subtitle" style={{ color: 'var(--text-secondary)', marginTop: '30px' }}><Zap size={12}/> Action Portals</span>
           <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="nasa-feed-item" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ fontWeight: '600' }}>Official Portal</div><ArrowUpRight size={18} color="#fff"/>
+              <div style={{ fontWeight: '600' }}>Official Portal Link</div><ArrowUpRight size={18} color="#fff"/>
             </div>
           </a>
         </div>
       </div>
 
-      {/* 🌟 RESPONSIVE DOCK 🌟 */}
       <div className="floating-dock">
         {dockItems.map((item, i) => (
           <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
@@ -679,7 +667,6 @@ export default function App() {
         ))}
       </div>
 
-      {/* 🌟 HAPTIC SCROLL ENGINE 🌟 */}
       <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
         <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
@@ -691,12 +678,43 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
       </div>
 
-      {/* 🌟 PRO DATA MODAL 🌟 */}
+      {/* OPERATIVE VIEW/DOSSIER MODAL */}
+      {viewingCrew && (
+        <div className="modal-overlay pointer-events-auto">
+          <div className="modal-window">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <h2 className="text-title" style={{ fontSize: '2.2rem' }}>Operative Dossier</h2>
+              <button className="btn-icon" onClick={() => setViewingCrew(null)}><X size={24}/></button>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:'16px', marginBottom:'32px' }}>
+              <div><span className="text-subtitle">Identity</span><div style={{fontSize:'1.6rem', fontWeight:'600'}}>{viewingCrew.name}</div></div>
+              <div><span className="text-subtitle">Role Assignment</span><div className="status-pill">{viewingCrew.role}</div></div>
+              {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType} Vector</div></div>}
+              <div><span className="text-subtitle">Generation Group</span><div style={{fontSize:'1.1rem'}}>Batch Vector: Year {viewingCrew.year}</div></div>
+              <div><span className="text-subtitle">Comms Endpoint</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.email}</div></div>
+              {viewingCrew.phone && <div><span className="text-subtitle">Mobile Secure Array</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.phone}</div></div>}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {isLeadershipMode ? (
+                <>
+                  <button className="btn-primary" style={{flex: 1}} onClick={() => { setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Modify Profile</button>
+                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Erase</button>
+                </>
+              ) : (
+                <div style={{fontSize:'0.8rem', color:'var(--text-secondary)', fontStyle:'italic'}}>Elevate system status to lock/unlock editing authorizations.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SYNCHRONIZATION CONFIGURATION MODAL */}
       {modalMode && (
         <div className="modal-overlay pointer-events-auto">
           <div className="modal-window">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
-              <h2 className="text-title" style={{ fontSize: '2rem' }}>{formPayload.id ? 'Modify' : 'Initialize'} Node</h2>
+              <h2 className="text-title" style={{ fontSize: '2rem' }}>{formPayload.id ? 'Configure' : 'Initialize'} Node</h2>
               <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
             </div>
             
@@ -704,25 +722,25 @@ export default function App() {
               
               {modalMode === 'crew' && (
                 <>
-                  <input required placeholder="Full Identity Name" className="w-full mb-4" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
-                  <input type="email" placeholder="Email Address Endpoint" className="w-full mb-4" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
-                  <input type="tel" placeholder="Mobile Array Number" className="w-full mb-4" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
+                  <input required placeholder="Full Identity Name" className="mb-4" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
+                  <input type="email" placeholder="Email Endpoint" className="mb-4" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
+                  <input type="tel" placeholder="Mobile Number Array" className="mb-4" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
                   
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Hierarchy Designation</span>
-                  <select required className="w-full mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
-                    <option value="" disabled>Select Core Role...</option>
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Hierarchy Assignment</span>
+                  <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
+                    <option value="" disabled>Select Matrix Position...</option>
                     <option value="Member">Standard Member</option>
-                    {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
-                    {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
-                    {isLeadershipMode && <option value="Coordinator">Executive Coordinator</option>}
+                    <option value="UD">Unit Designee (UD)</option>
+                    <option value="USEC">Unit Secretary (USEC)</option>
+                    <option value="Coordinator">Executive Coordinator</option>
                   </select>
 
                   {formPayload.role === 'Coordinator' && (
-                    <input required placeholder="Specify Type (e.g., Design, Tech, Events)" className="w-full mb-4" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
+                    <input required placeholder="Coordinator Vector Type (e.g., Design, Documentation)" className="mb-4" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
                   )}
 
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Academic Generation</span>
-                  <select className="w-full mb-4" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Generation Matrix</span>
+                  <select className="mb-4" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
                     <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
                   </select>
                 </>
@@ -730,33 +748,36 @@ export default function App() {
 
               {modalMode === 'finances' && (
                 <>
-                  <select className="w-full mb-4" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
-                    <option value="income">ADD FUNDS / CREDIT (Income Array)</option>
-                    <option value="expense">SPEND FUNDS / DEBIT (Expense Array)</option>
+                  <span className="text-subtitle">Transaction Class</span>
+                  <select className="mb-4" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
+                    <option value="income">CREDIT (+) Incoming Pool</option>
+                    <option value="expense">DEBIT (-) Outgoing Expenditure</option>
                   </select>
-                  <input required placeholder="Transaction Matrix Detail" className="w-full mb-4" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
-                  <input required type="number" placeholder="Value Amount (INR)" className="w-full mb-4" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
+                  <span className="text-subtitle">Narrative Descriptor</span>
+                  <input required placeholder="Transaction Matrix Description" className="mb-4" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
+                  <span className="text-subtitle">Volume Transferred (INR)</span>
+                  <input required type="number" placeholder="Value Amount (INR)" className="mb-4" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
                 </>
               )}
 
               {modalMode === 'hq' && (
                 <>
-                  <input placeholder="Unit Hash Identifier (e.g. Z649)" className="w-full mb-4" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
-                  <input placeholder="Core Gateway Email" className="w-full mb-4" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
-                  <input type="number" placeholder="Annual Financial Goal (INR)" className="w-full mb-4" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
+                  <input placeholder="Unit Ident Code (e.g. Z649)" className="mb-4" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
+                  <input placeholder="Core Gateway Email Endpoint" className="mb-4" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
+                  <input type="number" placeholder="Target Financial Goal (INR)" className="mb-4" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
                 </>
               )}
 
               {['vault', 'gallery', 'news'].includes(modalMode) && (
                 <>
-                  <input required placeholder="Identifier / Title" className="w-full mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  {modalMode !== 'news' && <input placeholder="Target Cloud URL / Link" className="w-full mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
-                  <textarea placeholder="Description Payload..." className="w-full mb-4" rows="3" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
+                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  {modalMode !== 'news' && <input placeholder="Data Link / URL Target" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
+                  <textarea placeholder="Write content payload description..." className="mb-4" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
                 </>
               )}
 
               <button type="submit" className="btn-primary w-full justify-center mt-4" style={{ padding: '18px', fontSize: '1rem', letterSpacing: '0.1em' }}>
-                INITIATE SYNC
+                COMMIT CONFIGURATION
               </button>
             </form>
           </div>
