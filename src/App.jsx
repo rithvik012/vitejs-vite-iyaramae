@@ -2,15 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
-  Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
+  Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
-  HardDrive, RadioTower, BookOpen
+  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  HardDrive, RadioTower, BookOpen, Check
 } from 'lucide-react';
 
 // ==========================================
-// FIREBASE DATABASE
+// 1. FIREBASE SECURE KERNEL
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -25,7 +25,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
-// Architectural Quotes Engine
+// ==========================================
+// 2. ARCHITECTURAL QUOTES ENGINE
+// ==========================================
 const ARCH_QUOTES = [
   "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light.\" – Le Corbusier",
   "\"Form ever follows function.\" – Louis Sullivan",
@@ -38,10 +40,10 @@ const ARCH_QUOTES = [
 ];
 
 // ==========================================
-// DESIGN SYSTEM STYLES
+// 3. HYBRID DESIGN SYSTEM (Desktop + Mobile)
 // ==========================================
 const GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..500;1,9..40,300..500&family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700&display=swap');
 
   :root {
     --bg-base: #020202;
@@ -54,202 +56,257 @@ const GLOBAL_STYLES = `
     --neon-gold: #ffbe0b;
     --neon-pink: #ff0055;
     --neon-green: #00ff66;
-    --font-heading: 'Playfair Display', serif;
-    --font-body: 'Plus Jakarta Sans', sans-serif;
+    
+    --color-void: #000000;
+    --color-obsidian: #0a0a0a;
+    --color-iron: #1a1a1a;
+    --color-steel: #252525;
+    --color-chrome: rgba(255,255,255,0.06);
+    
+    --accent-dash: #60a5fa;
+    --accent-crew: #34d399;
+    --accent-finance: #fbbf24;
+    --accent-vault: #a78bfa;
+    --accent-gallery: #f472b6;
+    --accent-news: #fb923c;
+    --accent-hq: #94a3b8;
+
+    --font-heading: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
-    --font-ui: 'Outfit', sans-serif;
+    --ease-spring: cubic-bezier(0.34, 1.56, 1, 1);
+    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-  body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
-  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
-  input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
-  ::-webkit-scrollbar { width: 0px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+  body, html { 
+    background-color: var(--color-void); 
+    color: var(--text-primary); 
+    font-family: var(--font-body); 
+    overflow: hidden; 
+    height: 100dvh; 
+    width: 100vw; 
+    -webkit-font-smoothing: antialiased; 
+  }
+  ::-webkit-scrollbar { display: none; width: 0px; }
 
-  /* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */
-  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  /* 🌟 TYPOGRAPHY 🌟 */
+  .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1.1; }
+  .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
+  .type-h2 { font-family: var(--font-heading); font-weight: 400; font-size: clamp(1.4rem, 2vw, 1.75rem); line-height: 1.2; }
+  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.02em; }
+  .type-label { font-family: var(--font-body); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); }
+  .type-caption { font-family: var(--font-body); font-weight: 300; font-size: 0.8rem; color: #9ca3af; }
+  .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: #9ca3af; }
+  .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
+
+  /* 🌟 3D ARCHITECTURAL WIREFRAME 🌟 */
+  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
   .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
-  .arch-scene { 
-    position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d;
-    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
-    will-change: transform;
-  }
-  .arch-wall {
-    position: absolute; border: 1px solid rgba(0, 240, 255, 0.15);
-    background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
-    background-size: 80px 80px; backface-visibility: visible;
-  }
+  .arch-scene { position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
+  .arch-wall { position: absolute; border: 1px solid rgba(0, 240, 255, 0.15); background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px); background-size: 80px 80px; backface-visibility: visible; }
   .wall-floor { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(90deg) translateZ(40vh); }
   .wall-ceil { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(-90deg) translateZ(40vh); }
   .wall-left { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(90deg) translateZ(40vw); }
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* CIRCLE FLOW SPLASH SCREEN */
-  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
-  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  /* 🌟 SPLASH SCREEN 🌟 */
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
+  .boot-splash.exit { transform: translateY(-100%); }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
-  .splash-brand { font-family: var(--font-heading); font-size: 3.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
-  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
-
-  /* PERFORMANCE SCROLLING */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
-  .scrolling-section {
-    min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
-    opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
-
-  .bento-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; }
-  .bento-card { 
-    background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-    border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; }
   
-  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .show-circles .circle-flow-1 { opacity: 1; }
+  .show-circles .circle-flow-2 { opacity: 0.8; }
+  .show-circles .circle-flow-3 { opacity: 1; }
+  .glitch-active .splash-brand { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
+  
+  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
+  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* TOP BAR */
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
+  /* 🌟 HYBRID SCROLL ENGINE 🌟 */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  
+  /* Desktop Layout (Locked 100vh) */
+  @media (min-width: 769px) {
+    .scrolling-section { height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 40px 80px 100px; position: relative; }
+    .bento-container { width: 100%; max-width: 1100px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 10px 10px 40px 10px; margin: 0 auto; scrollbar-width: none; }
+    .bento-container::-webkit-scrollbar { display: none; }
+  }
+
+  /* Mobile Layout (Auto Height, Natural Scroll) */
+  @media (max-width: 768px) {
+    .scrolling-section { height: auto; min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; flex-direction: column; padding: 100px 16px 120px 16px; position: relative; }
+    .bento-container { width: 100%; max-width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 0; overflow-y: visible; max-height: none; }
+  }
+
+  /* Staggered Reveal Logic */
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
+  .view-active .stagger-item { opacity: 1; transform: translateY(0); }
+  .stagger-1 { transition-delay: 0ms; }
+  .stagger-2 { transition-delay: 80ms; }
+  .stagger-3 { transition-delay: 160ms; }
+  .stagger-4 { transition-delay: 240ms; }
+
+  /* 🌟 BENTO CARDS 🌟 */
+  .bento-card { 
+    background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth);
+  }
+  .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
+  
+  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
+
+  @media (min-width: 769px) { .bento-card { padding: 32px; border-radius: 20px; } }
+  @media (max-width: 768px) { 
+    .bento-card { padding: 20px; border-radius: 16px; } 
+    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
+  }
+
+  /* 🌟 TOP BAR & ANIMATRONIC LOGO 🌟 */
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none; }
   .top-bar > * { pointer-events: auto; }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
   .security-hud:hover { border-color: var(--neon-cyan); }
-  .hud-icon-box { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
-  .hud-locked .hud-icon-box { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .hud-icon-box { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; background: rgba(255,255,255,0.1); color: #fff; }
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
-  /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
   .complex-sidebar-btn { 
-    position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
-    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: #fff; cursor: pointer;
+    position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
+    transition: transform 0.8s var(--ease-spring); color: #fff; cursor: pointer;
     background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
     backdrop-filter: blur(10px);
   }
-  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); }
+  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.05); }
   .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
-  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.8s ease; }
-  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.8s ease; }
-  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.8s ease; }
+  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.6s ease; }
+  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s ease; }
   
-  .complex-sidebar-btn.spin .hex-outer { transform: rotate(180deg) scale(0); opacity: 0; }
-  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
+  .complex-sidebar-btn.spin .hex-outer { transform: scale(0); opacity: 0; }
+  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.5); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
-  /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
-  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
-  .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
+  @media (max-width: 768px) {
+    .top-bar { padding: 16px 20px; }
+    .complex-sidebar-btn { width: 44px; height: 44px; }
+  }
 
-  /* SIDEBAR */
+  /* 🌟 SIDEBAR & OVERLAY 🌟 */
+  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: rgba(0,0,0,0); pointer-events: none; transition: background 0.3s; }
+  .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+
   .nasa-sidebar {
-    position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
-    background: #050505; border-left: 1px solid var(--glass-border); z-index: 110;
+    position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
+    background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring);
   }
   .nasa-sidebar.open { right: 0; }
-  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
-  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
-  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
-  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
 
-  /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
-  .floating-dock {
-    position: fixed; z-index: 100;
-    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
-    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+  /* 🌟 HYBRID MAGNETIC DOCK 🌟 */
+  .floating-dock-wrapper { position: fixed; z-index: 100; display: flex; pointer-events: none; }
+  .floating-dock { 
+    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
+    display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto;
   }
-  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
-  .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
-
-  /* Mobile Dock (Bottom, Horizontal) */
-  @media (max-width: 768px) {
-    .floating-dock {
-      bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
-      width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
-    }
-    .dock-item { min-width: 46px; height: 46px; scroll-snap-align: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, color 0.3s; }
-    .dock-item.active { color: #000; background: #fff; transform: translateY(-4px); }
-    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
-    .dock-tooltip { display: none; } 
-  }
-
-  /* Desktop Dock (Left Side, Vertical, No-Lag Pure CSS) */
+  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s ease; }
+  
+  /* Desktop Dock (Left, Vertical, Pop-out) */
   @media (min-width: 769px) {
-    .floating-dock {
-      top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
+    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
+    .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
+    .dock-item { width: 48px; height: 48px; border-radius: 50%; }
+    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); }
+    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
+    
+    .dock-tooltip { 
+      position: absolute; left: 100%; top: 50%; margin-left: 16px; transform: translateY(-50%) translateX(-10px);
+      background: var(--color-steel); border: 1px solid var(--color-chrome); color: #fff; 
+      padding: 6px 12px; border-radius: 8px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; 
+      opacity: 0; transition: all 0.2s; white-space: nowrap; pointer-events: none; display: flex; align-items: center; gap: 6px;
     }
-    .dock-item { width: 50px; height: 50px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s; will-change: transform; }
-    .dock-item.active { color: #000; background: #fff; transform: translateX(10px) scale(1.1); animation: popActive 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(6px); }
-    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
-    .scrolling-section { padding-left: 100px; }
-    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(10px) scale(1.1); } }
+    .dock-label-mobile { display: none; }
   }
 
-  /* TYPOGRAPHY & BUTTONS */
-  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-  .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
-  
-  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; font-family: var(--font-ui); letter-spacing: 0.05em; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+  /* Mobile Dock (Bottom, Horizontal, Scrollable) */
+  @media (max-width: 768px) {
+    .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
+    .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
+    .floating-dock::-webkit-scrollbar { display: none; }
+    .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
+    .dock-item.active { background: #fff; color: #000; transform: translateY(-4px); box-shadow: 0 8px 16px rgba(255,255,255,0.2); }
+    .dock-label-mobile { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; }
+    .dock-tooltip { display: none; }
+  }
+
+  /* 🌟 BUTTONS & PILLS 🌟 */
+  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .btn-primary:active { transform: scale(0.95); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
-  .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  
-  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
-  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
-  
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-family: var(--font-body); font-weight: 600; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; white-space: nowrap; }
   .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; white-space: nowrap; }
-  .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
-  .filter-tab:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.3); }
+  .filter-tab.active { background: #fff; color: #000; }
 
-  .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
-  .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
-  .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
-  .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
+  /* 🌟 CUSTOM FINANCE ROW (Replaces Table for Mobile) 🌟 */
+  .finance-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--color-chrome); transition: background 0.2s; }
+  .finance-row:hover { background: rgba(255,255,255,0.02); }
+  .finance-row.income { border-left: 3px solid var(--accent-crew); background: linear-gradient(90deg, rgba(52, 211, 153, 0.05) 0%, transparent 100%); }
+  .finance-row.expense { border-left: 3px solid var(--accent-news); background: linear-gradient(90deg, rgba(251, 146, 60, 0.05) 0%, transparent 100%); }
 
-  /* AI CHAT */
+  /* 🌟 AI TERMINAL 🌟 */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
   .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-behavior: smooth; }
-  .ai-chat-box::-webkit-scrollbar { display: none; }
-  .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
-  .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
-  .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
-  .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
+  .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; }
+  .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); align-self: flex-end; border-bottom-right-radius: 4px; }
+  @media (max-width: 768px) { .ai-terminal { height: calc(100dvh - 300px); min-height: 350px; } }
+
+  /* 🌟 BOTTOM SHEET MODALS (Mobile & Desktop) 🌟 */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
+  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards var(--ease-spring); }
   
-  /* Modal Overlay */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
-  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
-  
+  @media (max-width: 768px) {
+    .modal-overlay { align-items: flex-end; padding: 0; }
+    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
+    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
+  }
+
   @keyframes fadeIn { to { opacity: 1; } }
   @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+  @keyframes slideUpMobile { to { opacity: 1; transform: translateY(0); } }
+  
+  /* Input Floating Labels */
+  .input-group { position: relative; width: 100%; }
+  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 12px; padding: 24px 16px 8px; color: var(--text-100) !important; transition: all 0.2s; }
+  .input-label { position: absolute; left: 16px; top: 18px; font-size: 0.95rem; color: var(--text-400); transition: all 0.2s ease-out; pointer-events: none; }
+  .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); }
+  .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--neon-cyan); font-weight: 600; letter-spacing: 0.05em; }
 
-  @media (max-width: 768px) {
-    .text-title { font-size: 2.8rem; }
-    .scrolling-section { padding: 100px 16px 120px 16px; }
-    .modal-window { padding: 24px; }
-    .top-bar { padding: 16px 20px; }
-    .nasa-sidebar { width: 100%; right: -100%; }
-    .complex-sidebar-btn { width: 44px; height: 44px; }
-  }
+  /* Generic Utils */
+  .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; }
+  .animate-count { animation: countUpAnim 0.8s ease-out forwards; }
+  @keyframes countUpAnim { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 `;
 
 // ==========================================
@@ -280,29 +337,17 @@ const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
   return <span className="animate-count">{prefix}{count.toLocaleString()}{suffix}</span>;
 };
 
-const Sparkline = ({ data, color }) => {
-  if (!data || data.length < 2) return <svg className="sparkline"><path d="M0,12 L48,12" stroke={color}/></svg>;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const points = data.map((val, i) => {
-    const x = (i / (data.length - 1)) * 48;
-    const y = 24 - (((val - min) / range) * 20 + 2); // 2px padding
-    return `${x},${y}`;
-  }).join(' L');
-  return <svg className="sparkline"><path d={`M${points}`} stroke={color}/></svg>;
-};
-
 // ==========================================
 // 5. MAIN APP COMPONENT
 // ==========================================
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
+  
+  // Splash & Loading States
+  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
-
+  
   // Core Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
@@ -311,27 +356,22 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
-  // Filters & State
-  const [vaultFilter, setVaultFilter] = useState('All');
-  const vaultCategories = ['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'];
-
-  // Simulated LIVE NASA Feed
-  const liveNasaNews = [
-    { id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' },
-    { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }
-  ];
-
-  // AI State
-  const [aiInput, setAiInput] = useState("");
-  const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Advanced AI initialized. I have complete access to the NASA India telemetry, Unit archives, and architectural knowledge bases. What would you like to explore or design today?' }
-  ]);
-
-  // Modals & Refs
+  // UI States
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
   const [modalMode, setModalMode] = useState(null); 
   const [viewingCrew, setViewingCrew] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
   const [formPayload, setFormPayload] = useState({});
+  const [vaultFilter, setVaultFilter] = useState('All');
+
+  // AI State
+  const [aiInput, setAiInput] = useState("");
+  const [aiMessages, setAiMessages] = useState([
+    { sender: 'bot', text: 'RSA Advanced AI initialized. Connected to Unit Z649 archives and NASA India telemetry. Awaiting directive.' }
+  ]);
+
+  // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
 
@@ -346,12 +386,25 @@ export default function App() {
     { id: 'ai', label: 'AI Chat', icon: <BrainCircuit size={20}/>, accent: 'var(--neon-cyan)' }
   ];
 
+  // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
-    setTimeout(() => setIsBooting(false), 2200);
-    
+    const seq = [
+      { time: 100, state: 1 }, 
+      { time: 550, state: 2 }, 
+      { time: 630, state: 3 }, 
+      { time: 1000, state: 4 }, 
+      { time: 2000, state: 5 }  
+    ];
+    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
+    setTimeout(() => setIsBooting(false), 2400);
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  // Firebase Listeners
+  useEffect(() => {
     const unsubs = [
-      onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership(prev => ({ ...prev, ...d.data() })); }),
+      onSnapshot(doc(db, "unit", "hq"), d => { if(d.exists()) setLeadership(prev => ({ ...prev, ...d.data() })); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(collection(db, "finances"), s => setFinancialLog(s.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(collection(db, "vault"), s => setVaultData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -361,15 +414,16 @@ export default function App() {
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
+  // AI Auto-Scroll
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    const chatContainer = document.getElementById('ai-chat-box-container');
+    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
   }, [aiMessages]);
 
-  // 🌟 BULLETPROOF INTERSECTION OBSERVER FOR SCROLL SYNC 🌟
+  // 🌟 BULLETPROOF INTERSECTION OBSERVER FOR MOBILE & DESKTOP SCROLLING 🌟
   useEffect(() => {
-    const options = { root: scrollEngineRef.current, rootMargin: '0px', threshold: 0.5 };
+    // Root margin helps trigger slightly before it hits dead center
+    const options = { root: scrollEngineRef.current, rootMargin: '-20% 0px -40% 0px', threshold: 0 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -391,37 +445,29 @@ export default function App() {
     }
   };
 
-  const handleSecurityToggle = () => {
+  const toggleAdmin = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
-    else {
-      const pass = prompt("Enter Admin Password to Unlock Editing:");
-      if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
-      else if (pass) alert("Incorrect Password.");
-    }
+    else if (prompt("Enter Access Key:") === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
+    else alert("Incorrect Password.");
   };
 
   const handleSaveToCloud = async (e) => {
     e.preventDefault();
     try {
-      if (modalMode === 'hq') {
-        await setDoc(doc(db, "unit", "hq"), formPayload);
-      } else if (formPayload.id) {
+      if (modalMode === 'hq') await setDoc(doc(db, "unit", "hq"), formPayload);
+      else if (formPayload.id) {
         const { id, ...data } = formPayload;
         await updateDoc(doc(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), data);
-      } else {
-        await addDoc(collection(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), { ...formPayload, timestamp: Date.now() });
-      }
+      } else await addDoc(collection(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), { ...formPayload, timestamp: Date.now() });
       setModalMode(null); 
       setFormPayload({});
-    } catch (err) { alert("Failed to save data."); }
+    } catch (err) { alert("Sync failed."); }
   };
 
   const deleteDocRecord = async (col, id) => {
-    if (window.confirm("Are you sure you want to delete this?")) {
+    if (window.confirm("Permanently delete record?")) {
       await deleteDoc(doc(db, col, id));
-      setModalMode(null);
-      setViewingCrew(null);
-      setViewingNews(null);
+      setModalMode(null); setViewingCrew(null); setViewingNews(null);
     }
   };
 
@@ -430,39 +476,14 @@ export default function App() {
     try {
       const currentYear = new Date().getFullYear(); 
       await addDoc(collection(db, 'gallery'), {
-         title: item.title,
-         category: item.category || 'Archived Work',
+         title: item.title, category: item.category || 'Archived Work',
          description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '',
-         fileType: 'Archive',
-         archivedYear: currentYear,
-         timestamp: Date.now()
+         link: item.link || '', fileType: 'Archive', archivedYear: currentYear, timestamp: Date.now()
       });
       await deleteDoc(doc(db, 'vault', item.id));
-      alert("Successfully moved to Archive.");
-    } catch(e) {
-      alert("Failed to archive item.");
-    }
+    } catch(e) { alert("Failed to archive item."); }
   };
 
-  // 🌟 3D CAMERA TRANSFORM LOGIC 🌟
-  const getCameraTransform = () => {
-    const transforms = [
-      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash
-      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew
-      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury
-      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault
-      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery
-      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News
-      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ
-      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI
-    ];
-    return transforms[activeSectionIdx] || transforms[0];
-  };
-
-  // ==========================================
-  // SUPERCHARGED AI BRAIN
-  // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
     if (!aiInput.trim()) return;
@@ -472,9 +493,9 @@ export default function App() {
 
     setTimeout(() => {
       const tokens = textRaw.toLowerCase();
-      let botResponse = "Processing directive... Unit Z649 systems nominal.";
-      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
-      else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "For the MSL Trophy, our focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
+      let botResponse = "Processing directive... Unit systems nominal.";
+      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
+      else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "MSL Trophy focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
       else if (tokens.includes("news") || tokens.includes("live")) botResponse = `Checking live NASA feed... 68th ANC Workshop Details and Louis I. Kahn Trophy deadlines are active.`;
       else if (tokens.includes("hello") || tokens.includes("hi")) botResponse = "Hello! I am your advanced architectural co-pilot. How can I assist your design logic today?";
       else if (tokens.includes("money") || tokens.includes("balance")) {
@@ -482,38 +503,52 @@ export default function App() {
         botResponse = `Unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
       }
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 1000);
+    }, 800);
+  };
+
+  // 🌟 3D CAMERA TRANSFORM LOGIC (Matches specific rooms) 🌟
+  const getCameraTransform = () => {
+    const transforms = [
+      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash - Exterior
+      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew - Interior Living
+      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury - Corner Office
+      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault - Corridor
+      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery - Low angle up
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News - Bird's eye aerial
+      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ - Boardroom
+      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI - Server Room
+    ];
+    return transforms[activeSectionIdx] || transforms[0];
   };
 
   // ==========================================
-  // DASHBOARD SECTIONS
+  // RENDER: DASHBOARD
   // ==========================================
   const renderDashboard = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
-      <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
+      <div className="bento-grid-2">
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
-          <div style={{ fontSize: '1.4rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
+          <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
         </div>
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status</span>
           <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Preparation is active. Live feed connected.</p>
+          <p className="type-body mt-2">Preparation is active. Live feed connected.</p>
         </div>
       </div>
       <div className="bento-grid-3">
-        <div className="bento-card"><span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
-        <div className="bento-card"><span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
-        <div className="bento-card"><span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
+        <div className="bento-card"><span className="text-subtitle text-white"><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
+        <div className="bento-card"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
+        <div className="bento-card"><span className="text-subtitle text-white"><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
       </div>
     </div>
   );
 
   const renderCrew = () => {
     const orderedYears = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
-    const allocation = {};
-    orderedYears.forEach(y => allocation[y] = []);
+    const allocation = {}; orderedYears.forEach(y => allocation[y] = []);
     crewData.forEach(u => { const y = u.year || 'Unassigned'; if (allocation[y]) allocation[y].push(u); else allocation['Unassigned'].push(u); });
     
     return (
@@ -525,19 +560,24 @@ export default function App() {
         {orderedYears.map(year => {
           if (allocation[year].length === 0) return null;
           return (
-            <div key={year} style={{ marginTop: '24px' }}>
+            <div key={year} style={{ marginTop: '16px' }}>
               <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
               <div className="bento-grid-2" style={{ marginTop: '16px' }}>
                 {allocation[year].map(m => {
                   const isCouncil = ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role);
                   return (
-                    <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: isCouncil ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+                    <div key={m.id} className="bento-card" style={{ cursor: 'pointer', border: isCouncil ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                         <span className="status-pill">{isCouncil && <Crown size={12} style={{marginRight:4}}/>}{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
                       </div>
-                      <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
-                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div className="avatar" style={{ background: `${getHashColor(m.name)}20`, border: `1px solid ${getHashColor(m.name)}50`, color: getHashColor(m.name) }}>{m.name?m.name.charAt(0).toUpperCase():'?'}</div>
+                        <div style={{ flex: 1, overflow: 'hidden' }}>
+                          <div className="type-h2 text-truncate">{m.name}</div>
+                          <div className="type-caption mt-1 text-truncate">{m.email}</div>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
@@ -564,39 +604,43 @@ export default function App() {
         <div className="bento-grid-2">
           <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
-            <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
-              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>INCOME</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-green)'}}>₹<AnimatedCounter value={income} /></div></div>
-              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>EXPENSES</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-pink)'}}>₹<AnimatedCounter value={expense} /></div></div>
+            <div style={{display:'flex', gap:'24px', marginTop:'10px'}}>
+              <div><span className="type-mono-sm">INCOME</span><div className="type-metric text-[var(--neon-green)]">₹<AnimatedCounter value={income} /></div></div>
+              <div><span className="type-mono-sm">EXPENSES</span><div className="type-metric text-[var(--neon-pink)]">₹<AnimatedCounter value={expense} /></div></div>
             </div>
           </div>
           <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Current Funds</span>
-            <div className="text-metric">₹<AnimatedCounter value={net} /></div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '20px' }}>
+            <span className="text-subtitle text-white"><Zap size={14}/> Current Funds</span>
+            <div className="type-metric">₹<AnimatedCounter value={net} /></div>
+            <div style={{ width: '100%', height: '4px', background: 'var(--color-chrome)', borderRadius: '2px', overflow: 'hidden', marginTop: '16px' }}>
                <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
             </div>
           </div>
         </div>
-        <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
-           <table className="pro-table">
-             <thead><tr><th>Type</th><th>Description</th><th>Amount</th><th>Edit</th></tr></thead>
-             <tbody>
-               {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>No records found.</td></tr>}
-               {financialLog.map(f => (
-                 <tr key={f.id}>
-                   <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)', borderColor: f.type==='income'?'rgba(0,255,102,0.2)':'rgba(255,0,85,0.2)' }}>{f.type}</span></td>
-                   <td style={{ fontWeight: '500' }}>{f.description}</td>
-                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>{f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}</td>
-                   <td>
-                     <div style={{ display: 'flex', gap: '8px' }}>
-                       {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Edit"><Pencil size={14}/></button>}
-                       {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={14}/></button>}
-                     </div>
-                   </td>
-                 </tr>
-               ))}
-             </tbody>
-           </table>
+        <div className="bento-card" style={{ padding: '0' }}>
+          {financialLog.length === 0 ? (
+            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-300)' }}>No financial records found.</div>
+          ) : (
+            <div>
+              {financialLog.sort((a,b)=>b.timestamp-a.timestamp).map((f, i) => (
+                <div key={f.id} className={`finance-row ${f.type}`} style={{ borderBottom: i===financialLog.length-1?'none':'' }}>
+                  <div style={{ flex: 1, minWidth: 0, paddingRight: '16px' }}>
+                    <div className="type-h2 text-truncate" style={{ fontSize: '1.1rem' }}>{f.description}</div>
+                    <div className="type-mono-sm mt-1">{f.timestamp ? new Date(f.timestamp).toLocaleDateString() : 'Date Unknown'}</div>
+                  </div>
+                  <div className="type-metric" style={{ fontSize: '1.2rem', color: f.type==='income' ? 'var(--neon-green)' : 'var(--neon-pink)', whiteSpace: 'nowrap' }}>
+                    {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
+                  </div>
+                  {isLeadershipMode && (
+                    <div style={{ display: 'flex', gap: '4px', marginLeft: '12px' }}>
+                      <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }}><Pencil size={14}/></button>
+                      <button className="btn-icon danger" onClick={() => handleDelete('finances', f.id)}><Trash2 size={14}/></button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -610,8 +654,10 @@ export default function App() {
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
-        <div style={{ display: 'flex', gap: '12px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-          {vaultCategories.map(cat => <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>)}
+        <div style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
+          {['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'].map(cat => (
+            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
+          ))}
         </div>
         <div className="bento-grid-3">
           {filteredVault.map(v => (
@@ -621,11 +667,11 @@ export default function App() {
                 <div style={{ display: 'flex', gap: '4px' }}>
                   {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={() => handleArchiveVaultItem(v)}><FolderArchive size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('vault', v.id)}><Trash2 size={14}/></button>}
                 </div>
               </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
-              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
+              <div className="type-h2" style={{ marginBottom: '24px' }}>{v.title}</div>
+              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
             </div>
           ))}
         </div>
@@ -644,29 +690,30 @@ export default function App() {
           {galleryData.map(g => (
             <div key={g.id} className="bento-card" style={{ padding: 0 }}>
               {g.fileType === 'Archive' ? (
-                <div style={{ padding: '32px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
-                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>}
                   </div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
-                  <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6', flex: 1 }}>{g.description}</div>
-                  {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px' }}>View Saved Data <ArrowUpRight size={14}/></a>}
+                  <div className="type-h2">{g.title}</div>
+                  <div className="type-caption mt-2" style={{ flex: 1 }}>{g.description}</div>
+                  {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary mt-4">View Saved Data <ArrowUpRight size={14}/></a>}
                 </div>
               ) : (
                 <>
-                  <div style={{ height: '250px', background: g.fileType === 'Image URL' || g.fileType === 'Image' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {(g.fileType !== 'Image URL' && g.fileType !== 'Image') && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
-                  </div>
-                  <div style={{ padding: '32px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div style={{ height: '200px', background: `url("${g.link}") center/cover` }}></div>
+                  <div style={{ padding: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                       <span className="status-pill">{g.category}</span>
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
-                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
-                      </div>
+                      {isLeadershipMode && (
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>
+                          <button className="btn-icon danger" onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>
+                        </div>
+                      )}
                     </div>
-                    <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                    <div className="type-h2">{g.title}</div>
+                    <div className="type-caption mt-2">{g.description}</div>
                   </div>
                 </>
               )}
@@ -677,49 +724,52 @@ export default function App() {
     );
   };
 
-  const renderNews = () => (
-    <div className="bento-container" style={{ maxWidth: '1400px' }}>
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
-          {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-            <div key={n.id} className="bento-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
-                </div>
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
-              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingNews(n)}><BookOpen size={14}/> Read Full Story</button>
-            </div>
-          ))}
+  const renderNews = () => {
+    return (
+      <div className="bento-container" style={{ maxWidth: '1400px' }}>
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
-          <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {liveNasaNews.map(live => (
-                <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{live.tag}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{live.date}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '24px', marginTop: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <span className="text-subtitle text-white"><Activity size={14}/> Unit Updates</span>
+            {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
+              <div key={n.id} className="bento-card" style={{ padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
+                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('news', n.id)}><Trash2 size={14}/></button>}
                   </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{live.title}</div>
-                  <a href={live.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>Official Portal <ArrowUpRight size={14}/></a>
                 </div>
-              ))}
+                <div className="type-h2" style={{ marginBottom: '12px' }}>{n.title}</div>
+                <div className="type-body text-truncate" style={{ marginBottom: '20px' }}>{n.content}</div>
+                <button className="btn-primary btn-secondary w-full" onClick={() => setViewingNews(n)}><BookOpen size={14}/> Read Full Story</button>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <span className="text-subtitle text-[var(--neon-gold)]"><Globe size={14}/> Live NASA India Feed</span>
+            <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', padding: '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {[{ id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' }, { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }].map(live => (
+                  <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                      <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{live.tag}</span>
+                      <span className="type-mono-sm">{live.date}</span>
+                    </div>
+                    <div className="type-h2" style={{ fontSize: '1.2rem' }}>{live.title}</div>
+                    <a href={live.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary mt-4 w-fit inline-flex">Official Portal <ArrowUpRight size={14}/></a>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderUnitCouncil = () => {
     const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role));
@@ -728,23 +778,28 @@ export default function App() {
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
+            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
+            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit</button>}
           </div>
         </div>
         <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
-          <span className="text-subtitle" style={{color: '#fff'}}>Unit Information</span>
-          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
-          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <span className="type-label block mb-2 text-white">Unit Information</span>
+              <div className="type-hero">Unit {leadership.unitCode}</div>
+            </div>
+            <div className="status-pill" style={{ textTransform: 'lowercase' }}><Globe size={12}/> {leadership.officialEmail}</div>
+          </div>
         </div>
-        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
+        <span className="text-subtitle text-[var(--neon-gold)] px-4 mt-4"><Crown size={14}/> High Command Directory</span>
         <div className="bento-grid-2">
           {councilMembers.map(m => (
-            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
+                <span className="status-pill" style={{ color: 'var(--neon-gold)' }}>{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
               </div>
-              <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}><Eye size={14}/> View Dossier</button>
+              <div className="type-h2 mb-4">{m.name}</div>
+              <button className="btn-primary btn-secondary w-full" onClick={() => setViewingCrew(m)}><Eye size={14}/> View Dossier</button>
             </div>
           ))}
         </div>
@@ -756,15 +811,15 @@ export default function App() {
     return (
       <div className="bento-container" style={{ maxWidth: '1400px' }}>
         <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
-        <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
-          <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> Chat with RSA AI</span>
-          <div className="ai-terminal" style={{ marginTop: '16px' }}>
+        <div className="bento-card mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+          <span className="text-subtitle text-white"><BrainCircuit size={14}/> Chat with RSA AI</span>
+          <div className="ai-terminal">
             <div id="ai-chat-box-container" className="ai-chat-box">
               {aiMessages.map((msg, idx) => (<div key={idx} className={`ai-msg ${msg.sender}`}>{msg.text}</div>))}
               <div ref={chatEndRef} />
             </div>
-            <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
-              <input className="ai-input" placeholder="Ask complex architecture queries or request live NASA updates..." value={aiInput} onChange={(e) => setAiInput(e.target.value)} />
+            <form onSubmit={handleAiSubmit} className="ai-input-wrapper mt-4">
+              <input className="input-field" style={{ padding: '12px 16px' }} placeholder="Ask architectural queries or NASA updates..." value={aiInput} onChange={(e) => setAiInput(e.target.value)} />
               <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
             </form>
           </div>
@@ -773,11 +828,13 @@ export default function App() {
     );
   };
 
+  // ==========================================
+  // MAIN RETURN
+  // ==========================================
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 FULL 3D ARCHITECTURAL BACKGROUND 🌟 */}
       <div className="arch-environment">
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
@@ -790,7 +847,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* SPLASH SCREEN */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
           <div className="circle-flow-1"></div>
@@ -800,22 +856,19 @@ export default function App() {
         </div>
       </div>
 
-      {/* 🌟 OVERLAY FOR SIDEBAR (Click outside to close) 🌟 */}
+      {/* 🌟 CLICK OUTSIDE TO CLOSE OVERLAYS 🌟 */}
       <div className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}></div>
 
       <nav className="top-bar">
         <div className="pointer-events-auto">
-          <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
-            <div className="hud-icon-box">
+          <div className="security-hud" onClick={handleSecurityToggle}>
+            <div className={`hud-icon-box ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`}>
                {isLeadershipMode ? <Unlock size={14} strokeWidth={2.5}/> : <Lock size={14} strokeWidth={2.5}/>}
             </div>
-            <div className="hud-text hidden sm:block">
-               [ ADMIN: {isLeadershipMode ? 'ON' : 'OFF'} ]
-            </div>
+            <div className="hud-text hidden sm:block">[ ADMIN: {isLeadershipMode ? 'ON' : 'OFF'} ]</div>
           </div>
         </div>
         
-        {/* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */}
         <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <button className={`complex-sidebar-btn ${sidebarOpen ? 'spin' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
             <Hexagon size={28} className="hex-outer" strokeWidth={1.5} />
@@ -831,33 +884,34 @@ export default function App() {
           <div className="sidebar-logo">RSA <span style={{fontSize:'1rem', color:'#fff', fontStyle:'normal', fontFamily:'var(--font-body)', fontWeight:'400'}}>X</span> NASA</div>
           <button className="sidebar-close" onClick={() => setSidebarOpen(false)}><X size={28}/></button>
         </div>
-        
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '10px' }}>
           <div className="sidebar-section-title"><Activity size={14}/> Live Information</div>
           <div className="sidebar-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>EVENT</span><CalendarClock size={14}/></div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>68th Annual Convention</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Preparation</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span className="type-label">EVENT</span><CalendarClock size={14}/></div>
+            <div className="type-h2 mt-2" style={{ fontSize: '1.2rem' }}>68th Annual Convention</div>
+            <div className="type-caption mt-2">Status: Preparation</div>
           </div>
           <div className="sidebar-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHIES</span><Shield size={14}/></div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>Louis I. Kahn Trophy</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Open</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span className="type-label">TROPHIES</span><Shield size={14}/></div>
+            <div className="type-h2 mt-2" style={{ fontSize: '1.2rem' }}>Louis I. Kahn Trophy</div>
+            <div className="type-caption mt-2">Status: Open</div>
           </div>
-          <div className="sidebar-section-title" style={{ marginTop: '30px' }}><Zap size={14}/> Quick Links</div>
+          <div className="sidebar-section-title mt-8"><Zap size={14}/> Quick Links</div>
           <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="sidebar-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ fontWeight: '600', fontSize: '1.1rem' }}>NASA Website</div><ArrowUpRight size={20} color="#fff"/>
+              <div style={{ fontWeight: '600' }}>NASA Website</div><ArrowUpRight size={20} color="#fff"/>
             </div>
           </a>
         </div>
       </div>
 
+      {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock">
+        <div className="floating-dock" ref={dockRef}>
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
+              <span className="dock-label-mobile" style={{ color: activeSectionIdx===i ? sec.accent : 'inherit' }}>{sec.label}</span>
               <div className="dock-tooltip">{sec.label}</div>
             </div>
           ))}
@@ -883,8 +937,8 @@ export default function App() {
               <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{viewingNews.tag || 'UPDATE'}</span>
               <button className="btn-icon" onClick={() => setViewingNews(null)}><X size={24}/></button>
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '600', marginBottom: '24px', fontFamily: "var(--font-heading)", fontStyle: 'italic', lineHeight: '1.2' }}>{viewingNews.title}</div>
-            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.1rem', color: 'rgba(255,255,255,0.85)', lineHeight: '1.8' }}>{viewingNews.content}</div>
+            <div className="type-h1 mb-6">{viewingNews.title}</div>
+            <div className="type-body" style={{ whiteSpace: 'pre-wrap', color: 'rgba(255,255,255,0.85)' }}>{viewingNews.content}</div>
           </div>
         </div>
       )}
@@ -894,16 +948,16 @@ export default function App() {
         <div className="modal-overlay pointer-events-auto" onClick={() => setViewingCrew(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h2 className="text-title" style={{ fontSize: '2.5rem' }}>Member Details</h2>
+              <h2 className="type-h1">Member Details</h2>
               <button className="btn-icon" onClick={() => setViewingCrew(null)}><X size={24}/></button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:'16px', marginBottom:'32px' }}>
-              <div><span className="text-subtitle">Name</span><div style={{fontSize:'1.8rem', fontWeight:'600', fontFamily:'var(--font-heading)', fontStyle:'italic'}}>{viewingCrew.name}</div></div>
-              <div><span className="text-subtitle">Role</span><div className="status-pill" style={{color:'var(--neon-cyan)', borderColor:'rgba(0,240,255,0.3)'}}>{viewingCrew.role}</div></div>
-              {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType}</div></div>}
-              <div><span className="text-subtitle">Year</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.year}</div></div>
-              <div><span className="text-subtitle">Email</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.email}</div></div>
-              {viewingCrew.phone && <div><span className="text-subtitle">Phone</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.phone}</div></div>}
+              <div><span className="type-label block mb-1">Name</span><div className="type-h2">{viewingCrew.name}</div></div>
+              <div><span className="type-label block mb-1">Role</span><div className="status-pill" style={{color:'var(--neon-cyan)'}}>{viewingCrew.role}</div></div>
+              {viewingCrew.coordinatorType && <div><span className="type-label block mb-1">Department</span><div className="type-body text-white">{viewingCrew.coordinatorType}</div></div>}
+              <div><span className="type-label block mb-1">Year</span><div className="type-body text-white">{viewingCrew.year}</div></div>
+              <div><span className="type-label block mb-1">Email</span><div className="type-mono-sm text-white">{viewingCrew.email}</div></div>
+              {viewingCrew.phone && <div><span className="type-label block mb-1">Phone</span><div className="type-mono-sm text-white">{viewingCrew.phone}</div></div>}
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                 <a href={`mailto:${viewingCrew.email}`} className="btn-primary" style={{ flex: 1 }}><Mail size={16}/> Email</a>
@@ -918,7 +972,7 @@ export default function App() {
                   <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Delete</button>
                 </>
               ) : (
-                <div style={{fontSize:'0.8rem', color:'var(--text-secondary)', fontStyle:'italic'}}><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Only Admins can edit or delete this member.</div>
+                <div className="type-caption"><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Only Admins can edit or delete.</div>
               )}
             </div>
           </div>
@@ -930,71 +984,127 @@ export default function App() {
         <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
-              <h2 className="text-title" style={{ fontSize: '2rem' }}>{formPayload.id ? 'Edit' : 'Add'} Data</h2>
+              <h2 className="type-h1">{formPayload.id ? 'Edit' : 'Add'} Data</h2>
               <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
             </div>
             
-            <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(e); }}>
+            <form onSubmit={handleSaveToCloud}>
               
               {modalMode === 'crew' && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                  <input required placeholder="Name" className="input-field" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
-                  <input type="email" placeholder="Email" className="input-field" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
-                  <input type="tel" placeholder="Phone Number" className="input-field" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
+                  <div className="input-group">
+                    <input required placeholder="Name" className="input-field" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
+                    <label className="input-label">Name</label>
+                  </div>
+                  <div className="input-group">
+                    <input type="email" placeholder="Email" className="input-field" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
+                    <label className="input-label">Email</label>
+                  </div>
+                  <div className="input-group">
+                    <input type="tel" placeholder="Phone Number" className="input-field" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
+                    <label className="input-label">Phone Number</label>
+                  </div>
                   
-                  <select required className="input-field" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
-                    <option value="" disabled>Select Role...</option>
-                    <option value="Member">Student Member</option>
-                    {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
-                    {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
-                    {isLeadershipMode && <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>}
-                    {isLeadershipMode && <option value="Coordinator">Coordinator</option>}
-                  </select>
+                  <div>
+                    <span className="type-label block mb-2">Role (Adds Executive to Council)</span>
+                    <select required className="input-field" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
+                      <option value="" disabled>Select Role...</option>
+                      <option value="Member">Student Member</option>
+                      {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
+                      {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
+                      {isLeadershipMode && <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>}
+                      {isLeadershipMode && <option value="Coordinator">Coordinator</option>}
+                    </select>
+                  </div>
 
                   {formPayload.role === 'Coordinator' && (
-                    <input required placeholder="Coordinator Type (e.g., Design, Events)" className="input-field" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
+                    <div className="input-group">
+                      <input required placeholder="Coordinator Type (e.g., Design, Events)" className="input-field" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
+                      <label className="input-label">Coordinator Type</label>
+                    </div>
                   )}
 
-                  <select className="input-field" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
-                    <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
-                  </select>
+                  <div>
+                    <span className="type-label block mb-2">Year</span>
+                    <select className="input-field" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
+                      <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
+                    </select>
+                  </div>
                 </div>
               )}
 
               {modalMode === 'finances' && isLeadershipMode && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                  <select className="input-field" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
-                    <option value="income">INCOME (+)</option>
-                    <option value="expense">EXPENSE (-)</option>
-                  </select>
-                  <input required placeholder="What was this for?" className="input-field" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
-                  <input required type="number" placeholder="Amount (INR)" className="input-field" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
+                  <div>
+                    <span className="type-label block mb-2">Type</span>
+                    <select className="input-field" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
+                      <option value="income">INCOME (+)</option>
+                      <option value="expense">EXPENSE (-)</option>
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <input required placeholder="What was this for?" className="input-field" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
+                    <label className="input-label">Description</label>
+                  </div>
+                  <div className="input-group">
+                    <input required type="number" placeholder="Amount (INR)" className="input-field" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
+                    <label className="input-label">Amount (INR)</label>
+                  </div>
                 </div>
               )}
 
               {modalMode === 'hq' && isLeadershipMode && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                  <input placeholder="Unit Code (e.g. Z649)" className="input-field" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
-                  <input placeholder="Official Email" className="input-field" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
-                  <input type="number" placeholder="Goal Amount (INR)" className="input-field" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
+                  <div className="input-group">
+                    <input placeholder="Unit Code (e.g. Z649)" className="input-field" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
+                    <label className="input-label">Unit Code</label>
+                  </div>
+                  <div className="input-group">
+                    <input placeholder="Official Email" className="input-field" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
+                    <label className="input-label">Official Email</label>
+                  </div>
+                  <div className="input-group">
+                    <input type="number" placeholder="Goal Amount (INR)" className="input-field" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
+                    <label className="input-label">Goal Amount (INR)</label>
+                  </div>
                 </div>
               )}
 
               {modalMode === 'vault' && isLeadershipMode && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                  <select className="input-field" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
-                    <option value="Trophies">Trophies</option><option value="Programs">Programs</option><option value="Events">Events</option><option value="Meetings">Meetings</option><option value="Other">Other</option>
-                  </select>
-                  <input required placeholder="Title" className="input-field" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <input placeholder="Link / URL" className="input-field" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                  <div>
+                    <span className="type-label block mb-2">Category</span>
+                    <select className="input-field" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
+                      <option value="Trophies">Trophies</option><option value="Programs">Programs</option><option value="Events">Events</option><option value="Meetings">Meetings</option><option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <input required placeholder="Title" className="input-field" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                    <label className="input-label">Title</label>
+                  </div>
+                  <div className="input-group">
+                    <input placeholder="Link / URL" className="input-field" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                    <label className="input-label">Link URL</label>
+                  </div>
                 </div>
               )}
 
               {['gallery', 'news'].includes(modalMode) && isLeadershipMode && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                  <input required placeholder="Title" className="input-field" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  {modalMode !== 'news' && <input placeholder="Link / URL" className="input-field" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
-                  <textarea placeholder="Description..." className="input-field" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
+                  <div className="input-group">
+                    <input required placeholder="Title" className="input-field" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                    <label className="input-label">Title</label>
+                  </div>
+                  {modalMode !== 'news' && (
+                    <div className="input-group">
+                      <input placeholder="Link / URL" className="input-field" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                      <label className="input-label">Link URL</label>
+                    </div>
+                  )}
+                  <div className="input-group">
+                    <textarea placeholder="Description..." className="input-field" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
+                    <label className="input-label">Description Payload</label>
+                  </div>
                 </div>
               )}
 
