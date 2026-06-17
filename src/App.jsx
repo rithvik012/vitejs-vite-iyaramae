@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
-  Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
+  Shield, ShieldAlert, Plus, Trash2, Users, DollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
-  Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
-  HardDrive, RadioTower, BookOpen, Check
+  Globe, Activity, Crown, Cpu, Send, Calendar,
+  Hexagon, Zap, Lock, Unlock, Pencil, Eye, Archive,
+  HardDrive, Radio, BookOpen, Check
 } from 'lucide-react';
 
 // ==========================================
@@ -145,7 +145,7 @@ const GLOBAL_STYLES = `
   @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
   /* PERFORMANCE SCROLLING */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   /* Desktop Layout */
   @media (min-width: 769px) {
@@ -376,17 +376,16 @@ export default function App() {
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
-  const dockRef = useRef(null); // FIXED: Dock Reference Restored to prevent crash
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
-    { id: 'crew', label: 'Personnel', icon: <UsersRound size={20}/>, accent: 'var(--accent-crew)' },
-    { id: 'fin', label: 'Treasury', icon: <CircleDollarSign size={20}/>, accent: 'var(--accent-finance)' },
+    { id: 'crew', label: 'Personnel', icon: <Users size={20}/>, accent: 'var(--accent-crew)' },
+    { id: 'fin', label: 'Treasury', icon: <DollarSign size={20}/>, accent: 'var(--accent-finance)' },
     { id: 'vault', label: 'Vault', icon: <Server size={20}/>, accent: 'var(--accent-vault)' },
     { id: 'gal', label: 'Gallery', icon: <Aperture size={20}/>, accent: 'var(--accent-gallery)' },
-    { id: 'news', label: 'Broadcasts', icon: <RadioTower size={20}/>, accent: 'var(--accent-news)' },
+    { id: 'news', label: 'Broadcasts', icon: <Radio size={20}/>, accent: 'var(--accent-news)' },
     { id: 'hq', label: 'Council', icon: <Crown size={20}/>, accent: 'var(--accent-hq)' },
-    { id: 'ai', label: 'AI Chat', icon: <BrainCircuit size={20}/>, accent: 'var(--neon-cyan)' }
+    { id: 'ai', label: 'AI Chat', icon: <Cpu size={20}/>, accent: 'var(--neon-cyan)' }
   ];
 
   // Boot Sequence
@@ -450,7 +449,7 @@ export default function App() {
   const toggleAdmin = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
     else {
-      const pass = prompt("Enter Admin Password to Unlock Editing:");
+      const pass = prompt("Enter Access Key:");
       if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
       else if (pass) alert("Incorrect Password.");
     }
@@ -563,9 +562,9 @@ export default function App() {
         </div>
       </div>
       <div className="bento-grid-3">
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Users size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
         <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Radio size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
       </div>
     </div>
   );
@@ -647,7 +646,7 @@ export default function App() {
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-300)' }}>No financial records found.</div>
           ) : (
             <div>
-              {financialLog.sort((a,b)=>b.timestamp-a.timestamp).map((f, i) => (
+              {[...financialLog].sort((a,b)=>b.timestamp-a.timestamp).map((f, i) => (
                 <div key={f.id} className={`finance-row ${f.type}`} style={{ borderBottom: i===financialLog.length-1?'none':'' }}>
                   <div style={{ flex: 1, minWidth: 0, paddingRight: '16px' }}>
                     <div className="type-h2 text-truncate" style={{ fontSize: '1.1rem' }}>{f.description}</div>
@@ -690,13 +689,13 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><FolderArchive size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><Archive size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('vault', v.id); }}><Trash2 size={14}/></button>}
                 </div>
               </div>
               <div className="type-h2" style={{ marginBottom: '24px' }}>{v.title}</div>
-              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
+              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', textDecoration: 'none', display: 'flex', justifyContent: 'center' }}>Open Link <ArrowUpRight size={14}/></a>
             </div>
           ))}
         </div>
@@ -717,7 +716,7 @@ export default function App() {
               {g.fileType === 'Archive' ? (
                 <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
+                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><Archive size={12}/> YEAR {g.archivedYear || '2026'}</span>
                     {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('gallery', g.id); }}><Trash2 size={14}/></button>}
                   </div>
                   <div className="type-h2">{g.title}</div>
@@ -759,7 +758,7 @@ export default function App() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '24px', marginTop: '16px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <span className="text-subtitle text-white stagger-item stagger-2"><Activity size={14}/> Unit Updates</span>
-            {newsData.sort((a,b)=>b.timestamp-a.timestamp).map((n, i) => (
+            {[...newsData].sort((a,b)=>b.timestamp-a.timestamp).map((n, i) => (
               <div key={n.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
@@ -854,7 +853,7 @@ export default function App() {
       <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(7) }}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
         <div className="bento-card stagger-item stagger-2 mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-          <span className="text-subtitle text-white"><BrainCircuit size={14}/> Chat with RSA AI</span>
+          <span className="text-subtitle text-white"><Cpu size={14}/> Chat with RSA AI</span>
           <div className="ai-terminal">
             <div id="ai-chat-box-container" className="ai-chat-box">
               {aiMessages.map((msg, idx) => (<div key={idx} className={`ai-msg ${msg.sender}`}>{msg.text}</div>))}
@@ -949,11 +948,10 @@ export default function App() {
 
       {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock" ref={dockRef}>
+        <div className="floating-dock">
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
-              <span className="dock-label-mobile" style={{ color: activeSectionIdx===i ? sec.accent : 'inherit' }}>{sec.label}</span>
               <div className="dock-tooltip">{sec.label}</div>
             </div>
           ))}
