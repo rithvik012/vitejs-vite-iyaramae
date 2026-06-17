@@ -123,24 +123,25 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* CIRCLE FLOW SPLASH SCREEN */
+  /* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
   .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; transition: opacity 0.5s; }
   .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; transition: opacity 0.5s; }
   .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; transition: opacity 0.5s; }
-  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
   
   .show-circles .circle-flow-1 { opacity: 1; }
   .show-circles .circle-flow-2 { opacity: 0.8; }
   .show-circles .circle-flow-3 { opacity: 1; }
   .show-circles .splash-brand { opacity: 1; margin-left: 0; letter-spacing: 0.08em; }
-  .glitch-active .splash-brand { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
+  
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
+  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* KINETIC SCROLL ENGINE */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  /* PERFORMANCE SCROLLING */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   /* Desktop Layout */
   @media (min-width: 769px) {
@@ -181,8 +182,8 @@ const GLOBAL_STYLES = `
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
   }
 
-  /* TOP BAR & ANIMATRONIC LOGO */
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none; }
+  /* TOP BAR */
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
@@ -191,31 +192,28 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
+  /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
   .complex-sidebar-btn { 
-    position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
-    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); color: #fff; cursor: pointer;
+    position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: #fff; cursor: pointer;
     background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
     backdrop-filter: blur(10px);
   }
   .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.05); }
   .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
-  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.6s ease; }
-  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s ease; }
-  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s ease; }
+  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.8s ease; }
   
   .complex-sidebar-btn.spin .hex-outer { transform: scale(0); opacity: 0; }
-  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.5); opacity: 0; }
+  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
-  @media (max-width: 768px) {
-    .top-bar { padding: 16px 20px; }
-    .complex-sidebar-btn { width: 44px; height: 44px; }
-  }
-
-  /* SIDEBAR & OVERLAY */
+  /* SIDEBAR OVERLAY */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
-  .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+  .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
 
+  /* SIDEBAR */
   .nasa-sidebar {
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
@@ -224,27 +222,20 @@ const GLOBAL_STYLES = `
   }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
-  
-  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
-  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
-  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
-  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
-  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
 
-  /* 🌟 HYBRID MAGNETIC DOCK 🌟 */
-  .floating-dock-wrapper { position: fixed; z-index: 100; display: flex; pointer-events: none; }
-  .floating-dock { 
-    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
-    display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto;
+  /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
+  .floating-dock {
+    position: fixed; z-index: 100;
+    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
+    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
   }
-  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s ease; }
+  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
   
-  /* Desktop Dock (Left, Vertical) */
+  /* Desktop Dock (Left Side, Vertical) */
   @media (min-width: 769px) {
-    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
+    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); position: fixed; z-index: 100; }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
-    .dock-item { width: 48px; height: 48px; border-radius: 50%; }
+    .dock-item { width: 48px; height: 48px; }
     .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); }
     .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
     
@@ -260,7 +251,7 @@ const GLOBAL_STYLES = `
 
   /* Mobile Dock (Bottom, Horizontal) */
   @media (max-width: 768px) {
-    .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
+    .floating-dock-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
     .floating-dock::-webkit-scrollbar { display: none; }
     .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
@@ -269,7 +260,7 @@ const GLOBAL_STYLES = `
     .dock-tooltip { display: none; }
   }
 
-  /* BUTTONS, PILLS & TABLES */
+  /* BUTTONS & PILLS */
   .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
   .btn-primary:active { transform: scale(0.95); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
@@ -278,21 +269,6 @@ const GLOBAL_STYLES = `
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-family: var(--font-body); font-weight: 600; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; white-space: nowrap; }
-  .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; white-space: nowrap; }
-  .filter-tab.active { background: #fff; color: #000; }
-
-  .finance-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--color-chrome); transition: background 0.2s; }
-  .finance-row:hover { background: rgba(255,255,255,0.02); }
-  .finance-row.income { border-left: 3px solid var(--accent-crew); background: linear-gradient(90deg, rgba(52, 211, 153, 0.05) 0%, transparent 100%); }
-  .finance-row.expense { border-left: 3px solid var(--accent-news); background: linear-gradient(90deg, rgba(251, 146, 60, 0.05) 0%, transparent 100%); }
-
-  /* AI TERMINAL */
-  .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
-  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-behavior: smooth; }
-  .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; }
-  .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); align-self: flex-start; border-bottom-left-radius: 4px; }
-  .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); align-self: flex-end; border-bottom-right-radius: 4px; }
-  @media (max-width: 768px) { .ai-terminal { height: calc(100dvh - 300px); min-height: 350px; } }
 
   /* 🌟 BOTTOM SHEET MODALS 🌟 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
@@ -301,7 +277,7 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
     .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
-    input, textarea, select { font-size: 16px !important; }
+    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
   }
 
   @keyframes fadeIn { to { opacity: 1; } }
@@ -318,6 +294,14 @@ const GLOBAL_STYLES = `
   .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; }
   .animate-count { animation: countUpAnim 0.8s ease-out forwards; }
   @keyframes countUpAnim { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* AI CHAT */
+  .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
+  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-behavior: smooth; }
+  .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; }
+  .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); align-self: flex-end; border-bottom-right-radius: 4px; }
+  @media (max-width: 768px) { .ai-terminal { height: calc(100dvh - 300px); min-height: 350px; } }
 `;
 
 // ==========================================
@@ -374,7 +358,6 @@ export default function App() {
   const [viewingCrew, setViewingCrew] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
   const [formPayload, setFormPayload] = useState({});
-  const [vaultFilter, setVaultFilter] = useState('All');
 
   // AI State
   const [aiInput, setAiInput] = useState("");
@@ -403,9 +386,8 @@ export default function App() {
     const seq = [
       { time: 100, state: 1 }, 
       { time: 550, state: 2 }, 
-      { time: 630, state: 3 }, 
-      { time: 1000, state: 4 }, 
-      { time: 2000, state: 5 }  
+      { time: 1000, state: 3 }, 
+      { time: 2000, state: 4 }  
     ];
     const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
     setTimeout(() => setIsBooting(false), 2400);
@@ -455,7 +437,7 @@ export default function App() {
     }
   };
 
-  const handleSecurityToggle = () => {
+  const toggleAdmin = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
     else {
       const pass = prompt("Enter Admin Password to Unlock Editing:");
@@ -489,44 +471,21 @@ export default function App() {
     }
   };
 
-  const handleArchiveVaultItem = async (item) => {
-    if (!window.confirm("Move this work to the Archive Gallery? It will be permanently removed from the active vault.")) return;
-    try {
-      const currentYear = new Date().getFullYear(); 
-      await addDoc(collection(db, 'gallery'), {
-         title: item.title,
-         category: item.category || 'Archived Work',
-         description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '',
-         fileType: 'Archive',
-         archivedYear: currentYear,
-         timestamp: Date.now()
-      });
-      await deleteDoc(doc(db, 'vault', item.id));
-      alert("Successfully moved to Archive.");
-    } catch(e) {
-      alert("Failed to archive item.");
-    }
-  };
-
-  // 🌟 3D CAMERA TRANSFORM LOGIC 🌟
+  // 🌟 3D CAMERA TRANSFORM LOGIC (Matches specific rooms) 🌟
   const getCameraTransform = () => {
     const transforms = [
-      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash
-      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew
-      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury
-      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault
-      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery
-      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News
-      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ
-      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI
+      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash - Exterior
+      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew - Interior Living
+      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury - Corner Office
+      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault - Corridor
+      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery - Low angle up
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News - Bird's eye aerial
+      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ - Boardroom
+      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI - Server Room
     ];
     return transforms[activeSectionIdx] || transforms[0];
   };
 
-  // ==========================================
-  // SUPERCHARGED AI BRAIN
-  // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
     if (!aiInput.trim()) return;
@@ -561,7 +520,7 @@ export default function App() {
           <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
         </div>
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
-          <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status</span>
+          <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status: Nominal</span>
           <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
           <p className="type-body mt-2">Preparation is active. Live feed connected.</p>
         </div>
@@ -633,7 +592,7 @@ export default function App() {
         <div className="bento-grid-2">
           <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
-            <div style={{display:'flex', gap:'24px', marginTop:'10px'}}>
+            <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
               <div><span className="type-mono-sm">INCOME</span><div className="type-metric text-[var(--neon-green)]">₹<AnimatedCounter value={income} /></div></div>
               <div><span className="type-mono-sm">EXPENSES</span><div className="type-metric text-[var(--neon-pink)]">₹<AnimatedCounter value={expense} /></div></div>
             </div>
@@ -641,62 +600,51 @@ export default function App() {
           <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle text-white"><Zap size={14}/> Current Funds</span>
             <div className="type-metric">₹<AnimatedCounter value={net} /></div>
-            <div style={{ width: '100%', height: '4px', background: 'var(--color-chrome)', borderRadius: '2px', overflow: 'hidden', marginTop: '16px' }}>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '20px' }}>
                <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
             </div>
           </div>
         </div>
-        <div className="bento-card" style={{ padding: '0' }}>
-          {financialLog.length === 0 ? (
-            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-300)' }}>No financial records found.</div>
-          ) : (
-            <div>
-              {financialLog.sort((a,b)=>b.timestamp-a.timestamp).map((f, i) => (
-                <div key={f.id} className={`finance-row ${f.type}`} style={{ borderBottom: i===financialLog.length-1?'none':'' }}>
-                  <div style={{ flex: 1, minWidth: 0, paddingRight: '16px' }}>
-                    <div className="type-h2 text-truncate" style={{ fontSize: '1.1rem' }}>{f.description}</div>
-                    <div className="type-mono-sm mt-1">{f.timestamp ? new Date(f.timestamp).toLocaleDateString() : 'Date Unknown'}</div>
-                  </div>
-                  <div className="type-metric" style={{ fontSize: '1.2rem', color: f.type==='income' ? 'var(--neon-green)' : 'var(--neon-pink)', whiteSpace: 'nowrap' }}>
-                    {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
-                  </div>
-                  {isLeadershipMode && (
-                    <div style={{ display: 'flex', gap: '4px', marginLeft: '12px' }}>
-                      <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }}><Pencil size={14}/></button>
-                      <button className="btn-icon danger" onClick={() => handleDelete('finances', f.id)}><Trash2 size={14}/></button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
+           <table className="pro-table">
+             <thead><tr><th>Type</th><th>Description</th><th>Amount</th><th>Edit</th></tr></thead>
+             <tbody>
+               {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>No records found.</td></tr>}
+               {financialLog.map(f => (
+                 <tr key={f.id}>
+                   <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)', borderColor: f.type==='income'?'rgba(0,255,102,0.2)':'rgba(255,0,85,0.2)' }}>{f.type}</span></td>
+                   <td style={{ fontWeight: '500' }}>{f.description}</td>
+                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>{f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}</td>
+                   <td>
+                     <div style={{ display: 'flex', gap: '8px' }}>
+                       {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(f); setModalMode('finances'); }} title="Edit"><Pencil size={14}/></button>}
+                       {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('finances', f.id); }}><Trash2 size={14}/></button>}
+                     </div>
+                   </td>
+                 </tr>
+               ))}
+             </tbody>
+           </table>
         </div>
       </div>
     );
   };
 
   const renderVault = () => {
-    const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
-        <div style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
-          {['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'].map(cat => (
-            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
-          ))}
-        </div>
         <div className="bento-grid-3">
-          {filteredVault.map(v => (
+          {vaultData.map(v => (
             <div key={v.id} className="bento-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={() => handleArchiveVaultItem(v)}><FolderArchive size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('vault', v.id)}><Trash2 size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('vault', v.id); }}><Trash2 size={14}/></button>}
                 </div>
               </div>
               <div className="type-h2" style={{ marginBottom: '24px' }}>{v.title}</div>
@@ -713,39 +661,25 @@ export default function App() {
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Image</button>}
         </div>
         <div className="bento-grid-2">
           {galleryData.map(g => (
             <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-              {g.fileType === 'Archive' ? (
-                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
-                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>}
-                  </div>
-                  <div className="type-h2">{g.title}</div>
-                  <div className="type-caption mt-2" style={{ flex: 1 }}>{g.description}</div>
-                  {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary mt-4">View Saved Data <ArrowUpRight size={14}/></a>}
-                </div>
-              ) : (
-                <>
-                  <div style={{ height: '200px', background: `url("${g.link}") center/cover` }}></div>
-                  <div style={{ padding: '24px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                      <span className="status-pill">{g.category}</span>
-                      {isLeadershipMode && (
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                          <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>
-                          <button className="btn-icon danger" onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>
-                        </div>
-                      )}
+              <div style={{ height: '200px', background: `url("${g.link}") center/cover` }}></div>
+              <div style={{ padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <span className="status-pill">{g.category}</span>
+                  {isLeadershipMode && (
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>
+                      <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('gallery', g.id); }}><Trash2 size={14}/></button>
                     </div>
-                    <div className="type-h2">{g.title}</div>
-                    <div className="type-caption mt-2">{g.description}</div>
-                  </div>
-                </>
-              )}
+                  )}
+                </div>
+                <div className="type-h2">{g.title}</div>
+                <div className="type-caption mt-2">{g.description}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -768,8 +702,25 @@ export default function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
-                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('news', n.id)}><Trash2 size={14}/></button>}
+                    {/* 🌟 BROADCAST EMAIL BUTTON 🌟 */}
+                    {isLeadershipMode && (
+                      <button 
+                        className="btn-icon" 
+                        title="Broadcast via Email"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          const emails = crewData.map(c => c.email).filter(Boolean).join(',');
+                          if(!emails) return alert('No emails found in directory.');
+                          const subject = encodeURIComponent(`[RSA Unit ${leadership.unitCode} UPDATE] ${n.title}`);
+                          const body = encodeURIComponent(`${n.content}\n\n--\nSent via RSA Command Center`);
+                          window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
+                        }}
+                      >
+                        <Mail size={14}/>
+                      </button>
+                    )}
+                    {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
+                    {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('news', n.id); }}><Trash2 size={14}/></button>}
                   </div>
                 </div>
                 <div className="type-h2" style={{ marginBottom: '12px' }}>{n.title}</div>
@@ -856,13 +807,11 @@ export default function App() {
     );
   };
 
-  // ==========================================
-  // MAIN RETURN
-  // ==========================================
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
       
+      {/* 3D BACKGROUND */}
       <div className="arch-environment">
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
@@ -875,16 +824,17 @@ export default function App() {
         </div>
       </div>
 
+      {/* SPLASH SCREEN */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
-          <div className="circle-flow-1"></div>
-          <div className="circle-flow-2"></div>
-          <div className="circle-flow-3"></div>
-          <div className="splash-brand">RSA</div>
+          <div className={`circle-flow-1 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`circle-flow-2 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`circle-flow-3 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`splash-brand ${splashState === 2 ? 'glitch-active' : ''}`}>RSA</div>
         </div>
       </div>
 
-      {/* 🌟 CLICK OUTSIDE TO CLOSE OVERLAYS 🌟 */}
+      {/* OVERLAY FOR SIDEBAR (Click outside to close) */}
       <div className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}></div>
 
       <nav className="top-bar">
@@ -897,6 +847,7 @@ export default function App() {
           </div>
         </div>
         
+        {/* ANIMATRONIC SIDEBAR LOGO */}
         <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <button className={`complex-sidebar-btn ${sidebarOpen ? 'spin' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
             <Hexagon size={28} className="hex-outer" strokeWidth={1.5} />
@@ -937,7 +888,7 @@ export default function App() {
       <div className="floating-dock-wrapper">
         <div className="floating-dock">
           {SECTIONS.map((sec, i) => (
-            <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
+            <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)}>
               {sec.icon}
               <div className="dock-tooltip">{sec.label}</div>
             </div>
@@ -956,7 +907,7 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`} data-index="7">{renderRSAIntel()}</section>
       </div>
 
-      {/* FULL NEWS READER MODAL */}
+      {/* MODALS */}
       {viewingNews && (
         <div className="modal-overlay pointer-events-auto" onClick={() => setViewingNews(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
@@ -970,7 +921,6 @@ export default function App() {
         </div>
       )}
 
-      {/* MEMBER DETAILS MODAL */}
       {viewingCrew && (
         <div className="modal-overlay pointer-events-auto" onClick={() => setViewingCrew(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
@@ -1006,7 +956,6 @@ export default function App() {
         </div>
       )}
 
-      {/* EDIT/ADD MODAL */}
       {modalMode && (
         <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
@@ -1015,7 +964,7 @@ export default function App() {
               <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
             </div>
             
-            <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(e); }}>
+            <form onSubmit={handleSaveToCloud}>
               
               {modalMode === 'crew' && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
