@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
-  Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
+  Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye, FolderArchive,
-  HardDrive, RadioTower, TrendingUp, TrendingDown, BookOpen, Check
+  Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  HardDrive, RadioTower, BookOpen
 } from 'lucide-react';
 
 // ==========================================
-// 1. FIREBASE SECURE KERNEL
+// FIREBASE DATABASE
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -25,9 +25,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
-// ==========================================
-// 2. ARCHITECTURAL QUOTES ENGINE
-// ==========================================
+// Architectural Quotes Engine
 const ARCH_QUOTES = [
   "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light.\" – Le Corbusier",
   "\"Form ever follows function.\" – Louis Sullivan",
@@ -40,341 +38,227 @@ const ARCH_QUOTES = [
 ];
 
 // ==========================================
-// 3. DESIGN SYSTEM & MOTION LANGUAGE
+// DESIGN SYSTEM STYLES
 // ==========================================
 const GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..500;1,9..40,300..500&family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
 
   :root {
-    /* Tonal Identity System */
-    --color-void: #000000;
-    --color-obsidian: #0a0a0a;
-    --color-carbon: #111111;
-    --color-iron: #1a1a1a;
-    --color-steel: #252525;
-    --color-chrome: rgba(255,255,255,0.06);
-    --color-smoke: rgba(255,255,255,0.12);
-
-    /* Text Hierarchy */
-    --text-100: #ffffff;
-    --text-200: #d1d5db;
-    --text-300: #9ca3af;
-    --text-400: #6b7280;
-    --text-500: #374151;
-
-    /* Accent System */
-    --accent-dash: #60a5fa;
-    --accent-crew: #34d399;
-    --accent-finance: #fbbf24;
-    --accent-vault: #a78bfa;
-    --accent-gallery: #f472b6;
-    --accent-news: #fb923c;
-    --accent-hq: #94a3b8;
-
-    /* Font Families */
-    --font-heading: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
+    --bg-base: #020202;
+    --glass-bg: rgba(10, 10, 10, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #8b9bb4;
+    --neon-cyan: #00f0ff;
+    --neon-purple: #7000ff;
+    --neon-gold: #ffbe0b;
+    --neon-pink: #ff0055;
+    --neon-green: #00ff66;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
-
-    /* Easing */
-    --ease-spring: cubic-bezier(0.34, 1.56, 1, 1);
-    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+    --font-ui: 'Outfit', sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-  body, html { 
-    background-color: var(--color-void); 
-    color: var(--text-100); 
-    font-family: var(--font-body); 
-    overflow: hidden; 
-    height: 100dvh; 
-    width: 100vw; 
-    -webkit-font-smoothing: antialiased; 
-  }
-  ::-webkit-scrollbar { display: none; width: 0px; }
+  body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
+  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
+  input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
+  ::-webkit-scrollbar { width: 0px; }
 
-  /* 🌟 TYPOGRAPHY SYSTEM 🌟 */
-  .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(3rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1; }
-  .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
-  .type-h2 { font-family: var(--font-heading); font-weight: 400; font-size: 1.75rem; line-height: 1.2; }
-  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
-  .type-label { font-family: var(--font-body); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
-  .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.7; color: var(--text-200); }
-  .type-caption { font-family: var(--font-body); font-weight: 300; font-size: 0.8rem; color: var(--text-300); }
-  .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
+  /* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */
+  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; }
+  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
+  .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
+  .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
+  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
-  /* 🌟 5-LAYER BACKGROUND SYSTEM 🌟 */
-  .bg-system { position: fixed; inset: 0; z-index: -10; overflow: hidden; pointer-events: none; }
-  /* Layer A - Starfield generated via React */
-  /* Layer B - Aurora Mesh */
-  .aurora-mesh { position: absolute; inset: -20%; filter: blur(80px); opacity: 0.22; mix-blend-mode: screen; }
-  .blob { position: absolute; border-radius: 50%; }
-  .blob-1 { top: 0; left: 0; width: 50vw; height: 50vw; background: #1a1aff; animation: blobFloat 18s infinite alternate ease-in-out; }
-  .blob-2 { top: 0; right: 0; width: 45vw; height: 45vw; background: #6600cc; animation: blobFloat 22s infinite alternate-reverse ease-in-out; }
-  .blob-3 { bottom: 0; left: 0; width: 60vw; height: 60vw; background: #003366; animation: blobFloat 25s infinite alternate ease-in-out; }
-  .blob-4 { bottom: 0; right: 0; width: 55vw; height: 55vw; background: #330066; animation: blobFloat 30s infinite alternate-reverse ease-in-out; }
-  /* Layer C - Scan Line */
-  .scan-line { position: absolute; width: 100%; height: 1px; background: rgba(255,255,255,0.03); animation: scan 8s linear infinite; z-index: -3; }
-  /* Layer D - Noise Grain */
-  .noise-grain { position: absolute; inset: 0; opacity: 0.06; z-index: -2; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: noiseShift 0.4s steps(10) infinite; }
-  /* Layer E - Vignette */
-  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at center, transparent 40%, rgba(0,0,0,0.5) 100%); z-index: -1; }
-
-  @keyframes blobFloat { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(10%, 10%) scale(1.1); } }
-  @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-  @keyframes noiseShift { 0% { background-position: 0 0; } 100% { background-position: 100% 100%; } }
-
-  /* 🌟 CINEMATIC SPLASH SCREEN 🌟 */
-  .splash-container { position: fixed; inset: 0; z-index: 99999; background: var(--color-void); display: flex; align-items: center; justify-content: center; flex-direction: column; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
-  .splash-container.exit { transform: translateY(-100%); }
-  /* Layer 1 - Grid Pulse */
-  .splash-grid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px); background-size: 40px 40px; animation: gridPulse 0.4s ease-out forwards; opacity: 0; }
-  /* Layer 2 - HR Sweep */
-  .splash-hr { position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #fff; transform-origin: left center; animation: hrSweep 0.3s 0.3s ease-out forwards; transform: scaleX(0); opacity: 0; }
-  /* Layer 4 - Logo Reveal */
-  .splash-logo-container { display: flex; flex-direction: column; align-items: flex-start; z-index: 10; margin-left: -50vw; animation: slideInLeft 0.1s 0.6s forwards; opacity: 0; }
-  .splash-logo { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-  /* Layer 3 - Glitch Frame (Applied to logo via JS class toggle) */
-  .glitch-active { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
-  .splash-sub { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-200); margin-top: -10px; clip-path: inset(0 100% 0 0); animation: wipeReveal 0.4s 1s ease-out forwards; }
-  /* Layer 5 - Status Line */
-  .splash-status { position: absolute; bottom: 20%; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-300); }
-  .status-auth { color: var(--neon-green); opacity: 0; animation: revealFade 0.1s 1.8s forwards; }
-
-  @keyframes gridPulse { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-  @keyframes hrSweep { 0% { transform: scaleX(0); opacity: 1; } 99% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
-  @keyframes trackIn { to { letter-spacing: 0.08em; } }
-  @keyframes wipeReveal { to { clip-path: inset(0 0% 0 0); } }
-  @keyframes slideInLeft { to { margin-left: 0; opacity: 1; } }
-
-  /* 🌟 KINETIC SCROLL ENGINE 🌟 */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-  .scrolling-section { min-height: 100dvh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 24px 80px 24px; position: relative; }
-  
-  /* Staggered Reveal Logic */
-  .stagger-item { opacity: 0; transform: translateY(var(--reveal-dir, 40px)); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
-  .view-active .stagger-item { opacity: 1; transform: translateY(0); }
-  .stagger-1 { transition-delay: 0ms; }
-  .stagger-2 { transition-delay: 80ms; }
-  .stagger-3 { transition-delay: 160ms; }
-  .stagger-4 { transition-delay: 240ms; }
-
-  /* Scroll Progress Indicator (Desktop) */
-  .scroll-indicator { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); width: 1px; height: 200px; background: rgba(255,255,255,0.1); z-index: 80; display: none; }
-  .scroll-pill { position: absolute; left: -1px; width: 3px; height: 30px; background: #fff; border-radius: 3px; transition: top 0.4s var(--ease-smooth); }
-  @media (min-width: 1024px) { .scroll-indicator { display: block; } }
-
-  /* 🌟 BENTO CARD HIERARCHY 🌟 */
-  .bento-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; margin: 0 auto; }
-  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
-  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
-
-  /* Base Card Styles */
-  .card-base { border-radius: 16px; position: relative; overflow: hidden; transition: all 0.3s var(--ease-smooth); will-change: transform; }
-  .card-header { padding: 24px 24px 16px; border-bottom: 1px solid var(--color-chrome); display: flex; justify-content: space-between; align-items: flex-start; }
-  .card-content { padding: 20px 24px; }
-  .card-footer { padding: 16px 24px; border-top: 1px solid var(--color-chrome); display: flex; justify-content: space-between; align-items: center; }
-
-  /* Level 1 - Ghost */
-  .card-ghost { background: transparent; border: 1px solid var(--color-chrome); }
-  .card-ghost:hover { border-color: rgba(255,255,255,0.14); }
-  
-  /* Level 2 - Surface */
-  .card-surface { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); }
-  .card-surface:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(-2px); }
-  
-  /* Level 3 - Elevated */
-  .card-elevated { background: rgba(255,255,255,0.07); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 24px rgba(0,0,0,0.6); }
-
-  /* Accent Borders on Hover (Applied dynamically via style) */
-  .card-accent-hover:hover { border-left-width: 3px; border-left-style: solid; padding-left: calc(var(--base-pl, 0px) - 2px); } /* Compensate for border width */
-
-  /* 🌟 MAGNETIC DOCK 🌟 */
-  .floating-dock-wrapper { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
-  .floating-dock { 
-    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--color-chrome); border-radius: 100px; 
-    display: flex; gap: 8px; padding: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    transform-origin: bottom center;
-  }
-  .dock-item { 
-    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-    color: var(--text-300); cursor: pointer; position: relative; 
-    transition: transform 0.15s var(--ease-spring), color 0.2s, background 0.2s, box-shadow 0.2s; 
+  /* The 3D Room / Camera */
+  .arch-scene { 
+    position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
     will-change: transform;
   }
-  .dock-item:active { transform: scale(0.95) !important; } /* Tap press state */
-  
-  /* Active State applied via JS inline styles for specific colors, fallback here */
-  .dock-item.active { color: #fff; }
-  
-  /* Live Indicator */
-  .dock-live-dot { position: absolute; top: 8px; right: 8px; width: 4px; height: 4px; border-radius: 50%; animation: pulseDot 2s infinite; }
-  @keyframes pulseDot { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(var(--dot-color-rgb), 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(var(--dot-color-rgb), 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(var(--dot-color-rgb), 0); } }
-
-  .dock-tooltip { 
-    position: absolute; top: -45px; left: 50%; transform: translateX(-50%) translateY(10px);
-    background: var(--color-steel); border: 1px solid var(--color-chrome); color: #fff; 
-    padding: 6px 12px; border-radius: 8px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; 
-    opacity: 0; transition: all 0.2s; white-space: nowrap; pointer-events: none; 
-    display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  .arch-wall {
+    position: absolute; border: 1px solid rgba(0, 240, 255, 0.15);
+    background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px; backface-visibility: visible;
   }
-  .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .tooltip-count { color: var(--text-300); font-family: var(--font-mono); font-size: 0.7rem; }
+  .wall-floor { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(90deg) translateZ(40vh); }
+  .wall-ceil { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(-90deg) translateZ(40vh); }
+  .wall-left { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(90deg) translateZ(40vw); }
+  .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
+  .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
+
+  /* CIRCLE FLOW SPLASH SCREEN */
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
+  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
+  .splash-brand { font-family: var(--font-heading); font-size: 3.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
+
+  /* SCROLLING */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
+  .scrolling-section {
+    height: 100dvh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 80px 24px 20px 24px;
+    opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+
+  .bento-container { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
+  .bento-card { 
+    background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+  
+  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+
+  /* TOP BAR */
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
+  .top-bar > * { pointer-events: auto; }
+  
+  .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
+  .security-hud:hover { border-color: var(--neon-cyan); }
+  .hud-icon-box { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+  .hud-locked .hud-icon-box { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+  .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
+
+  /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
+  .complex-sidebar-btn { 
+    position: fixed; top: 24px; right: 40px; width: 50px; height: 50px; 
+    background: rgba(10,10,10,0.8); border: 1px solid var(--glass-border); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    backdrop-filter: blur(10px); z-index: 120; transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.05); }
+  .complex-sidebar-btn .hex { position: absolute; color: var(--neon-cyan); transition: all 0.6s ease; }
+  .complex-sidebar-btn .aperture { position: absolute; color: var(--neon-gold); transition: all 0.6s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s ease; }
+  
+  .complex-sidebar-btn.open { border-radius: 50%; border-color: var(--neon-pink); background: rgba(255,0,85,0.1); box-shadow: 0 0 20px rgba(255,0,85,0.3); transform: rotate(180deg); }
+  .complex-sidebar-btn.open .hex { opacity: 0; transform: scale(1.5) rotate(90deg); }
+  .complex-sidebar-btn.open .aperture { opacity: 0; transform: scale(0) rotate(-90deg); }
+  .complex-sidebar-btn.open .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
+
+  /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
+  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
+  .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
+
+  /* SIDEBAR */
+  .nasa-sidebar {
+    position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
+    background: #050505; border-left: 1px solid var(--glass-border); z-index: 110;
+    padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nasa-sidebar.open { right: 0; }
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
+  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
+  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
+  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+
+  /* 🌟 OPTIMIZED FLOATING DOCK (MOBILE vs DESKTOP) 🌟 */
+  .floating-dock {
+    position: fixed; z-index: 100;
+    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
+    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+  }
+  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
+  .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
+
+  /* Mobile Dock (Bottom, Horizontal) */
+  @media (max-width: 768px) {
+    .floating-dock {
+      bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
+      width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch;
+    }
+    .dock-item { min-width: 46px; height: 46px; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, color 0.3s; }
+    .dock-item.active { color: #000; background: #fff; transform: translateY(-4px); }
+    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
+    .dock-tooltip { top: -45px; left: 50%; transform: translateX(-50%) translateY(10px); }
+    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* Desktop Dock (Left Side, Vertical, No-Lag Pure CSS) */
+  @media (min-width: 769px) {
+    .floating-dock {
+      top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
+    }
+    .dock-item { width: 50px; height: 50px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s; will-change: transform; }
+    .dock-item.active { color: #000; background: #fff; transform: translateX(10px) scale(1.1); animation: popActive 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(6px); }
+    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
+    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
+    .scrolling-section { padding-left: 100px; }
+    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(10px) scale(1.1); } }
+  }
+
+  /* TYPOGRAPHY & BUTTONS */
+  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
+  
+  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; font-family: var(--font-ui); letter-spacing: 0.05em; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+  .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  
+  .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
+  .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
+  
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
+  
+  .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; }
+  .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
+  .filter-tab:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+  .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
+  .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
+  .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* AI CHAT */
+  .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
+  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
+  .ai-chat-box::-webkit-scrollbar { display: none; }
+  .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
+  .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
+  
+  /* Modal Overlay (Click outside to close) */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
 
   @media (max-width: 768px) {
-    .floating-dock-wrapper { width: 92%; max-width: 400px; }
-    .floating-dock { width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; border-radius: 20px; padding: 12px; gap: 12px; }
-    .dock-item { width: auto; min-width: max-content; height: 40px; border-radius: 12px; padding: 0 16px; gap: 8px; }
-    .dock-label-mobile { display: block; font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; }
-    .dock-tooltip { display: none; } /* Hide tooltips on mobile */
-    .dock-item.active { border-bottom: 2px solid var(--item-accent); background: transparent !important; box-shadow: none !important; border-radius: 0; padding-bottom: 6px; height: 38px; }
-    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
+    .text-title { font-size: 2.8rem; }
+    .scrolling-section { padding: 100px 16px 120px 16px; }
+    .modal-window { padding: 24px; }
+    .top-bar { padding: 16px 20px; }
+    .nasa-sidebar { width: 100%; right: -100%; }
+    .complex-sidebar-btn { top: 16px; right: 20px; width: 44px; height: 44px; }
   }
-  @media (min-width: 769px) { .dock-label-mobile { display: none; } }
-
-  /* 🌟 ADMIN MODE UX 🌟 */
-  .admin-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: rgba(251, 191, 36, 0.4); z-index: 100; transform-origin: center; animation: adminBarIn 0.4s ease-out; }
-  @keyframes adminBarIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  .admin-action { animation: revealFade 0.4s ease forwards; opacity: 0; }
-  .admin-dot { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--accent-finance); border-radius: 50%; }
-
-  /* 🌟 TOP BAR 🌟 */
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none; }
-  .top-bar > * { pointer-events: auto; }
-  .section-counter { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-400); margin-left: auto; margin-right: 24px; }
-  
-  .security-hud { display: flex; align-items: center; gap: 8px; cursor: pointer; transition: opacity 0.3s; }
-  .security-hud:hover { opacity: 0.8; }
-  .hud-icon-wrapper { width: 32px; height: 32px; border-radius: 50%; background: var(--color-iron); border: 1px solid var(--color-chrome); display: flex; align-items: center; justify-content: center; transition: all 0.4s; perspective: 100px; }
-  .hud-icon-wrapper.admin-on { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3); transform: rotateY(180deg); }
-  .hud-icon-inner { transition: transform 0.4s; }
-  .hud-icon-wrapper.admin-on .hud-icon-inner { transform: rotateY(180deg); color: var(--accent-finance); }
-
-  /* 🌟 MODAL SYSTEM 🌟 */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: revealFade 0.3s ease-out; }
-  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; position: relative; animation: modalSpring 0.5s var(--ease-spring); border-left: 4px solid var(--modal-accent, var(--color-chrome)); }
-  @keyframes modalSpring { 0% { transform: scale(0.95) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
-  .modal-header { padding: 24px; border-bottom: 1px solid var(--color-chrome); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--color-obsidian); z-index: 10; }
-  .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
-
-  /* Floating Label Inputs */
-  .input-group { position: relative; width: 100%; }
-  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 8px; padding: 20px 16px 8px; color: var(--text-100) !important; font-family: var(--font-body); transition: all 0.2s; }
-  .input-label { position: absolute; left: 16px; top: 16px; font-family: var(--font-body); font-size: 0.95rem; color: var(--text-400); transition: all 0.2s ease-out; pointer-events: none; }
-  .input-field:focus { border-color: var(--modal-accent, var(--accent-dash)); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
-  .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--modal-accent, var(--text-200)); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
-  .input-field.error { border-color: var(--accent-news); animation: shake 0.4s; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
-
-  /* UI Elements */
-  .btn-primary { background: var(--text-100); color: var(--color-void); border: none; padding: 12px 24px; border-radius: 8px; font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s var(--ease-spring), opacity 0.2s; }
-  .btn-primary:active { transform: scale(0.96); }
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-ghost { background: transparent; color: var(--text-200); border: 1px solid var(--color-chrome); }
-  .btn-ghost:hover { background: var(--color-chrome); color: var(--text-100); }
-  .btn-icon { background: transparent; color: var(--text-400); border: none; padding: 8px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
-  .btn-icon:hover { color: var(--text-100); background: var(--color-chrome); }
-  .btn-icon.danger:hover { color: var(--accent-news); background: rgba(251, 146, 60, 0.1); }
-  
-  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 100px; font-family: var(--font-body); font-weight: 500; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; }
-
-  /* 🌟 SECTION SPECIFICS 🌟 */
-  /* Dashboard */
-  .clock-display { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-200); }
-  .sparkline { width: 48px; height: 24px; stroke: var(--text-300); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; margin-top: 8px; }
-  /* Crew */
-  .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; }
-  .crew-list-item { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--color-chrome); transition: background 0.2s; margin: 0 -24px; padding: 12px 24px; }
-  .crew-list-item:hover { background: rgba(255,255,255,0.02); }
-  .sticky-year { position: sticky; top: -32px; background: var(--color-obsidian); z-index: 5; padding: 12px 0; border-bottom: 1px solid var(--color-steel); margin-bottom: 8px; }
-  /* Treasury */
-  .finance-row { display: grid; grid-template-columns: auto 1fr auto auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--color-chrome); }
-  .finance-row.income { border-left: 2px solid var(--accent-crew); padding-left: 14px; background: linear-gradient(90deg, rgba(52, 211, 153, 0.03) 0%, transparent 100%); }
-  .finance-row.expense { border-left: 2px solid var(--accent-news); padding-left: 14px; background: linear-gradient(90deg, rgba(251, 146, 60, 0.03) 0%, transparent 100%); }
-  /* Vault */
-  .vault-ghost-icon { position: absolute; right: -10%; bottom: -20%; opacity: 0.04; width: 120px; height: 120px; pointer-events: none; }
-  /* Gallery */
-  .gallery-card { aspect-ratio: 16/9; background-size: cover; background-position: center; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; }
-  .gallery-card-inner { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: opacity 0.3s; }
-  .gallery-card:hover .gallery-card-inner { opacity: 1; }
-  .gallery-card:hover { transform: scale(1.02); }
-  /* News */
-  .news-latest { position: relative; z-index: 1; }
-  .news-latest::after { content: ''; position: absolute; inset: -1px; border-radius: 17px; border: 1px solid var(--accent-news); opacity: 0.5; animation: borderPulse 3s ease infinite; pointer-events: none; }
-  @keyframes borderPulse { 0%,100%{opacity:0.2} 50%{opacity:0.8} }
-  /* Org Chart HQ */
-  .org-node { background: var(--color-iron); border: 1px solid var(--color-chrome); padding: 12px 20px; border-radius: 8px; text-align: center; }
-  .org-line { width: 2px; background: var(--color-chrome); margin: 0 auto; }
-
-  /* ANIMATIONS */
-  @keyframes countUpAnim { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .animate-count { animation: countUpAnim 0.6s ease-out forwards; }
-  
-  /* SKELETON SHIMMER */
-  .skeleton { background: linear-gradient(90deg, var(--color-iron) 0%, var(--color-steel) 50%, var(--color-iron) 100%); background-size: 200% 100%; animation: shimmer 2s infinite linear; border-color: transparent; }
-  .skeleton-text { height: 1rem; border-radius: 4px; margin-bottom: 8px; width: 80%; }
-  .skeleton-title { height: 2rem; border-radius: 6px; width: 60%; margin-bottom: 16px; }
-  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-
-  /* SPINNER */
-  .spinner { animation: spin 1s linear infinite; }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
 `;
 
-// Helper: Deterministic color for avatars/tags based on string
-const getHashColor = (str) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
-  const colors = ['#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#f472b6', '#fb923c'];
-  return colors[Math.abs(hash) % colors.length];
-};
-
-// Helper: Animated Counter Component
-const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    let start = 0;
-    const duration = 1200; // ms
-    const startTime = performance.now();
-    const animate = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // easeOutExpo
-      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      setCount(Math.floor(ease * value));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [value]);
-  return <span className="animate-count">{prefix}{count.toLocaleString()}{suffix}</span>;
-};
-
-// SVG Sparkline Component
-const Sparkline = ({ data, color }) => {
-  if (!data || data.length < 2) return <svg className="sparkline"><path d="M0,12 L48,12" stroke={color}/></svg>;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const points = data.map((val, i) => {
-    const x = (i / (data.length - 1)) * 48;
-    const y = 24 - (((val - min) / range) * 20 + 2); // 2px padding
-    return `${x},${y}`;
-  }).join(' L');
-  return <svg className="sparkline"><path d={`M${points}`} stroke={color}/></svg>;
-};
-
-// Main App Component
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
-  const [scrollDir, setScrollDir] = useState('down');
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
-  
-  // Splash & Loading States
-  const [splashState, setSplashState] = useState(0); // 0: init, 1: grid/hr, 2: glitch, 3: logo, 4: status, 5: exit
-  const [isLoading, setIsLoading] = useState({ hq: true, crew: true, fin: true, vault: true, gal: true, news: true });
-  
-  // Data States
+  const [isBooting, setIsBooting] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
+
+  // Core Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
   const [financialLog, setFinancialLog] = useState([]);
@@ -382,296 +266,252 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
-  // UI States
-  const [modalConfig, setModalConfig] = useState(null); // { type: 'crew'|'fin'|..., data: {} }
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-  const [lightboxImg, setLightboxImg] = useState(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  // Filters & State
+  const [vaultFilter, setVaultFilter] = useState('All');
+  const vaultCategories = ['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'];
 
-  // Refs
-  const scrollEngineRef = useRef(null);
-  const lastScrollY = useRef(0);
-  const dockRef = useRef(null);
-
-  // Constants
-  const SECTIONS = [
-    { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
-    { id: 'crew', label: 'Personnel', icon: <UsersRound size={20}/>, accent: 'var(--accent-crew)' },
-    { id: 'fin', label: 'Treasury', icon: <CircleDollarSign size={20}/>, accent: 'var(--accent-finance)' },
-    { id: 'vault', label: 'Vault', icon: <Server size={20}/>, accent: 'var(--accent-vault)' },
-    { id: 'gal', label: 'Gallery', icon: <Aperture size={20}/>, accent: 'var(--accent-gallery)' },
-    { id: 'news', label: 'Broadcasts', icon: <RadioTower size={20}/>, accent: 'var(--accent-news)' },
-    { id: 'hq', label: 'HQ', icon: <Settings size={20}/>, accent: 'var(--accent-hq)' }
+  // Simulated LIVE NASA Feed
+  const liveNasaNews = [
+    { id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' },
+    { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }
   ];
 
-  // Real-time clock
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
+  // AI State
+  const [aiInput, setAiInput] = useState("");
+  const [aiMessages, setAiMessages] = useState([
+    { sender: 'bot', text: 'RSA Advanced AI initialized. I have complete access to the NASA India telemetry, Unit archives, and architectural knowledge bases. What would you like to explore or design today?' }
+  ]);
 
-  // Cinematic Splash Sequence
-  useEffect(() => {
-    const seq = [
-      { time: 100, state: 1 }, // Grid + HR
-      { time: 550, state: 2 }, // Glitch start
-      { time: 630, state: 3 }, // Logo reveal (glitch end)
-      { time: 1000, state: 4 }, // Status text
-      { time: 2000, state: 5 }  // Exit
-    ];
-    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
-    return () => timers.forEach(clearTimeout);
-  }, []);
+  // Modals
+  const [modalMode, setModalMode] = useState(null); 
+  const [viewingCrew, setViewingCrew] = useState(null);
+  const [viewingNews, setViewingNews] = useState(null);
+  const [formPayload, setFormPayload] = useState({});
+  const scrollEngineRef = useRef(null);
 
-  // Starfield Generator
-  const [stars, setStars] = useState([]);
-  useEffect(() => {
-    const newStars = Array.from({length: 120}).map((_, i) => ({
-      id: i,
-      cx: Math.random() * 100 + 'vw',
-      cy: Math.random() * 100 + 'vh',
-      r: Math.random() > 0.8 ? 1.5 : (Math.random() > 0.5 ? 1 : 0.5),
-      animDelay: Math.random() * 6 + 's',
-      animDuration: (Math.random() * 3 + 2) + 's',
-      isPulsing: Math.random() > 0.6
-    }));
-    setStars(newStars);
-  }, []);
+  const dockItems = [
+    { id: 'core', icon: <Hexagon size={22} strokeWidth={1.5}/>, label: 'Dashboard' },
+    { id: 'crew', icon: <UsersRound size={22} strokeWidth={1.5}/>, label: 'Team' },
+    { id: 'funds', icon: <CircleDollarSign size={22} strokeWidth={1.5}/>, label: 'Treasury' },
+    { id: 'vault', icon: <HardDrive size={22} strokeWidth={1.5}/>, label: 'Files' },
+    { id: 'gallery', icon: <Aperture size={22} strokeWidth={1.5}/>, label: 'Archive Gallery' },
+    { id: 'news', icon: <RadioTower size={22} strokeWidth={1.5}/>, label: 'News' },
+    { id: 'hq', icon: <Crown size={22} strokeWidth={1.5}/>, label: 'Council' },
+    { id: 'ai', icon: <BrainCircuit size={22} strokeWidth={1.5}/>, label: 'AI Chat' }
+  ];
 
-  // Firebase Listeners
   useEffect(() => {
+    setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
+    setTimeout(() => setIsBooting(false), 2200);
+    
     const unsubs = [
-      onSnapshot(doc(db, "unit", "hq"), d => { if(d.exists()) setLeadership({ ...leadership, ...d.data() }); setIsLoading(p => ({...p, hq: false})); }),
-      onSnapshot(collection(db, "crew"), s => { setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() }))); setIsLoading(p => ({...p, crew: false})); }),
-      onSnapshot(collection(db, "finances"), s => { setFinancialLog(s.docs.map(d => ({ id: d.id, ...d.data() }))); setIsLoading(p => ({...p, fin: false})); }),
-      onSnapshot(collection(db, "vault"), s => { setVaultData(s.docs.map(d => ({ id: d.id, ...d.data() }))); setIsLoading(p => ({...p, vault: false})); }),
-      onSnapshot(collection(db, "gallery"), s => { setGalleryData(s.docs.map(d => ({ id: d.id, ...d.data() }))); setIsLoading(p => ({...p, gal: false})); }),
-      onSnapshot(collection(db, "news"), s => { setNewsData(s.docs.map(d => ({ id: d.id, ...d.data() }))); setIsLoading(p => ({...p, news: false})); })
+      onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
+      onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
+      onSnapshot(collection(db, "finances"), s => setFinancialLog(s.docs.map(d => ({ id: d.id, ...d.data() })))),
+      onSnapshot(collection(db, "vault"), s => setVaultData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
+      onSnapshot(collection(db, "gallery"), s => setGalleryData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
+      onSnapshot(collection(db, "news"), s => setNewsData(s.docs.map(d => ({ id: d.id, ...d.data() }))))
     ];
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
-  // Scroll & Dock Physics Logic
-  const handleScroll = (e) => {
-    const currentY = e.target.scrollTop;
-    setScrollDir(currentY > lastScrollY.current ? 'down' : 'up');
-    lastScrollY.current = currentY;
-    
-    const idx = Math.round(currentY / window.innerHeight);
-    if (idx !== activeSectionIdx && idx >= 0 && idx < SECTIONS.length) {
-      setActiveSectionIdx(idx);
-    }
-  };
-
-  const navTo = (idx) => {
-    scrollEngineRef.current?.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
-  };
-
-  // Magnetic Dock Effect
   useEffect(() => {
-    if (!dockRef.current || window.innerWidth < 768) return; // Desktop only
-    
-    const handleMouseMove = (e) => {
-      const items = dockRef.current.querySelectorAll('.dock-item');
-      items.forEach(item => {
-        const rect = item.getBoundingClientRect();
-        const itemCenterX = rect.left + rect.width / 2;
-        const distance = Math.abs(e.clientX - itemCenterX);
-        // Gaussian-ish falloff: max scale 1.3 at distance 0, drops to 1 at distance 80px
-        const scale = distance < 80 ? 1 + (0.3 * (1 - distance / 80)) : 1;
-        item.style.transform = `scale(${scale})`;
-      });
-    };
-    
-    const handleMouseLeave = () => {
-      const items = dockRef.current.querySelectorAll('.dock-item');
-      items.forEach(item => item.style.transform = ''); // Reset to CSS default
-    };
+    const chatContainer = document.getElementById('ai-chat-box-container');
+    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+  }, [aiMessages]);
 
-    const dock = dockRef.current;
-    dock.addEventListener('mousemove', handleMouseMove);
-    dock.addEventListener('mouseleave', handleMouseLeave);
-    return () => {
-      dock.removeEventListener('mousemove', handleMouseMove);
-      dock.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
+  const handleEngineScroll = () => {
+    if (!scrollEngineRef.current) return;
+    const idx = Math.round(scrollEngineRef.current.scrollTop / window.innerHeight);
+    if (idx !== activeSectionIdx) setActiveSectionIdx(idx);
+  };
 
-  // Admin Toggle
-  const toggleAdmin = () => {
+  const executeEngineNavigation = (idx) => {
+    scrollEngineRef.current.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+    setActiveSectionIdx(idx);
+  };
+
+  const handleSecurityToggle = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
     else {
-      if (prompt("Enter Access Key:") === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
+      const pass = prompt("Enter Admin Password to Unlock Editing:");
+      if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
+      else if (pass) alert("Incorrect Password.");
     }
   };
 
-  // Save Logic
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setIsSaving(true);
-    const { type, data } = modalConfig;
-    const colName = type === 'fin' ? 'finances' : type === 'gal' ? 'gallery' : type;
-    
+  const handleSaveToCloud = async (collectionName) => {
     try {
-      if (type === 'hq') {
-        await setDoc(doc(db, "unit", "hq"), data);
-      } else if (data.id) {
-        const { id, ...saveData } = data;
-        await updateDoc(doc(db, colName, id), saveData);
+      if (collectionName === 'hq') {
+        await setDoc(doc(db, "unit", "hq"), formPayload);
+      } else if (formPayload.id) {
+        const { id, ...data } = formPayload;
+        await updateDoc(doc(db, collectionName, id), data);
       } else {
-        await addDoc(collection(db, colName), { ...data, timestamp: Date.now() });
+        await addDoc(collection(db, collectionName), { ...formPayload, timestamp: Date.now() });
       }
-      setSaveSuccess(true);
-      setTimeout(() => {
-        setSaveSuccess(false);
-        setIsSaving(false);
-        setModalConfig(null);
-      }, 1000);
-    } catch (err) {
-      alert("Sync failed.");
-      setIsSaving(false);
+      setModalMode(null); 
+      setFormPayload({});
+    } catch (e) { alert("Failed to save data."); }
+  };
+
+  const deleteDocRecord = async (col, id) => {
+    if (window.confirm("Are you sure you want to delete this?")) {
+      await deleteDoc(doc(db, col, id));
     }
   };
 
-  const handleDelete = async (col, id) => {
-    if (window.confirm("Permanently delete record?")) await deleteDoc(doc(db, col, id));
+  const handleArchiveVaultItem = async (item) => {
+    if (!window.confirm("Move this work to the Archive Gallery? It will be permanently removed from the active vault.")) return;
+    try {
+      const currentYear = new Date().getFullYear(); 
+      await addDoc(collection(db, 'gallery'), {
+         title: item.title,
+         category: item.category || 'Archived Work',
+         description: `Archived File (${currentYear}). ${item.description || ''}`,
+         link: item.link || '',
+         fileType: 'Archive',
+         archivedYear: currentYear,
+         timestamp: Date.now()
+      });
+      await deleteDoc(doc(db, 'vault', item.id));
+      alert("Successfully moved to Archive.");
+    } catch(e) {
+      alert("Failed to archive item.");
+    }
   };
 
-  // Helper to generate dynamic section styles
-  const getSectionStyle = (idx) => {
-    const isActive = activeSectionIdx === idx;
-    return {
-      '--reveal-dir': scrollDir === 'down' ? '40px' : '-40px',
-      '--section-accent': SECTIONS[idx].accent
-    };
+  // 🌟 3D CAMERA TRANSFORM LOGIC FOR BACKGROUND 🌟
+  const getCameraTransform = () => {
+    const transforms = [
+      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dashboard (Isometric out)
+      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew (Straight on inside)
+      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury (High angle corner)
+      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault (Hallway view)
+      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery (Low angle looking up)
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News (Bird's eye aerial)
+      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ (Direct frontal zoom)
+      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI (Angled interior)
+    ];
+    return transforms[activeSectionIdx] || transforms[0];
   };
 
   // ==========================================
-  // RENDER: DASHBOARD
+  // SUPERCHARGED AI BRAIN
   // ==========================================
-  const renderDashboard = () => {
-    const active = activeSectionIdx === 0;
+  const handleAiSubmit = (e) => {
+    e.preventDefault();
+    if (!aiInput.trim()) return;
     
-    // Sparkline mock data logic
-    const memData = crewData.length > 0 ? [0, Math.floor(crewData.length/2), crewData.length-1, crewData.length] : [0,0,0];
-    const finInc = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0);
-    const finExp = financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-    const net = finInc - finExp;
-    const finData = [0, finInc*0.4, finInc*0.8 - finExp*0.3, net];
-    const vaultD = vaultData.length > 0 ? [0, 1, vaultData.length] : [0,0];
+    const textRaw = aiInput.trim();
+    setAiMessages(prev => [...prev, { sender: 'user', text: textRaw }]);
+    setAiInput('');
 
-    // Recent Activity
-    const allActivity = [
-      ...crewData.map(c => ({ msg: `New operative added: ${c.name}`, time: c.timestamp || 0, color: 'var(--accent-crew)' })),
-      ...financialLog.map(f => ({ msg: `Transaction logged: ${f.type === 'income'?'+':'-'}₹${f.amount}`, time: f.timestamp || 0, color: 'var(--accent-finance)' })),
-      ...newsData.map(n => ({ msg: `Broadcast issued: ${n.title}`, time: n.timestamp || 0, color: 'var(--accent-news)' }))
-    ].sort((a,b) => b.time - a.time).slice(0, 3);
+    setTimeout(() => {
+      const tokens = textRaw.toLowerCase();
+      let botResponse = "";
 
-    return (
-      <div className="bento-container" style={getSectionStyle(0)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div>
-            <span className="type-label text-[var(--accent-dash)] mb-2 block">Overview</span>
-            <h1 className="type-hero">Command Center</h1>
+      if (tokens.includes("troph") || tokens.includes("lik") || tokens.includes("louis")) {
+        botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Currently, submissions are open on the NASA portal. I recommend focusing on vernacular spatial configurations and timber joints, similar to the Kanchipuram housing typologies we documented. Do you need details on specific vernacular elements?";
+      } else if (tokens.includes("msl") || tokens.includes("landscape") || tokens.includes("shaheer")) {
+        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, our focus is the Velachery site in Chennai. Our 'Hydro-Social Connector' concept acts as a biological machine to manage urban flooding. Ensure your bio-swale and topographical grading metrics are properly mapped in AutoCAD.";
+      } else if (tokens.includes("news") || tokens.includes("live") || tokens.includes("feed")) {
+        botResponse = `Checking live NASA feed... I found ${liveNasaNews.length} recent updates. The latest is: "${liveNasaNews[0].title}". You can view these directly in the News section via the sidebar.`;
+      } else if (tokens.includes("nasa") || tokens.includes("convention")) {
+        botResponse = "The 68th Annual NASA Convention is in preparation stage. Make sure your unit delegates from Chennai are ready. Workshop selections are crucial—refer to the 'How to Select ANC Workshops' guide in our News section to align with our unit's strategic goals.";
+      } else if (tokens.includes("rural") || tokens.includes("varyankaval")) {
+        botResponse = "The Varyankaval Village study in Ariyalur is a prime example of rural documentation. The morphological maps and land-use data you produced are excellent references for understanding organic community growth and shared courtyard spaces.";
+      } else if (tokens.includes("hello") || tokens.includes("hi") || tokens.includes("hey")) {
+        botResponse = "Hello! I am your advanced architectural co-pilot. I am fully synchronized with our unit's legacy, current active phases, and the broader architectural landscape. How can I assist you with your design logic or unit management today?";
+      } else if (tokens.includes("money") || tokens.includes("fund") || tokens.includes("balance") || tokens.includes("treasury")) {
+        const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
+        botResponse = `Calculating current financial arrays... Our unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
+      } else if (tokens.includes("design") || tokens.includes("concept") || tokens.includes("philosophy") || tokens.includes("architecture")) {
+        botResponse = "When formulating an architectural concept, one must bridge the phenomenological with the structural. Consider how natural light defines the volume, as Louis Kahn suggested. Are you leaning towards a parametric fluid approach or a more strict, rationalist grid configuration for this specific design phase?";
+      } else {
+        botResponse = "That requires deeper synthesis. From an architectural standpoint, we must evaluate how this variable interacts with user circulation, structural integrity, and environmental passive strategies. Can you define the parameters of your query a bit more clearly?";
+      }
+
+      setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    }, 1000);
+  };
+
+  // ==========================================
+  // DASHBOARD SECTIONS
+  // ==========================================
+  
+  const renderDashboard = () => (
+    <div className="bento-container">
+      <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
+      
+      <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
+        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
+          <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
+          <div style={{ fontSize: '1.4rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>
+            {dailyQuote}
           </div>
-          <div className="clock-display hidden md:block">{currentTime.toLocaleTimeString('en-US', {hour12:false})}</div>
         </div>
-        
-        <div className="bento-grid-3">
-          <div className={`card-base card-surface card-accent-hover stagger-item stagger-2 ${active ? 'view-active' : ''}`}>
-            <div className="card-content">
-              <span className="type-label text-[var(--text-200)] mb-4 block">Personnel Strength</span>
-              {isLoading.crew ? <div className="skeleton skeleton-title"></div> : <div className="type-metric"><AnimatedCounter value={crewData.length} /></div>}
-              {!isLoading.crew && <Sparkline data={memData} color="var(--accent-crew)" />}
-            </div>
-          </div>
-          <div className={`card-base card-surface card-accent-hover stagger-item stagger-3 ${active ? 'view-active' : ''}`}>
-            <div className="card-content">
-              <span className="type-label text-[var(--text-200)] mb-4 block">Net Capital (INR)</span>
-              {isLoading.fin ? <div className="skeleton skeleton-title"></div> : <div className="type-metric"><AnimatedCounter value={net} /></div>}
-              {!isLoading.fin && <Sparkline data={finData} color={net >= 0 ? "var(--accent-finance)" : "var(--accent-news)"} />}
-            </div>
-          </div>
-          <div className={`card-base card-surface card-accent-hover stagger-item stagger-4 ${active ? 'view-active' : ''}`}>
-            <div className="card-content">
-              <span className="type-label text-[var(--text-200)] mb-4 block">Vault Assets</span>
-              {isLoading.vault ? <div className="skeleton skeleton-title"></div> : <div className="type-metric"><AnimatedCounter value={vaultData.length} /></div>}
-              {!isLoading.vault && <Sparkline data={vaultD} color="var(--accent-vault)" />}
-            </div>
-          </div>
-        </div>
-
-        <div className={`card-base card-elevated stagger-item stagger-4 ${active ? 'view-active' : ''}`} style={{ marginTop: '8px' }}>
-          <div className="card-header border-none pb-0"><span className="type-label text-[var(--accent-dash)]">Recent System Activity</span></div>
-          <div className="card-content">
-            {allActivity.length === 0 ? <p className="type-caption">No recent activity on network.</p> : 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {allActivity.map((act, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: act.color }}></div>
-                    <span className="type-body flex-1">{act.msg}</span>
-                    <span className="type-mono-sm text-[var(--text-400)]">{act.time ? new Date(act.time).toLocaleDateString() : 'Session'}</span>
-                  </div>
-                ))}
-              </div>
-            }
-          </div>
+        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
+          <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status: Nominal</span>
+          <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Preparation is active. Live feed connected. Ensure all delegates review the workshop registration guidelines.</p>
         </div>
       </div>
-    );
-  };
 
-  // ==========================================
-  // RENDER: CREW
-  // ==========================================
+      <div className="bento-grid-3">
+        <div className="bento-card">
+          <span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Active Members</span>
+          <div className="text-metric">{crewData.length}</div>
+        </div>
+        <div className="bento-card">
+          <span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Saved Files</span>
+          <div className="text-metric">{vaultData.length}</div>
+        </div>
+        <div className="bento-card">
+          <span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> News Posts</span>
+          <div className="text-metric">{newsData.length}</div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderCrew = () => {
-    const active = activeSectionIdx === 1;
-    const allocation = crewData.reduce((acc, u) => { const y = u.year||"Unassigned"; if(!acc[y]) acc[y]=[]; acc[y].push(u); return acc; }, {});
-    const order = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
+    const orderedYears = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
+    const allocation = {};
+    orderedYears.forEach(y => allocation[y] = []);
+
+    crewData.forEach(u => {
+      const y = u.year || 'Unassigned';
+      if (allocation[y]) allocation[y].push(u);
+      else allocation['Unassigned'].push(u);
+    });
     
     return (
-      <div className="bento-container" style={getSectionStyle(1)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="type-label text-[var(--accent-crew)] mb-2 block">Directory</span><h1 className="type-h1">Personnel</h1></div>
-          {isLeadershipMode && <button className="btn-primary admin-action" onClick={() => setModalConfig({type: 'crew', data: { role: 'Member', year: '1' }})}><Plus size={16}/> Add Record</button>}
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
+          <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
         </div>
         
-        {isLoading.crew && <div className="card-base card-surface skeleton" style={{ height: '300px', marginTop: '24px' }}></div>}
-        
-        {!isLoading.crew && crewData.length === 0 && (
-          <div className="card-base card-ghost" style={{ padding: '60px', textAlign: 'center', marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <UsersRound size={48} color="var(--accent-crew)" style={{ opacity: 0.3 }}/>
-            <p className="type-body text-[var(--text-300)]">Directory empty. Awaiting initialization.</p>
-          </div>
-        )}
-
-        {!isLoading.crew && order.map((year, yIdx) => {
-          if (!allocation[year] || allocation[year].length === 0) return null;
+        {orderedYears.map(year => {
+          if (allocation[year].length === 0) return null;
           return (
-            <div key={year} className={`stagger-item stagger-${Math.min((yIdx%3)+2, 4)} ${active ? 'view-active' : ''}`} style={{ marginTop: '24px' }}>
-              <div className="sticky-year">
-                <span className="type-label text-[var(--text-100)] px-4">{year === 'Alumni' || year === 'Unassigned' ? year : `Year ${year}`}</span>
-              </div>
-              <div className="card-base card-surface" style={{ padding: '0' }}>
-                {allocation[year].map((m, i) => {
-                  const isCouncil = ['UD', 'USEC', 'Coordinator'].includes(m.role);
+            <div key={year} style={{ marginTop: '24px' }}>
+              <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
+              <div className="bento-grid-2" style={{ marginTop: '16px' }}>
+                {allocation[year].map(m => {
+                  const isCouncil = ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role);
                   return (
-                    <div key={m.id} className="crew-list-item" style={{ borderBottom: i === allocation[year].length-1 ? 'none' : '' }}>
-                      <div className="avatar" style={{ background: getHashColor(m.name) }}>{m.name.charAt(0).toUpperCase()}</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <span className="type-h2" style={{ fontSize: '1.2rem', transform: i%2===0 ? 'rotate(-0.5deg)' : 'rotate(0.5deg)', display: 'inline-block' }}>{m.name}</span>
-                          {isCouncil && <span className="pill" style={{ color: 'var(--accent-crew)', borderColor: 'rgba(52, 211, 153, 0.3)', background: 'rgba(52, 211, 153, 0.1)' }}>{m.role === 'Coordinator' ? m.coordinatorType : m.role}</span>}
-                        </div>
-                        <div className="type-caption mt-1">{m.email} {m.phone && `• ${m.phone}`}</div>
+                    <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: isCouncil ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                        <span className="status-pill">
+                          {isCouncil && <Crown size={12} style={{marginRight:4}}/>}
+                          {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
                       </div>
-                      {isLeadershipMode && (
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button className="btn-icon admin-action" onClick={() => setModalConfig({type:'crew', data: m})}><Pencil size={14}/></button>
-                          <button className="btn-icon danger admin-action" onClick={() => handleDelete('crew', m.id)}><Trash2 size={14}/></button>
-                        </div>
-                      )}
+                      <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
                     </div>
                   );
                 })}
@@ -683,535 +523,513 @@ export default function App() {
     );
   };
 
-  // ==========================================
-  // RENDER: FINANCES
-  // ==========================================
   const renderFunds = () => {
-    const active = activeSectionIdx === 2;
-    const goal = Number(leadership.financialGoal) || 1;
-    const sortedLog = [...financialLog].sort((a,b) => b.timestamp - a.timestamp); // Newest first
+    const income = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0);
+    const expense = financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
+    const total = income + expense;
+    const net = income - expense;
+    const goal = Number(leadership.financialGoal) || 1; 
 
     return (
-      <div className="bento-container" style={getSectionStyle(2)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="type-label text-[var(--accent-finance)] mb-2 block">Ledger</span><h1 className="type-h1">Treasury</h1></div>
-          {isLeadershipMode && <button className="btn-primary admin-action" onClick={() => setModalConfig({type: 'fin', data: { type: 'expense' }})}><Plus size={16}/> Add Entry</button>}
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
+          {isLeadershipMode && (
+            <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>
+          )}
         </div>
 
-        {isLoading.fin ? <div className="card-base card-surface skeleton stagger-item stagger-2 view-active" style={{ height: '400px', marginTop: '24px' }}></div> : (
-          <div className={`card-base card-elevated stagger-item stagger-2 ${active ? 'view-active' : ''}`} style={{ marginTop: '24px', padding: 0 }}>
-            
-            {/* Target Progress Bar Header */}
-            <div style={{ padding: '24px', borderBottom: '1px solid var(--color-chrome)', background: 'linear-gradient(180deg, rgba(251, 191, 36, 0.05) 0%, transparent 100%)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '12px' }}>
-                <span className="type-label text-[var(--accent-finance)]">Goal Progression</span>
-                <span className="type-mono-sm">Target: ₹{goal.toLocaleString()}</span>
-              </div>
-              <div style={{ width: '100%', height: '4px', background: 'var(--color-chrome)', borderRadius: '2px', overflow: 'hidden' }}>
-                {/* Visual hack: assuming net > 0 for progress, simplify to income for demo if net is negative */}
-                <div style={{ width: `${Math.min(((financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0))/goal)*100, 100)}%`, height: '100%', background: 'var(--accent-finance)', transition: 'width 1s cubic-bezier(0.22, 1, 0.36, 1)' }}></div>
-              </div>
+        <div className="bento-grid-2">
+          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Total Balance</span>
+            <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
+              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>INCOME</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-green)'}}>₹{income.toLocaleString()}</div></div>
+              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>EXPENSES</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-pink)'}}>₹{expense.toLocaleString()}</div></div>
             </div>
-
-            {/* List */}
-            {sortedLog.length === 0 ? (
-              <div style={{ padding: '60px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <CircleDollarSign size={48} color="var(--accent-finance)" style={{ opacity: 0.3 }}/>
-                <p className="type-body text-[var(--text-300)]">No financial activity recorded.</p>
-              </div>
-            ) : (
-              <div>
-                {sortedLog.map((f, i) => (
-                  <div key={f.id} className={`finance-row ${f.type}`} style={{ borderBottom: i === sortedLog.length-1 ? 'none' : '' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span className="type-h2" style={{ fontSize: '1.1rem' }}>{f.description}</span>
-                      <span className="type-mono-sm text-[var(--text-400)]">{new Date(f.timestamp).toLocaleDateString()}</span>
-                    </div>
-                    <div className="type-metric" style={{ fontSize: '1.5rem', color: f.type==='income' ? '#22c55e' : '#ef4444', textAlign: 'right' }}>
-                      {f.type==='income'?'+':'-'}₹{Number(f.amount).toLocaleString()}
-                    </div>
-                    {isLeadershipMode && (
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <button className="btn-icon admin-action" onClick={() => setModalConfig({type:'fin', data: f})}><Pencil size={14}/></button>
-                        <button className="btn-icon danger admin-action" onClick={() => handleDelete('finances', f.id)}><Trash2 size={14}/></button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
-        )}
+          
+          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Current Funds</span>
+            <div className="text-metric">₹{net.toLocaleString()}</div>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '20px' }}>
+               <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', marginTop: '10px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontFamily:'var(--font-mono)' }}>
+              <span>Goal</span><span>₹{goal.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
+           <table className="pro-table">
+             <thead>
+               <tr><th>Type</th><th>Description</th><th>Amount</th><th>Edit</th></tr>
+             </thead>
+             <tbody>
+               {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>No records found.</td></tr>}
+               {financialLog.map(f => (
+                 <tr key={f.id}>
+                   <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)', borderColor: f.type==='income'?'rgba(0,255,102,0.2)':'rgba(255,0,85,0.2)' }}>{f.type}</span></td>
+                   <td style={{ fontWeight: '500' }}>{f.description}</td>
+                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>
+                      {f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}
+                   </td>
+                   <td>
+                     <div style={{ display: 'flex', gap: '8px' }}>
+                       {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Edit"><Pencil size={14}/></button>}
+                       {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={14}/></button>}
+                     </div>
+                   </td>
+                 </tr>
+               ))}
+             </tbody>
+           </table>
+        </div>
       </div>
     );
   };
 
-  // ==========================================
-  // RENDER: VAULT
-  // ==========================================
   const renderVault = () => {
-    const active = activeSectionIdx === 3;
+    const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
     return (
-      <div className="bento-container" style={getSectionStyle(3)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="type-label text-[var(--accent-vault)] mb-2 block">Storage</span><h1 className="type-h1">Secure Vault</h1></div>
-          {isLeadershipMode && <button className="btn-primary admin-action" onClick={() => setModalConfig({type: 'vault', data: { type: 'Document' }})}><Plus size={16}/> Upload File</button>}
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
 
-        {isLoading.vault ? <div className="card-base card-surface skeleton stagger-item stagger-2 view-active" style={{ height: '300px', marginTop: '24px' }}></div> : (
-          <>
-            {vaultData.length === 0 ? (
-              <div className="card-base card-ghost stagger-item stagger-2 view-active" style={{ padding: '60px', textAlign: 'center', marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <Server size={48} color="var(--accent-vault)" style={{ opacity: 0.3 }}/>
-                <p className="type-body text-[var(--text-300)]">Vault empty. No encrypted nodes found.</p>
-              </div>
-            ) : (
-              <div className="bento-grid-3" style={{ marginTop: '24px' }}>
-                {vaultData.map((v, i) => (
-                  <div key={v.id} className={`card-base card-surface card-accent-hover stagger-item stagger-${Math.min((i%3)+2, 4)} ${active ? 'view-active' : ''}`}>
-                    {/* Background SVG shape based on type */}
-                    <svg className="vault-ghost-icon" viewBox="0 0 24 24" fill="currentColor">
-                      {v.type === 'Design' ? <polygon points="12,2 22,20 2,20" /> : v.type === 'Finance' ? <rect x="3" y="3" width="18" height="18" /> : <circle cx="12" cy="12" r="10" />}
-                    </svg>
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', position: 'relative', zIndex: 2 }}>
-                      <span className="pill" style={{ color: 'var(--accent-vault)', background: 'rgba(167, 139, 250, 0.1)' }}>{v.type}</span>
-                      {isLeadershipMode && (
-                        <div style={{ display: 'flex', gap: '4px', margin: '-8px' }}>
-                          <button className="btn-icon admin-action" onClick={() => setModalConfig({type:'vault', data: v})}><Pencil size={14}/></button>
-                          <button className="btn-icon danger admin-action" onClick={() => handleDelete('vault', v.id)}><Trash2 size={14}/></button>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <h3 className="type-h2" style={{ marginBottom: '8px', position: 'relative', zIndex: 2 }}>{v.title}</h3>
-                    <p className="type-caption line-clamp-2 mb-6" style={{ position: 'relative', zIndex: 2 }}>{v.description || 'No payload description.'}</p>
-                    
-                    <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-ghost" style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '10px', borderRadius: '8px', textDecoration: 'none', position: 'relative', zIndex: 2 }}>
-                      Access File <ArrowUpRight size={14} className="ml-2"/>
-                    </a>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    );
-  };
-
-  // ==========================================
-  // RENDER: GALLERY
-  // ==========================================
-  const renderGallery = () => {
-    const active = activeSectionIdx === 4;
-    return (
-      <div className="bento-container" style={getSectionStyle(4)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="type-label text-[var(--accent-gallery)] mb-2 block">Visuals</span><h1 className="type-h1">Portfolio</h1></div>
-          {isLeadershipMode && <button className="btn-primary admin-action" onClick={() => setModalConfig({type: 'gal', data: { fileType: 'Image URL' }})}><Plus size={16}/> Add Work</button>}
+        {/* VAULT CATEGORY FILTER */}
+        <div style={{ display: 'flex', gap: '12px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {vaultCategories.map(cat => (
+            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
+          ))}
         </div>
 
-        {isLoading.gal ? <div className="card-base card-surface skeleton stagger-item stagger-2 view-active" style={{ height: '400px', marginTop: '24px' }}></div> : (
-          <>
-            {galleryData.length === 0 ? (
-              <div className="card-base card-ghost stagger-item stagger-2 view-active" style={{ padding: '60px', textAlign: 'center', marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gallery)" strokeWidth="1" opacity="0.3">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="3" y1="21" x2="21" y2="3"></line>
-                </svg>
-                <p className="type-body text-[var(--text-300)]">No visual projects showcased yet.</p>
-              </div>
-            ) : (
-              <div className="bento-grid-2" style={{ marginTop: '24px' }}>
-                {galleryData.map((g, i) => (
-                  <div key={g.id} className={`gallery-card stagger-item stagger-${(i%2)+2} ${active ? 'view-active' : ''}`} style={{ backgroundImage: `url("${g.link}")` }} onClick={() => g.fileType === 'Image URL' && setLightboxImg(g.link)}>
-                    {g.fileType !== 'Image URL' && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-iron)' }}><Aperture size={32} color="var(--text-400)"/></div>}
-                    
-                    <div className="gallery-card-inner">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <span className="pill" style={{ color: '#fff', background: 'var(--accent-gallery)', border: 'none' }}>{g.category}</span>
-                        {isLeadershipMode && (
-                          <div style={{ display: 'flex', gap: '4px', background: 'rgba(0,0,0,0.5)', borderRadius: '8px', padding: '4px' }} onClick={e => e.stopPropagation()}>
-                            <button className="btn-icon admin-action" style={{ padding: '4px' }} onClick={() => setModalConfig({type:'gal', data: g})}><Pencil size={14}/></button>
-                            <button className="btn-icon danger admin-action" style={{ padding: '4px' }} onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>
-                          </div>
-                        )}
-                      </div>
-                      <h3 className="type-h2" style={{ color: '#fff', fontSize: '1.4rem' }}>{g.title}</h3>
-                      {g.description && <p className="type-caption line-clamp-2 mt-2" style={{ color: 'rgba(255,255,255,0.8)' }}>{g.description}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    );
-  };
-
-  // ==========================================
-  // RENDER: NEWS
-  // ==========================================
-  const renderNews = () => {
-    const active = activeSectionIdx === 5;
-    const sortedNews = [...newsData].sort((a,b)=>b.timestamp-a.timestamp);
-
-    return (
-      <div className="bento-container" style={getSectionStyle(5)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="type-label text-[var(--accent-news)] mb-2 block">Announcements</span><h1 className="type-h1">Broadcasts</h1></div>
-          {isLeadershipMode && <button className="btn-primary admin-action" onClick={() => setModalConfig({type: 'news', data: {}})}><Plus size={16}/> New Broadcast</button>}
-        </div>
-
-        {isLoading.news ? <div className="card-base card-surface skeleton stagger-item stagger-2 view-active" style={{ height: '300px', marginTop: '24px' }}></div> : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '24px' }}>
-            {sortedNews.length === 0 ? (
-              <div className="card-base card-ghost stagger-item stagger-2 view-active" style={{ padding: '60px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <RadioTower size={48} color="var(--accent-news)" style={{ opacity: 0.3 }}/>
-                <p className="type-body text-[var(--text-300)]">Network silent. No recent broadcasts.</p>
-              </div>
-            ) : (
-              sortedNews.map((n, i) => (
-                <div key={n.id} className={`card-base ${i===0 ? 'card-elevated news-latest' : 'card-surface'} stagger-item stagger-${Math.min(i+2, 4)} ${active ? 'view-active' : ''}`} style={{ padding: '0' }}>
-                  <div className="card-header" style={{ paddingBottom: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span className="pill" style={{ color: 'var(--accent-news)', background: 'rgba(251, 146, 60, 0.1)', borderColor: 'rgba(251, 146, 60, 0.2)' }}>{n.tag || 'UPDATE'}</span>
-                      <span className="type-mono-sm text-[var(--text-400)]">{n.timestamp ? new Date(n.timestamp).toLocaleDateString() : ''}</span>
-                    </div>
-                    {isLeadershipMode && (
-                      <div style={{ display: 'flex', gap: '4px', margin: '-8px' }}>
-                        <button className="btn-icon admin-action" onClick={() => setModalConfig({type:'news', data: n})}><Pencil size={14}/></button>
-                        <button className="btn-icon danger admin-action" onClick={() => handleDelete('news', n.id)}><Trash2 size={14}/></button>
-                      </div>
-                    )}
-                  </div>
-                  <div className="card-content">
-                    <h2 className="type-h2" style={{ fontSize: '1.8rem', marginBottom: '16px' }}>{n.title}</h2>
-                    <p className="type-body" style={{ whiteSpace: 'pre-wrap' }}>{n.content}</p>
-                  </div>
+        <div className="bento-grid-3">
+          {filteredVault.map(v => (
+            <div key={v.id} className="bento-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={() => handleArchiveVaultItem(v)}><FolderArchive size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon" title="Edit" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
                 </div>
-              ))
-            )}
-          </div>
-        )}
+              </div>
+              <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
+              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
+            </div>
+          ))}
+          {filteredVault.length === 0 && <div style={{ color: 'var(--text-secondary)', padding: '16px' }}>No files found in this category.</div>}
+        </div>
       </div>
     );
   };
 
-  // ==========================================
-  // RENDER: HQ / ORG CHART
-  // ==========================================
-  const renderHQ = () => {
-    const active = activeSectionIdx === 6;
+  const renderGallery = () => {
     return (
-      <div className="bento-container" style={getSectionStyle(6)}>
-        <div className={`stagger-item stagger-1 ${active ? 'view-active' : ''}`} style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div><span className="type-label text-[var(--accent-hq)] mb-2 block">Settings</span><h1 className="type-h1">Headquarters</h1></div>
-          {isLeadershipMode && <button className="btn-primary btn-secondary admin-action" onClick={() => setModalConfig({type: 'hq', data: leadership})}><Settings size={16}/> Configure Unit</button>}
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
+        </div>
+        <div className="bento-grid-2">
+          {galleryData.map(g => (
+            <div key={g.id} className="bento-card" style={{ padding: 0 }}>
+              {g.fileType === 'Archive' ? (
+                <div style={{ padding: '32px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
+                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                  </div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                  <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6', flex: 1 }}>{g.description}</div>
+                  {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>View Saved Data <ArrowUpRight size={14}/></a>}
+                </div>
+              ) : (
+                <>
+                  <div style={{ height: '250px', background: g.fileType === 'Image URL' || g.fileType === 'Image' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {(g.fileType !== 'Image URL' && g.fileType !== 'Image') && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
+                  </div>
+                  <div style={{ padding: '32px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <span className="status-pill">{g.category}</span>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
+                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                    <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderNews = () => (
+    <div className="bento-container" style={{ maxWidth: '1400px' }}>
+      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+        <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
+        
+        {/* MANUAL UNIT NEWS (Gist View) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
+          {newsData.length === 0 && <div className="text-sm text-white/50 px-4">No unit news right now.</div>}
+          {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
+            <div key={n.id} className="bento-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
+                <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
+                </div>
+              </div>
+              <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
+              <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
+                {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
+              </div>
+              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingNews(n)}>
+                <BookOpen size={14}/> Read Full Story
+              </button>
+            </div>
+          ))}
         </div>
 
-        {isLoading.hq ? <div className="card-base card-surface skeleton stagger-item stagger-2 view-active" style={{ height: '400px', marginTop: '24px' }}></div> : (
-          <div className={`card-base card-surface stagger-item stagger-2 ${active ? 'view-active' : ''}`} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '60px 24px' }}>
-            
-            {/* Simple Visual Org Chart */}
-            <div className="org-node" style={{ borderColor: 'var(--accent-hq)', background: 'rgba(148, 163, 184, 0.05)' }}>
-              <span className="type-label block mb-1 text-[var(--accent-hq)]">Unit Designation</span>
-              <div className="type-hero" style={{ fontSize: '2.5rem' }}>{leadership.unitCode}</div>
-            </div>
-            
-            <div className="org-line" style={{ height: '40px' }}></div>
-            
-            <div style={{ display: 'flex', gap: '20px', position: 'relative' }}>
-              {/* Connector line top horizontal */}
-              <div style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: '2px', background: 'var(--color-chrome)' }}></div>
-              <div style={{ position: 'absolute', top: 0, left: '25%', width: '2px', height: '20px', background: 'var(--color-chrome)' }}></div>
-              <div style={{ position: 'absolute', top: 0, right: '25%', width: '2px', height: '20px', background: 'var(--color-chrome)' }}></div>
-              
-              <div className="org-node" style={{ marginTop: '20px', flex: 1, minWidth: '140px' }}>
-                <span className="type-label block mb-1">Official Comms</span>
-                <div className="type-mono-sm" style={{ color: 'var(--text-100)' }}>{leadership.officialEmail}</div>
-              </div>
-              <div className="org-node" style={{ marginTop: '20px', flex: 1, minWidth: '140px' }}>
-                <span className="type-label block mb-1">Financial Goal</span>
-                <div className="type-mono-sm" style={{ color: 'var(--text-100)' }}>₹{Number(leadership.financialGoal).toLocaleString()}</div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '60px', opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Shield size={16}/> <span className="type-mono-sm">RSA Core System v2.0 • Secured</span>
+        {/* LIVE NASA FEED SECTION */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
+          <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {liveNasaNews.map(live => (
+                <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{live.tag}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{live.date}</span>
+                  </div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{live.title}</div>
+                  <a href={live.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>Official Portal <ArrowUpRight size={14}/></a>
+                </div>
+              ))}
             </div>
           </div>
-        )}
+        </div>
+
+      </div>
+    </div>
+  );
+
+  const renderUnitCouncil = () => {
+    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role));
+
+    return (
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
+            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
+          </div>
+        </div>
+        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
+          <span className="text-subtitle" style={{color: '#fff'}}>Unit Information</span>
+          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
+          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+        </div>
+
+        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
+        <div className="bento-grid-2">
+          {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
+          {councilMembers.map(m => (
+            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
+                  {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                </span>
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
+              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
+                <Eye size={14}/> View Dossier
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
 
-  // ==========================================
-  // MAIN RETURN
-  // ==========================================
+  const renderRSAIntel = () => {
+    return (
+      <div className="bento-container" style={{ maxWidth: '1400px' }}>
+        <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
+        
+        <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
+          <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> Chat with RSA AI</span>
+          <div className="ai-terminal" style={{ marginTop: '16px' }}>
+            <div id="ai-chat-box-container" className="ai-chat-box">
+              {aiMessages.map((msg, idx) => (
+                <div key={idx} className={`ai-msg ${msg.sender}`}>
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+            <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
+              <input 
+                className="ai-input" 
+                placeholder="Ask complex architecture queries or request live NASA updates..." 
+                value={aiInput}
+                onChange={(e) => setAiInput(e.target.value)}
+              />
+              <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* BACKGROUND */}
-      <div className="bg-system">
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          {stars.map(s => (
-            <circle key={s.id} cx={s.cx} cy={s.cy} r={s.r} fill="#fff" opacity="0.4" style={{ animation: s.isPulsing ? `pulseDot ${s.animDuration} infinite alternate ${s.animDelay}` : 'none' }} />
-          ))}
-        </svg>
-        <div className="aurora-mesh">
-          <div className="blob blob-1"></div><div className="blob blob-2"></div>
-          <div className="blob blob-3"></div><div className="blob blob-4"></div>
+      {/* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */}
+      <div className="arch-environment">
+        <div className="plasma-orb orb-c"></div>
+        <div className="plasma-orb orb-p"></div>
+        <div className="arch-scene" style={{ transform: getCameraTransform() }}>
+          <div className="arch-wall wall-floor"></div>
+          <div className="arch-wall wall-ceil"></div>
+          <div className="arch-wall wall-left"></div>
+          <div className="arch-wall wall-right"></div>
+          <div className="arch-wall wall-back"></div>
         </div>
-        <div className="scan-line"></div>
-        <div className="noise-grain"></div>
-        <div className="vignette"></div>
       </div>
 
-      {/* SPLASH SCREEN */}
-      <div className={`splash-container ${splashState === 5 ? 'exit' : ''}`} style={{ visibility: splashState >= 5 ? 'hidden' : 'visible' }}>
-        <div className="splash-grid" style={{ opacity: splashState >= 1 ? 1 : 0, animationPlayState: splashState >= 1 ? 'running' : 'paused' }}></div>
-        <div className="splash-hr" style={{ opacity: splashState >= 1 ? 1 : 0, animationPlayState: splashState >= 1 ? 'running' : 'paused' }}></div>
-        <div className="splash-logo-container" style={{ opacity: splashState >= 3 ? 1 : 0, animationPlayState: splashState >= 3 ? 'running' : 'paused' }}>
-          <div className={`splash-logo ${splashState === 2 ? 'glitch-active' : ''}`}>RSA</div>
-          <div className="splash-sub">UNIT {leadership.unitCode}</div>
+      {/* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */}
+      <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
+        <div className="splash-container">
+          <div className="circle-flow-1"></div>
+          <div className="circle-flow-2"></div>
+          <div className="circle-flow-3"></div>
+          <div className="splash-brand">RSA</div>
         </div>
-        {splashState >= 4 && (
-          <div className="splash-status">
-            INITIALIZING COMMAND PROTOCOLS... <span className="status-auth">[AUTHORIZED]</span>
-          </div>
-        )}
       </div>
 
-      {/* TOP BAR */}
+      {/* 🌟 OVERLAY FOR SIDEBAR (Click outside to close) 🌟 */}
+      <div className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+
       <nav className="top-bar">
         <div className="pointer-events-auto">
-          <div className={`security-hud`} onClick={toggleAdmin}>
-            <div className={`hud-icon-wrapper ${isLeadershipMode ? 'admin-on' : ''}`}>
-               <div className="hud-icon-inner">
-                 {isLeadershipMode ? <Shield size={16} strokeWidth={2.5}/> : <ShieldAlert size={16} strokeWidth={2.5}/>}
-               </div>
+          <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
+            <div className="hud-icon-box">
+               {isLeadershipMode ? <Unlock size={14} strokeWidth={2.5}/> : <Lock size={14} strokeWidth={2.5}/>}
             </div>
-            <div className="hud-text hidden sm:block">
-               {isLeadershipMode ? 'ADMIN ACTIVE' : 'LOCKED'}
+            <div className="hud-text">
+               [ ADMIN: {isLeadershipMode ? 'ON' : 'OFF'} ]
             </div>
           </div>
         </div>
-        <div className="section-counter hidden lg:block">
-          {String(activeSectionIdx + 1).padStart(2, '0')} / 07
+        
+        {/* 🌟 ANIMATRONIC SIDEBAR TOGGLE BUTTON 🌟 */}
+        <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <button className={`complex-sidebar-btn ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <Hexagon size={32} className="hex" strokeWidth={1} />
+            <Aperture size={16} className="aperture" strokeWidth={1.5} />
+            <X size={20} className="close-x" strokeWidth={2.5} />
+          </button>
         </div>
       </nav>
 
-      {/* ADMIN INDICATOR BAR */}
-      {isLeadershipMode && <div className="admin-bar"></div>}
-
-      {/* FLOATING DOCK */}
-      <div className="floating-dock-wrapper">
-        <div className="floating-dock" ref={dockRef}>
-          {SECTIONS.map((sec, i) => {
-            const active = activeSectionIdx === i;
-            // Fake notification dots for demo logic
-            const showDot = (i===1 && crewData.length>0) || (i===2 && financialLog.length>0) || (i===5 && newsData.length>0);
-            return (
-              <div 
-                key={sec.id} 
-                className={`dock-item ${active ? 'active' : ''}`} 
-                onClick={() => navTo(i)}
-                style={active ? { '--item-accent': sec.accent, color: sec.accent } : {}}
-              >
-                {sec.icon}
-                <span className="dock-label-mobile" style={{ color: active ? sec.accent : 'inherit' }}>{sec.label}</span>
-                {showDot && <div className="dock-live-dot" style={{ background: sec.accent, '--dot-color-rgb': '255,255,255' }}></div>}
-                
-                <div className="dock-tooltip">
-                  <span>{sec.label}</span>
-                  {/* Tooltip Count logic */}
-                  {i===1 && <span className="tooltip-count">• {crewData.length}</span>}
-                  {i===2 && <span className="tooltip-count">• {financialLog.length}</span>}
-                  {i===3 && <span className="tooltip-count">• {vaultData.length}</span>}
-                  {i===4 && <span className="tooltip-count">• {galleryData.length}</span>}
-                  {i===5 && <span className="tooltip-count">• {newsData.length}</span>}
-                </div>
-              </div>
-            );
-          })}
+      {/* SIDEBAR */}
+      <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-logo">RSA <span style={{fontSize:'1rem', color:'#fff', fontStyle:'normal', fontFamily:'var(--font-body)', fontWeight:'400'}}>X</span> NASA</div>
+          <button className="sidebar-close" onClick={() => setSidebarOpen(false)}><X size={28}/></button>
         </div>
-        {isLeadershipMode && <div className="admin-dot" title="Admin Mode Active"></div>}
+        
+        <div style={{ flex: 1, overflowY: 'auto', paddingRight: '10px' }}>
+          <div className="sidebar-section-title"><Activity size={14}/> Live Information</div>
+          
+          <div className="sidebar-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>EVENT</span><CalendarClock size={14}/></div>
+            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>68th Annual Convention</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Preparation</div>
+          </div>
+
+          <div className="sidebar-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHIES</span><Shield size={14}/></div>
+            <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>Louis I. Kahn Trophy</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Open</div>
+          </div>
+
+          <div className="sidebar-section-title" style={{ marginTop: '30px' }}><Zap size={14}/> Quick Links</div>
+          <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="sidebar-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontWeight: '600', fontSize: '1.1rem' }}>NASA Website</div><ArrowUpRight size={20} color="#fff"/>
+            </div>
+          </a>
+        </div>
       </div>
 
-      {/* SCROLL INDICATOR */}
-      <div className="scroll-indicator">
-        <div className="scroll-pill" style={{ top: `${(activeSectionIdx / (SECTIONS.length - 1)) * 170}px` }}></div>
+      <div className="floating-dock">
+        {dockItems.map((item, i) => (
+          <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
+            {item.icon}
+            <div className="dock-tooltip">{item.label}</div>
+          </div>
+        ))}
       </div>
 
-      {/* SCROLL ENGINE */}
-      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleScroll}>
+      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
         <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>{renderFunds()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`}>{renderVault()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`}>{renderGallery()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderHQ()}</section>
-        {/* Spacer for bottom safe area */}
-        <div style={{ height: '80px', width: '100%', scrollSnapAlign: 'end' }}></div>
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
       </div>
 
-      {/* LIGHTBOX MODAL */}
-      {lightboxImg && (
-        <div className="modal-overlay" style={{ zIndex: 1100, background: 'rgba(0,0,0,0.95)' }} onClick={() => setLightboxImg(null)}>
-          <button className="btn-icon" style={{ position: 'absolute', top: '24px', right: '24px', background: 'rgba(255,255,255,0.1)', color: '#fff' }} onClick={() => setLightboxImg(null)}><X size={24}/></button>
-          <img src={lightboxImg} alt="Gallery Focus" style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px', animation: 'modalSpring 0.4s var(--ease-spring)' }} onClick={e => e.stopPropagation()}/>
+      {/* FULL NEWS READER MODAL */}
+      {viewingNews && (
+        <div className="modal-overlay pointer-events-auto" onClick={() => setViewingNews(null)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{viewingNews.tag || 'UPDATE'}</span>
+              <button className="btn-icon" onClick={() => setViewingNews(null)}><X size={24}/></button>
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '600', marginBottom: '24px', fontFamily: "var(--font-heading)", fontStyle: 'italic', lineHeight: '1.2' }}>{viewingNews.title}</div>
+            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.1rem', color: 'rgba(255,255,255,0.85)', lineHeight: '1.8' }}>{viewingNews.content}</div>
+          </div>
         </div>
       )}
 
-      {/* UNIFIED DATA MODAL */}
-      {modalConfig && (
-        <div className="modal-overlay pointer-events-auto" onClick={() => setModalConfig(null)}>
-          <div className="modal-window" onClick={(e) => e.stopPropagation()} style={{ '--modal-accent': SECTIONS.find(s=>s.id === (modalConfig.type==='gal'?'gal':modalConfig.type==='fin'?'fin':modalConfig.type))?.accent || 'var(--color-chrome)' }}>
-            
-            <div className="modal-header">
-              <h2 className="type-h2">{modalConfig.data.id ? 'Edit Record' : 'Initialize Node'}</h2>
-              <button className="btn-icon" onClick={() => setModalConfig(null)}><X size={20}/></button>
+      {/* MEMBER DETAILS MODAL */}
+      {viewingCrew && (
+        <div className="modal-overlay pointer-events-auto" onClick={() => setViewingCrew(null)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <h2 className="text-title" style={{ fontSize: '2.5rem' }}>Member Details</h2>
+              <button className="btn-icon" onClick={() => setViewingCrew(null)}><X size={24}/></button>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:'16px', marginBottom:'32px' }}>
+              <div><span className="text-subtitle">Name</span><div style={{fontSize:'1.8rem', fontWeight:'600', fontFamily:'var(--font-heading)', fontStyle:'italic'}}>{viewingCrew.name}</div></div>
+              <div><span className="text-subtitle">Role</span><div className="status-pill" style={{color:'var(--neon-cyan)', borderColor:'rgba(0,240,255,0.3)'}}>{viewingCrew.role}</div></div>
+              {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType}</div></div>}
+              <div><span className="text-subtitle">Year</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.year}</div></div>
+              <div><span className="text-subtitle">Email</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.email}</div></div>
+              {viewingCrew.phone && <div><span className="text-subtitle">Phone</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.phone}</div></div>}
+              
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                <a href={`mailto:${viewingCrew.email}`} className="btn-primary" style={{ flex: 1 }}><Mail size={16}/> Email</a>
+                {viewingCrew.phone && <a href={`tel:${viewingCrew.phone}`} className="btn-primary" style={{ flex: 1 }}><Phone size={16}/> Call</a>}
+              </div>
             </div>
             
-            <form onSubmit={handleSave} className="modal-body">
+            <div style={{ display: 'flex', gap: '12px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              {isLeadershipMode ? (
+                <>
+                  <button className="btn-primary btn-secondary" style={{flex: 1}} onClick={() => { setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Edit</button>
+                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Delete</button>
+                </>
+              ) : (
+                <div style={{fontSize:'0.8rem', color:'var(--text-secondary)', fontStyle:'italic'}}><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Only Admins can edit or delete this member.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT/ADD MODAL (Normal users can ONLY add to CREW) */}
+      {modalMode && (
+        <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
+              <h2 className="text-title" style={{ fontSize: '2rem' }}>{formPayload.id ? 'Edit' : 'Add'} Data</h2>
+              <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
+            </div>
+            
+            <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(modalMode); }}>
               
-              {/* CREW FORM */}
-              {modalConfig.type === 'crew' && (
+              {modalMode === 'crew' && (
                 <>
-                  <div className="input-group">
-                    <input required placeholder="Full Identity Name" className="input-field" value={modalConfig.data.name||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, name:e.target.value}})} />
-                    <label className="input-label">Full Identity Name</label>
-                  </div>
-                  <div className="input-group">
-                    <input type="email" placeholder="Email Endpoint" className="input-field" value={modalConfig.data.email||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, email:e.target.value}})} />
-                    <label className="input-label">Email Endpoint</label>
-                  </div>
-                  <div className="input-group">
-                    <input type="tel" placeholder="Mobile Number Array" className="input-field" value={modalConfig.data.phone||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, phone:e.target.value}})} />
-                    <label className="input-label">Mobile Number Array</label>
-                  </div>
+                  <input required placeholder="Name" className="mb-4" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
+                  <input type="email" placeholder="Email" className="mb-4" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
+                  <input type="tel" placeholder="Phone Number" className="mb-4" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Hierarchy</span>
-                      <select required className="input-field" value={modalConfig.data.role||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, role:e.target.value}})}>
-                        <option value="" disabled>Select Role...</option>
-                        <option value="Member">Student Member</option>
-                        {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
-                        {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
-                        {isLeadershipMode && <option value="Coordinator">Executive Coordinator</option>}
-                      </select>
-                    </div>
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Generation</span>
-                      <select className="input-field" value={modalConfig.data.year||'1'} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, year:e.target.value}})}>
-                        <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
-                      </select>
-                    </div>
-                  </div>
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Role (Adds Executive to Council)</span>
+                  <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
+                    <option value="" disabled>Select Role...</option>
+                    <option value="Member">Student Member</option>
+                    {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
+                    {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
+                    {isLeadershipMode && <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>}
+                    {isLeadershipMode && <option value="Coordinator">Coordinator</option>}
+                  </select>
 
-                  {modalConfig.data.role === 'Coordinator' && (
-                    <div className="input-group">
-                      <input required placeholder="Vector Type (e.g., Design, Events)" className="input-field" value={modalConfig.data.coordinatorType||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, coordinatorType:e.target.value}})} />
-                      <label className="input-label">Vector Type</label>
-                    </div>
+                  {formPayload.role === 'Coordinator' && (
+                    <input required placeholder="Coordinator Type (e.g., Design, Events)" className="mb-4" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
                   )}
+
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Year</span>
+                  <select className="mb-4" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
+                    <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
+                  </select>
                 </>
               )}
 
-              {/* FINANCES FORM */}
-              {modalConfig.type === 'fin' && (
+              {modalMode === 'finances' && isLeadershipMode && (
                 <>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Class</span>
-                      <select className="input-field" value={modalConfig.data.type||'income'} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, type:e.target.value}})} style={{ borderColor: modalConfig.data.type==='income'?'#22c55e':'#ef4444' }}>
-                        <option value="income">CREDIT (+)</option>
-                        <option value="expense">DEBIT (-)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Volume (INR)</span>
-                      <div className="input-group">
-                        <input required type="number" placeholder="0" className="input-field" value={modalConfig.data.amount||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, amount:e.target.value}})} />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="input-group">
-                    <input required placeholder="Transaction Narrative" className="input-field" value={modalConfig.data.description||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, description:e.target.value}})} />
-                    <label className="input-label">Narrative</label>
-                  </div>
+                  <span className="text-subtitle">Type</span>
+                  <select className="mb-4" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
+                    <option value="income">INCOME (+)</option>
+                    <option value="expense">EXPENSE (-)</option>
+                  </select>
+                  <span className="text-subtitle">Description</span>
+                  <input required placeholder="What was this for?" className="mb-4" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
+                  <span className="text-subtitle">Amount (INR)</span>
+                  <input required type="number" placeholder="Amount (INR)" className="mb-4" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
                 </>
               )}
 
-              {/* HQ FORM */}
-              {modalConfig.type === 'hq' && (
+              {modalMode === 'hq' && isLeadershipMode && (
                 <>
-                  <div className="input-group">
-                    <input placeholder="Unit Ident (e.g. Z649)" className="input-field" value={modalConfig.data.unitCode||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, unitCode:e.target.value}})} />
-                    <label className="input-label">Unit Code</label>
-                  </div>
-                  <div className="input-group">
-                    <input placeholder="Gateway Email" className="input-field" value={modalConfig.data.officialEmail||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, officialEmail:e.target.value}})} />
-                    <label className="input-label">Official Email</label>
-                  </div>
-                  <div className="input-group">
-                    <input type="number" placeholder="Target Financial Goal (INR)" className="input-field" value={modalConfig.data.financialGoal||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, financialGoal:e.target.value}})} />
-                    <label className="input-label">Financial Goal (INR)</label>
-                  </div>
+                  <input placeholder="Unit Code (e.g. Z649)" className="mb-4" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
+                  <input placeholder="Official Email" className="mb-4" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
+                  <input type="number" placeholder="Goal Amount (INR)" className="mb-4" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
                 </>
               )}
 
-              {/* VAULT / GALLERY / NEWS FORM */}
-              {['vault', 'gal', 'news'].includes(modalConfig.type) && (
+              {modalMode === 'vault' && isLeadershipMode && (
                 <>
-                  {modalConfig.type === 'vault' && (
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Category</span>
-                      <select className="input-field" value={modalConfig.data.category||'Programs'} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, category:e.target.value}})}>
-                        <option value="Trophies">Trophies</option><option value="Programs">Programs</option><option value="Events">Events</option><option value="Meetings">Meetings</option><option value="Other">Other</option>
-                      </select>
-                    </div>
-                  )}
-                  {modalConfig.type === 'gal' && (
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Category Tag</span>
-                      <input className="input-field" placeholder="e.g. MSL Trophy, Site Visit" value={modalConfig.data.category||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, category:e.target.value}})} />
-                    </div>
-                  )}
-                  {modalConfig.type === 'news' && (
-                    <div>
-                      <span className="type-label block mb-2 text-[var(--text-300)]">Broadcast Tag</span>
-                      <input className="input-field" placeholder="e.g. UPDATE, DEADLINE" value={modalConfig.data.tag||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, tag:e.target.value}})} />
-                    </div>
-                  )}
-                  
-                  <div className="input-group">
-                    <input required placeholder="Title" className="input-field" value={modalConfig.data.title||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, title:e.target.value}})} />
-                    <label className="input-label">Title</label>
-                  </div>
-                  
-                  {modalConfig.type !== 'news' && (
-                    <div className="input-group">
-                      <input placeholder="Target Cloud URL" className="input-field" value={modalConfig.data.link||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, link:e.target.value}})} />
-                      <label className="input-label">{modalConfig.type === 'gal' ? 'Image URL' : 'File URL'}</label>
-                    </div>
-                  )}
-                  
-                  <div className="input-group">
-                    <textarea placeholder="Payload Description..." className="input-field" rows="4" value={modalConfig.data.description||modalConfig.data.content||''} onChange={e=>setModalConfig({...modalConfig, data:{...modalConfig.data, description:e.target.value, content:e.target.value}})}></textarea>
-                    <label className="input-label">Content Payload</label>
-                  </div>
+                  <span className="text-subtitle">Category</span>
+                  <select className="mb-4" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
+                    {vaultCategories.filter(c=>c!=='All').map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
                 </>
               )}
 
-              <button type="submit" className="btn-primary w-full mt-2" disabled={isSaving} style={{ background: saveSuccess ? 'var(--neon-green)' : '' }}>
-                {isSaving ? <Loader /> : saveSuccess ? <><Check size={16}/> Saved Successfully</> : "Commit Configuration"}
+              {['gallery', 'news'].includes(modalMode) && isLeadershipMode && (
+                <>
+                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  {modalMode !== 'news' && <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
+                  <textarea placeholder="Description..." className="mb-4" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
+                </>
+              )}
+
+              <button type="submit" className="btn-primary w-full justify-center mt-4" style={{ padding: '18px', fontSize: '1rem', letterSpacing: '0.1em' }}>
+                SAVE DATA
               </button>
             </form>
           </div>
@@ -1220,17 +1038,3 @@ export default function App() {
     </>
   );
 }
-
-// Simple internal spinner component
-const Loader = () => (
-  <svg className="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="2" x2="12" y2="6"></line>
-    <line x1="12" y1="18" x2="12" y2="22"></line>
-    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
-    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
-    <line x1="2" y1="12" x2="6" y2="12"></line>
-    <line x1="18" y1="12" x2="22" y2="12"></line>
-    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
-    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-  </svg>
-);
