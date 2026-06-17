@@ -86,7 +86,7 @@ const GLOBAL_STYLES = `
   /* SCROLLING */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
-    min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
+    height: 100dvh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 80px 24px 20px 24px;
     opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -118,12 +118,6 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
-  /* COMPLEX ANIMATRONIC SIDEBAR LOGO */
-  .complex-sidebar-logo { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: var(--neon-cyan); }
-  .complex-sidebar-logo.spin { transform: rotate(180deg) scale(1.1); }
-  .complex-sidebar-logo .hex-outer { position: absolute; animation: spinRings 12s linear infinite; }
-  .complex-sidebar-logo .aperture-inner { position: absolute; animation: spinRings 6s linear infinite reverse; color: var(--neon-gold); }
-
   /* SIDEBAR */
   .nasa-sidebar {
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
@@ -133,22 +127,49 @@ const GLOBAL_STYLES = `
   }
   .nasa-sidebar.open { right: 0; }
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
   .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
   .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
   .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* FLOATING DOCK */
+  /* 🌟 ANIMATRONIC FLOATING DOCK (MOBILE vs DESKTOP) 🌟 */
   .floating-dock {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; gap: 8px; padding: 8px; z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+    position: fixed; z-index: 100;
+    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
+    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
   }
-  .dock-item { min-width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-  .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
-  .dock-tooltip { position: absolute; top: -45px; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; transform: translateY(10px); }
-  .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(0); }
+  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; }
+  .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
+
+  /* Mobile Dock (Bottom, Horizontal) */
+  @media (max-width: 768px) {
+    .floating-dock {
+      bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
+      width: 92%; overflow-x: auto; justify-content: flex-start;
+    }
+    .dock-item { min-width: 46px; height: 46px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
+    .dock-tooltip { top: -45px; left: 50%; transform: translateX(-50%) translateY(10px); }
+    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* Desktop Dock (Left Side, Vertical, Animatronic) */
+  @media (min-width: 769px) {
+    .floating-dock {
+      top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
+      animation: dockFloat 6s ease-in-out infinite;
+    }
+    @keyframes dockFloat { 0%, 100% { transform: translateY(-50%); } 50% { transform: translateY(calc(-50% - 10px)); } }
+    .dock-item { width: 50px; height: 50px; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    .dock-item.active { color: #000; background: #fff; transform: translateX(12px) scale(1.1); box-shadow: -10px 10px 20px rgba(255,255,255,0.1); }
+    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(8px); }
+    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
+    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
+    .scrolling-section { padding-left: 100px; } /* Prevent overlap on desktop */
+  }
 
   /* TYPOGRAPHY & BUTTONS */
   .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
@@ -184,16 +205,13 @@ const GLOBAL_STYLES = `
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
   
-  /* Modal */
+  /* Modal Overlay */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
 
   @media (max-width: 768px) {
-    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
     .text-title { font-size: 2.8rem; }
-    .floating-dock { width: 92%; overflow-x: auto; justify-content: flex-start; padding: 10px; border-radius: 20px; }
-    .dock-item { min-width: 46px; height: 46px; }
-    .scrolling-section { padding: 100px 16px; scroll-snap-align: start; }
+    .scrolling-section { padding: 100px 16px 120px 16px; }
     .modal-window { padding: 24px; }
     .top-bar { padding: 16px 20px; }
     .logo-toggle { font-size: 1.8rem; }
@@ -229,7 +247,7 @@ export default function App() {
   // AI State
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Advanced AI initialized. I have complete access to the NASA India telemetry, Unit archives, and architectural knowledge bases. What would you like to explore?' }
+    { sender: 'bot', text: 'RSA Advanced AI initialized. I have complete access to the NASA India telemetry, Unit archives, and architectural knowledge bases. What would you like to explore or design today?' }
   ]);
 
   // Modals
@@ -346,24 +364,25 @@ export default function App() {
       const tokens = textRaw.toLowerCase();
       let botResponse = "";
 
-      // Advanced Knowledge Routing
-      if (tokens.includes("troph") || tokens.includes("participate") || tokens.includes("available")) {
-        botResponse = `Parsing live telemetry... Current active vectors: \n1. ${liveNasaNews.find(n=>n.title.includes("Kahn"))?.title || "Louis I. Kahn Trophy"}\n2. Reubens Showcase\n3. Mohammad Shaheer Landscape Trophy (MSL).`;
-      } else if (tokens.includes("event") || tokens.includes("program")) {
-        botResponse = `NASA India live tracking indicates upcoming operations: 68th Annual Convention and Zonal Workshops. Ensure all members check the Official Portal for deadlines.`;
-      } else if (tokens.includes("nasa") || tokens.includes("national association")) {
-        botResponse = `Network synced to NASA India. Unit ${leadership.unitCode} connection secure. You can review Official Trophies and Convention metrics directly via the sidebar Uplink.`;
-      } else if (tokens.includes("shaheer") || tokens.includes("msl") || tokens.includes("landscape")) {
-        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, focus on ecological integration. Our past concepts utilized biological machines to counteract urban flooding. Ensure bio-swale metrics are updated.";
-      } else if (tokens.includes("design") || tokens.includes("idea") || tokens.includes("concept") || tokens.includes("architect")) {
-        botResponse = "As Le Corbusier said, architecture is the play of forms in light. Consider starting your design by analyzing the site context (sun path, wind patterns) before finalizing the morphology. Would you like to explore parametric forms or vernacular adaptive reuse?";
+      if (tokens.includes("troph") || tokens.includes("lik") || tokens.includes("louis")) {
+        botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Currently, submissions are open on the NASA portal. I recommend focusing on vernacular spatial configurations and timber joints, similar to the Kanchipuram housing typologies we documented. Do you need details on specific vernacular elements?";
+      } else if (tokens.includes("msl") || tokens.includes("landscape") || tokens.includes("shaheer")) {
+        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, our focus is the Velachery site in Chennai. Our 'Hydro-Social Connector' concept acts as a biological machine to manage urban flooding. Ensure your bio-swale and topographical grading metrics are properly mapped in AutoCAD.";
+      } else if (tokens.includes("news") || tokens.includes("live") || tokens.includes("feed")) {
+        botResponse = `Checking live NASA feed... I found ${liveNasaNews.length} recent updates. The latest is: "${liveNasaNews[0].title}". You can view these directly in the News section via the sidebar.`;
+      } else if (tokens.includes("nasa") || tokens.includes("convention")) {
+        botResponse = "The 68th Annual NASA Convention is in preparation stage. Make sure your unit delegates from Chennai are ready. Workshop selections are crucial—refer to the 'How to Select ANC Workshops' guide in our News section to align with our unit's strategic goals.";
+      } else if (tokens.includes("rural") || tokens.includes("varyankaval")) {
+        botResponse = "The Varyankaval Village study in Ariyalur is a prime example of rural documentation. The morphological maps and land-use data you produced are excellent references for understanding organic community growth and shared courtyard spaces.";
       } else if (tokens.includes("hello") || tokens.includes("hi") || tokens.includes("hey")) {
-        botResponse = "Hello! I am your advanced architectural co-pilot. I have access to our Unit databases, design philosophies, and the live NASA network. How can I help you today?";
+        botResponse = "Hello! I am your advanced architectural co-pilot. I am fully synchronized with our unit's legacy, current active phases, and the broader architectural landscape. How can I assist you with your design logic or unit management today?";
       } else if (tokens.includes("money") || tokens.includes("fund") || tokens.includes("balance") || tokens.includes("treasury")) {
         const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-        botResponse = `Our current unit treasury balance is ₹${net.toLocaleString()}.`;
+        botResponse = `Calculating current financial arrays... Our unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
+      } else if (tokens.includes("design") || tokens.includes("concept") || tokens.includes("philosophy") || tokens.includes("architecture")) {
+        botResponse = "When formulating an architectural concept, one must bridge the phenomenological with the structural. Consider how natural light defines the volume, as Louis Kahn suggested. Are you leaning towards a parametric fluid approach or a more strict, rationalist grid configuration for this specific design phase?";
       } else {
-        botResponse = "That is an interesting concept. As an architectural AI, I suggest considering how that impacts user experience, structure, and the environmental context. Can you provide more details?";
+        botResponse = "That requires deeper synthesis. From an architectural standpoint, we must evaluate how this variable interacts with user circulation, structural integrity, and environmental passive strategies. Can you define the parameters of your query a bit more clearly?";
       }
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
@@ -378,7 +397,6 @@ export default function App() {
     <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
       
-      {/* LIVELY DASHBOARD WIDGETS */}
       <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
@@ -411,7 +429,6 @@ export default function App() {
   );
 
   const renderCrew = () => {
-    // Force strict sorting logic
     const orderedYears = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
     const allocation = {};
     orderedYears.forEach(y => allocation[y] = []);
@@ -435,19 +452,22 @@ export default function App() {
             <div key={year} style={{ marginTop: '24px' }}>
               <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
               <div className="bento-grid-2" style={{ marginTop: '16px' }}>
-                {allocation[year].map(m => (
-                  <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: ['UD', 'USEC', 'Coordinator'].includes(m.role) ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                      <span className="status-pill">
-                        {['UD', 'USEC', 'Coordinator'].includes(m.role) && <Crown size={12} style={{marginRight:4}}/>}
-                        {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
+                {allocation[year].map(m => {
+                  const isCouncil = ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role);
+                  return (
+                    <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: isCouncil ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                        <span className="status-pill">
+                          {isCouncil && <Crown size={12} style={{marginRight:4}}/>}
+                          {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
+                      </div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
                     </div>
-                    <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );
@@ -531,7 +551,6 @@ export default function App() {
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
 
-        {/* VAULT CATEGORY FILTER */}
         <div style={{ display: 'flex', gap: '12px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
           {vaultCategories.map(cat => (
             <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
@@ -613,7 +632,6 @@ export default function App() {
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
         
-        {/* MANUAL UNIT NEWS (Gist View) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
           {newsData.length === 0 && <div className="text-sm text-white/50 px-4">No unit news right now.</div>}
@@ -627,7 +645,6 @@ export default function App() {
                 </div>
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
-              {/* GIST VIEW: Show only first 120 chars */}
               <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
                 {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
               </div>
@@ -638,7 +655,6 @@ export default function App() {
           ))}
         </div>
 
-        {/* LIVE NASA FEED SECTION */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
           <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
@@ -662,14 +678,13 @@ export default function App() {
   );
 
   const renderUnitCouncil = () => {
-    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
+    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role));
 
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            {/* ADD EXECUTIVE OPENS CREW MODAL */}
             {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
             {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
           </div>
@@ -741,7 +756,6 @@ export default function App() {
         <div className="plasma-orb orb-p"></div>
       </div>
 
-      {/* 🌟 NEW COMPLEX CIRCLE FLOW SPLASH SCREEN 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
           <div className="circle-flow-1"></div>
@@ -763,12 +777,8 @@ export default function App() {
           </div>
         </div>
         
-        {/* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */}
         <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <div className={`complex-sidebar-logo ${sidebarOpen ? 'spin' : ''}`}>
-             <Hexagon size={36} className="hex-outer" />
-             <Aperture size={20} className="aperture-inner" />
-          </div>
+          RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
         </div>
       </nav>
 
@@ -821,14 +831,12 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
-        {/* Transparent spacer to prevent cutting off the bottom AI section */}
-        <div style={{ height: '40px', width: '100%', scrollSnapAlign: 'end' }}></div>
       </div>
 
       {/* FULL NEWS READER MODAL */}
       {viewingNews && (
-        <div className="modal-overlay pointer-events-auto">
-          <div className="modal-window">
+        <div className="modal-overlay pointer-events-auto" onClick={() => setViewingNews(null)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
               <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{viewingNews.tag || 'UPDATE'}</span>
               <button className="btn-icon" onClick={() => setViewingNews(null)}><X size={24}/></button>
@@ -841,8 +849,8 @@ export default function App() {
 
       {/* MEMBER DETAILS MODAL */}
       {viewingCrew && (
-        <div className="modal-overlay pointer-events-auto">
-          <div className="modal-window">
+        <div className="modal-overlay pointer-events-auto" onClick={() => setViewingCrew(null)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
               <h2 className="text-title" style={{ fontSize: '2.5rem' }}>Member Details</h2>
               <button className="btn-icon" onClick={() => setViewingCrew(null)}><X size={24}/></button>
@@ -852,6 +860,8 @@ export default function App() {
               <div><span className="text-subtitle">Role</span><div className="status-pill" style={{color:'var(--neon-cyan)', borderColor:'rgba(0,240,255,0.3)'}}>{viewingCrew.role}</div></div>
               {viewingCrew.coordinatorType && <div><span className="text-subtitle">Department</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.coordinatorType}</div></div>}
               <div><span className="text-subtitle">Year</span><div style={{fontSize:'1.1rem'}}>{viewingCrew.year}</div></div>
+              <div><span className="text-subtitle">Email</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.email}</div></div>
+              {viewingCrew.phone && <div><span className="text-subtitle">Phone</span><div style={{fontFamily:'var(--font-mono)'}}>{viewingCrew.phone}</div></div>}
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                 <a href={`mailto:${viewingCrew.email}`} className="btn-primary" style={{ flex: 1 }}><Mail size={16}/> Email</a>
@@ -875,8 +885,8 @@ export default function App() {
 
       {/* EDIT/ADD MODAL */}
       {modalMode && (
-        <div className="modal-overlay pointer-events-auto">
-          <div className="modal-window">
+        <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
               <h2 className="text-title" style={{ fontSize: '2rem' }}>{formPayload.id ? 'Edit' : 'Add'} Data</h2>
               <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
@@ -896,6 +906,7 @@ export default function App() {
                     <option value="Member">Student Member</option>
                     <option value="UD">Unit Designee (UD)</option>
                     <option value="USEC">Unit Secretary (USEC)</option>
+                    <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>
                     <option value="Coordinator">Coordinator</option>
                   </select>
 
