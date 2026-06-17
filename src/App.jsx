@@ -5,7 +5,7 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
   HardDrive, RadioTower, BookOpen
 } from 'lucide-react';
 
@@ -45,7 +45,7 @@ const GLOBAL_STYLES = `
 
   :root {
     --bg-base: #030303;
-    --glass-bg: rgba(10, 10, 10, 0.7);
+    --glass-bg: rgba(10, 10, 10, 0.75);
     --glass-border: rgba(255, 255, 255, 0.08);
     --text-primary: #ffffff;
     --text-secondary: #8b9bb4;
@@ -68,14 +68,15 @@ const GLOBAL_STYLES = `
 
   /* 🌟 3D ARCHITECTURAL WIREFRAME BACKGROUND 🌟 */
   .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1200px; display: flex; align-items: center; justify-content: center; }
-  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.2; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.2; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
   .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
   .arch-camera { 
     position: absolute; width: 0; height: 0; transform-style: preserve-3d;
-    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); 
+    will-change: transform;
   }
   .arch-plane {
     position: absolute; width: 200vw; height: 200vh; left: -100vw; top: -100vh;
@@ -115,6 +116,7 @@ const GLOBAL_STYLES = `
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+  
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
@@ -129,20 +131,26 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
-  /* 🌟 KINETIC SIDEBAR TOGGLE 🌟 */
-  .sidebar-toggle-btn {
-    position: relative; width: 48px; height: 48px; border-radius: 12px;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
-    cursor: pointer; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    backdrop-filter: blur(10px); z-index: 120;
+  /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
+  .complex-sidebar-logo { 
+    position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: #fff; cursor: pointer;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
+    backdrop-filter: blur(10px);
   }
-  .sidebar-toggle-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,240,255,0.2); transform: scale(1.05); }
-  .st-line { width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-  .sidebar-toggle-btn.open { border-radius: 50%; border-color: var(--neon-pink); background: rgba(255,0,85,0.1); transform: rotate(180deg); box-shadow: 0 0 20px rgba(255,0,85,0.3); }
-  .sidebar-toggle-btn.open .st-line:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--neon-pink); }
-  .sidebar-toggle-btn.open .st-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
-  .sidebar-toggle-btn.open .st-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--neon-pink); }
+  .complex-sidebar-logo:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); }
+  .complex-sidebar-logo.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
+  .complex-sidebar-logo .hex-outer { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-logo .aperture-inner { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-logo.spin .hex-outer { transform: rotate(180deg) scale(0); opacity: 0; }
+  .complex-sidebar-logo.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); }
+
+  /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
+  .sidebar-overlay {
+    position: fixed; inset: 0; z-index: 105; background: transparent; 
+    pointer-events: none; transition: background 0.3s;
+  }
+  .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
 
   /* SIDEBAR */
   .nasa-sidebar {
@@ -158,13 +166,13 @@ const GLOBAL_STYLES = `
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
   .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* 🌟 ANIMATRONIC FLOATING DOCK 🌟 */
+  /* 🌟 ANIMATRONIC FLOATING DOCK (MOBILE vs DESKTOP) 🌟 */
   .floating-dock {
     position: fixed; z-index: 100;
     background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
     display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
   }
-  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; }
+  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
   .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
 
   /* Mobile Dock (Bottom, Horizontal) */
@@ -173,26 +181,25 @@ const GLOBAL_STYLES = `
       bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
       width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch;
     }
-    .dock-item { min-width: 46px; height: 46px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); animation: dockPulseMobile 2s infinite ease-in-out; }
+    .dock-item { min-width: 46px; height: 46px; }
+    .dock-item.active { color: #000; background: #fff; transform: translateY(-4px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
     .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
     .dock-tooltip { top: -45px; left: 50%; transform: translateX(-50%) translateY(10px); }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
-    @keyframes dockPulseMobile { 0%, 100% { transform: translateY(-6px) scale(1); } 50% { transform: translateY(-8px) scale(1.05); } }
   }
 
-  /* Desktop Dock (Left Side, Vertical, Animatronic) */
+  /* Desktop Dock (Left Side, Vertical, Optimized Animatronic) */
   @media (min-width: 769px) {
     .floating-dock {
       top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
     }
-    .dock-item { width: 50px; height: 50px; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    .dock-item { width: 50px; height: 50px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     .dock-item.active { color: #000; background: #fff; transform: translateX(12px) scale(1.1); box-shadow: -10px 10px 20px rgba(255,255,255,0.1); animation: dockPulseDesk 2s infinite ease-in-out; }
     .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(8px); }
     .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .scrolling-section { padding-left: 100px; }
-    @keyframes dockPulseDesk { 0%, 100% { transform: translateX(12px) scale(1.1); } 50% { transform: translateX(16px) scale(1.15); } }
+    @keyframes dockPulseDesk { 0%, 100% { transform: translateX(12px) scale(1.1); box-shadow: -10px 10px 20px rgba(255,255,255,0.1); } 50% { transform: translateX(14px) scale(1.12); box-shadow: -12px 12px 25px rgba(255,255,255,0.2); } }
   }
 
   /* TYPOGRAPHY & BUTTONS */
@@ -222,7 +229,7 @@ const GLOBAL_STYLES = `
 
   /* AI CHAT */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
-  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
+  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-bar-width: none; }
   .ai-chat-box::-webkit-scrollbar { display: none; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
   .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
@@ -238,6 +245,7 @@ const GLOBAL_STYLES = `
     .scrolling-section { padding: 100px 16px 120px 16px; }
     .modal-window { padding: 24px; }
     .top-bar { padding: 16px 20px; }
+    .nasa-sidebar { width: 100%; right: -100%; }
   }
 `;
 
@@ -371,6 +379,21 @@ export default function App() {
     }
   };
 
+  // 🌟 3D CAMERA TRANSFORM LOGIC 🌟
+  const getCameraTransform = () => {
+    const transforms = [
+      "rotateX(15deg) rotateY(15deg) translateZ(-100px)",  // 0: Dashboard
+      "rotateX(5deg) rotateY(0deg) translateZ(150px)",     // 1: Crew
+      "rotateX(25deg) rotateY(-20deg) translateZ(50px)",   // 2: Treasury
+      "rotateX(0deg) rotateY(45deg) translateZ(250px)",    // 3: Vault
+      "rotateX(-15deg) rotateY(-10deg) translateZ(150px)", // 4: Gallery
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News
+      "rotateX(0deg) rotateY(0deg) translateZ(400px)",     // 6: HQ
+      "rotateX(10deg) rotateY(-35deg) translateZ(200px)"   // 7: AI
+    ];
+    return transforms[activeSectionIdx] || transforms[0];
+  };
+
   // ==========================================
   // SUPERCHARGED AI BRAIN
   // ==========================================
@@ -409,21 +432,6 @@ export default function App() {
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
     }, 1000);
-  };
-
-  // 🌟 DYNAMIC ARCHITECTURAL 3D BACKGROUND CAMERA 🌟
-  const getCameraTransform = () => {
-    const transforms = [
-      "rotateX(15deg) rotateY(15deg) translateZ(-100px)",  // 0: Dashboard - Isometric outside
-      "rotateX(5deg) rotateY(0deg) translateZ(150px)",     // 1: Crew - Straight on inside
-      "rotateX(25deg) rotateY(-20deg) translateZ(50px)",   // 2: Treasury - High angle corner
-      "rotateX(0deg) rotateY(45deg) translateZ(250px)",    // 3: Vault - Hallway view
-      "rotateX(-15deg) rotateY(-10deg) translateZ(150px)", // 4: Gallery - Low angle looking up
-      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News - Bird's eye aerial
-      "rotateX(0deg) rotateY(0deg) translateZ(400px)",     // 6: HQ - Direct frontal
-      "rotateX(10deg) rotateY(-35deg) translateZ(200px)"   // 7: AI - Angled interior
-    ];
-    return transforms[activeSectionIdx] || transforms[0];
   };
 
   // ==========================================
@@ -739,7 +747,7 @@ export default function App() {
         <div className="bento-grid-2">
           {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
           {councilMembers.map(m => (
-            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
                   {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
@@ -802,7 +810,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* 🌟 NEW COMPLEX CIRCLE FLOW SPLASH SCREEN 🌟 */}
+      {/* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
           <div className="circle-flow-1"></div>
@@ -811,6 +819,9 @@ export default function App() {
           <div className="splash-brand">RSA<span style={{color:'var(--neon-cyan)'}}>.</span></div>
         </div>
       </div>
+
+      {/* 🌟 OVERLAY FOR SIDEBAR (Click outside to close) 🌟 */}
+      <div className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}></div>
 
       <nav className="top-bar">
         <div className="pointer-events-auto">
@@ -824,12 +835,13 @@ export default function App() {
           </div>
         </div>
         
-        {/* 🌟 KINETIC SIDEBAR MENU TOGGLE 🌟 */}
-        <button className={`sidebar-toggle-btn pointer-events-auto ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <div className="st-line"></div>
-          <div className="st-line"></div>
-          <div className="st-line"></div>
-        </button>
+        {/* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */}
+        <div className="pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <div className={`complex-sidebar-logo ${sidebarOpen ? 'spin' : ''}`}>
+             <Hexagon size={36} className="hex-outer" />
+             <Aperture size={20} className="aperture-inner" />
+          </div>
+        </div>
       </nav>
 
       {/* SIDEBAR */}
@@ -954,7 +966,6 @@ export default function App() {
                   <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
                     <option value="" disabled>Select Role...</option>
                     <option value="Member">Student Member</option>
-                    {/* Normal users cannot select Admin roles */}
                     {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
                     {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
                     {isLeadershipMode && <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>}
