@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
+
+// ALL ICONS VERIFIED AND MATCHED EXACTLY
 import { 
-  Shield, ShieldAlert, Plus, Trash2, Users, DollarSign, 
-  Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
-  Globe, Activity, Crown, Cpu, Send, Calendar,
-  Hexagon, Zap, Lock, Unlock, Pencil, Eye, Archive,
-  HardDrive, Radio, BookOpen, Check
+  Shield, Plus, Trash2, Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
+  Globe, Activity, Crown, BrainCircuit, Send, Hexagon, Zap, Lock, Unlock, Pencil, Eye, 
+  HardDrive, BookOpen, Calendar, Users, DollarSign, Archive, Radio 
 } from 'lucide-react';
 
 // ==========================================
@@ -131,13 +131,21 @@ const GLOBAL_STYLES = `
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
-  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; transition: opacity 0.5s; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+  
+  .show-circles .circle-flow-1 { opacity: 1; }
+  .show-circles .circle-flow-2 { opacity: 0.8; }
+  .show-circles .circle-flow-3 { opacity: 1; }
+  .show-circles .splash-brand { opacity: 1; margin-left: 0; letter-spacing: 0.08em; }
+  .glitch-active .splash-brand { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
+  
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
+  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* PERFORMANCE SCROLLING */
+  /* 🌟 HYBRID SCROLL ENGINE (Intersection Observer Powered) 🌟 */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   /* Desktop Layout */
@@ -154,19 +162,19 @@ const GLOBAL_STYLES = `
   }
 
   /* Staggered Reveal Logic */
-  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
   .view-active .stagger-item { opacity: 1; transform: translateY(0); }
   .stagger-1 { transition-delay: 0ms; }
   .stagger-2 { transition-delay: 80ms; }
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* BENTO CARDS */
+  /* 🌟 BENTO CARDS 🌟 */
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
     position: relative; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth);
   }
   
   /* The Card Glow Splash */
@@ -174,7 +182,7 @@ const GLOBAL_STYLES = `
     content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 70%);
     opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-spring); pointer-events: none; z-index: 0;
   }
-  .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
+  .bento-card:hover { border-color: rgba(255,255,255,0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.8); transform: translateY(-4px); }
   .bento-card:hover::before { opacity: 1; transform: scale(1.5); }
   .bento-card > * { position: relative; z-index: 1; }
   
@@ -187,7 +195,7 @@ const GLOBAL_STYLES = `
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
   }
 
-  /* TOP BAR */
+  /* 🌟 TOP BAR 🌟 */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -214,6 +222,11 @@ const GLOBAL_STYLES = `
   .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
+  @media (max-width: 768px) {
+    .top-bar { padding: 16px 20px; }
+    .complex-sidebar-btn { width: 44px; height: 44px; }
+  }
+
   /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
@@ -223,7 +236,7 @@ const GLOBAL_STYLES = `
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
@@ -252,13 +265,13 @@ const GLOBAL_STYLES = `
   }
   .dock-item:active::before { opacity: 0.2; transform: scale(1.5); transition: 0s; }
   
-  /* Desktop Dock */
+  /* Desktop Dock (Left Side, Vertical) */
   @media (min-width: 769px) {
     .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
     .dock-item { width: 48px; height: 48px; border-radius: 50%; }
     .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); animation: popActive 0.4s var(--ease-spring); }
-    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px) scale(1.05); }
+    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
     
     .dock-tooltip { 
       position: absolute; left: 100%; top: 50%; margin-left: 16px; transform: translateY(-50%) translateX(-10px);
@@ -271,7 +284,7 @@ const GLOBAL_STYLES = `
     @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(12px) scale(1.1); } }
   }
 
-  /* Mobile Dock */
+  /* Mobile Dock (Bottom, Horizontal) */
   @media (max-width: 768px) {
     .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
@@ -327,7 +340,7 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
     .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
-    input, textarea, select { font-size: 16px !important; }
+    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
   }
 
   @keyframes fadeIn { to { opacity: 1; } }
@@ -359,6 +372,7 @@ const GLOBAL_STYLES = `
 // ==========================================
 // 4. HELPER COMPONENTS
 // ==========================================
+
 const getHashColor = (str) => {
   if (!str) return '#60a5fa'; 
   let hash = 0;
@@ -393,6 +407,7 @@ export default function App() {
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
   
   // Splash States
+  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
   
   // Core Databases
@@ -431,13 +446,22 @@ export default function App() {
     { id: 'gal', label: 'Gallery', icon: <Aperture size={20}/>, accent: 'var(--accent-gallery)' },
     { id: 'news', label: 'Broadcasts', icon: <Radio size={20}/>, accent: 'var(--accent-news)' },
     { id: 'hq', label: 'Council', icon: <Crown size={20}/>, accent: 'var(--accent-hq)' },
-    { id: 'ai', label: 'AI Chat', icon: <Cpu size={20}/>, accent: 'var(--neon-cyan)' }
+    { id: 'ai', label: 'AI Chat', icon: <BrainCircuit size={20}/>, accent: 'var(--neon-cyan)' }
   ];
 
   // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
+    const seq = [
+      { time: 100, state: 1 }, 
+      { time: 550, state: 2 }, 
+      { time: 630, state: 3 }, 
+      { time: 1000, state: 4 }, 
+      { time: 2000, state: 5 }  
+    ];
+    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
     setTimeout(() => setIsBooting(false), 2400);
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   // Firebase Listeners
@@ -509,12 +533,18 @@ export default function App() {
     } catch (err) { alert("Sync failed."); }
   };
 
+  // 🌟 FIXED handleDelete LOGIC 🌟
   const handleDelete = async (col, id) => {
     if (window.confirm("Permanently delete record?")) {
-      await deleteDoc(doc(db, col, id));
-      setModalMode(null);
-      setViewingCrew(null);
-      setViewingNews(null);
+      try {
+        await deleteDoc(doc(db, col, id));
+        setModalMode(null);
+        setViewingCrew(null);
+        setViewingNews(null);
+      } catch (e) {
+        console.error(e);
+        alert("Error deleting record.");
+      }
     }
   };
 
@@ -581,7 +611,7 @@ export default function App() {
   const getSectionStyle = (idx) => {
     return {
       '--reveal-dir': '40px',
-      '--section-accent': SECTIONS[idx].accent
+      '--section-accent': SECTIONS[idx]?.accent || 'var(--neon-cyan)'
     };
   };
 
@@ -1046,7 +1076,7 @@ export default function App() {
               {isLeadershipMode ? (
                 <>
                   <button className="btn-primary btn-secondary" style={{flex: 1}} onClick={(e) => { e.stopPropagation(); setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Edit</button>
-                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={(e) => { e.stopPropagation(); deleteDocRecord('crew', viewingCrew.id); }}><Trash2 size={16}/> Delete</button>
+                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={(e) => { e.stopPropagation(); handleDelete('crew', viewingCrew.id); }}><Trash2 size={16}/> Delete</button>
                 </>
               ) : (
                 <div className="type-caption"><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Only Admins can edit or delete.</div>
