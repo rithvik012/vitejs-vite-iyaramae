@@ -38,7 +38,7 @@ const ARCH_QUOTES = [
 ];
 
 // ==========================================
-// DESIGN SYSTEM STYLES
+// DESIGN SYSTEM STYLES (Mobile Optimized)
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -60,20 +60,19 @@ const GLOBAL_STYLES = `
     --font-ui: 'Outfit', sans-serif;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
   body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
   input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
   input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
-  ::-webkit-scrollbar { width: 0px; }
+  ::-webkit-scrollbar { width: 0px; display: none; }
 
   /* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */
-  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; }
+  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
   .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
-  /* The 3D Room / Camera */
   .arch-scene { 
     position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d;
     transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
@@ -100,16 +99,16 @@ const GLOBAL_STYLES = `
   .splash-brand { font-family: var(--font-heading); font-size: 3.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
 
-  /* SCROLLING */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
+  /* PERFORMANCE SCROLLING */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   .scrolling-section {
-    height: 100dvh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 80px 24px 20px 24px;
+    min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
     opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
 
-  .bento-container { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
+  .bento-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; }
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
@@ -134,20 +133,17 @@ const GLOBAL_STYLES = `
 
   /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
   .complex-sidebar-btn { 
-    position: fixed; top: 24px; right: 40px; width: 50px; height: 50px; 
-    background: rgba(10,10,10,0.8); border: 1px solid var(--glass-border); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    backdrop-filter: blur(10px); z-index: 120; transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: #fff; cursor: pointer;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
+    backdrop-filter: blur(10px);
   }
-  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.05); }
-  .complex-sidebar-btn .hex { position: absolute; color: var(--neon-cyan); transition: all 0.6s ease; }
-  .complex-sidebar-btn .aperture { position: absolute; color: var(--neon-gold); transition: all 0.6s ease; }
-  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s ease; }
-  
-  .complex-sidebar-btn.open { border-radius: 50%; border-color: var(--neon-pink); background: rgba(255,0,85,0.1); box-shadow: 0 0 20px rgba(255,0,85,0.3); transform: rotate(180deg); }
-  .complex-sidebar-btn.open .hex { opacity: 0; transform: scale(1.5) rotate(90deg); }
-  .complex-sidebar-btn.open .aperture { opacity: 0; transform: scale(0) rotate(-90deg); }
-  .complex-sidebar-btn.open .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
+  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); }
+  .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
+  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn.spin .hex-outer { transform: rotate(180deg) scale(0); opacity: 0; }
+  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); }
 
   /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
@@ -163,11 +159,13 @@ const GLOBAL_STYLES = `
   .nasa-sidebar.open { right: 0; }
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
+  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
   .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* 🌟 OPTIMIZED FLOATING DOCK (MOBILE vs DESKTOP) 🌟 */
+  /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
   .floating-dock {
     position: fixed; z-index: 100;
     background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
@@ -180,16 +178,15 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) {
     .floating-dock {
       bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
-      width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch;
+      width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
     }
-    .dock-item { min-width: 46px; height: 46px; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, color 0.3s; }
+    .dock-item { min-width: 46px; height: 46px; scroll-snap-align: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, color 0.3s; }
     .dock-item.active { color: #000; background: #fff; transform: translateY(-4px); }
     .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
-    .dock-tooltip { top: -45px; left: 50%; transform: translateX(-50%) translateY(10px); }
-    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .dock-tooltip { display: none; } /* Hide tooltips on mobile to prevent clipping issues */
   }
 
-  /* Desktop Dock (Left Side, Vertical, No-Lag Pure CSS) */
+  /* Desktop Dock (Left Side, Vertical) */
   @media (min-width: 769px) {
     .floating-dock {
       top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
@@ -204,7 +201,7 @@ const GLOBAL_STYLES = `
   }
 
   /* TYPOGRAPHY & BUTTONS */
-  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: clamp(2.8rem, 5vw, 4.2rem); letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
   .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
   
@@ -219,7 +216,7 @@ const GLOBAL_STYLES = `
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
   
-  .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; }
+  .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; white-space: nowrap; }
   .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
   .filter-tab:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.3); }
 
@@ -230,24 +227,31 @@ const GLOBAL_STYLES = `
 
   /* AI CHAT */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
-  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
+  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-behavior: smooth; }
   .ai-chat-box::-webkit-scrollbar { display: none; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
   .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
   
-  /* Modal Overlay (Click outside to close) */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
+  /* Modal Overlay */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
+  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
+  
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes popIn { to { opacity: 1; transform: scale(1); } }
 
+  /* 🌟 MOBILE SPECIFIC REFINEMENTS 🌟 */
   @media (max-width: 768px) {
-    .text-title { font-size: 2.8rem; }
-    .scrolling-section { padding: 100px 16px 120px 16px; }
-    .modal-window { padding: 24px; }
+    .scrolling-section { min-height: 100dvh; height: auto; padding: 100px 16px 120px 16px; scroll-snap-align: start; }
+    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
+    .modal-window { padding: 24px; padding-bottom: 40px; }
     .top-bar { padding: 16px 20px; }
     .nasa-sidebar { width: 100%; right: -100%; }
-    .complex-sidebar-btn { top: 16px; right: 20px; width: 44px; height: 44px; }
+    .bento-card { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 24px; }
+    
+    /* Lock Input Font Size on Mobile to prevent iOS Zoom */
+    input, textarea, select { font-size: 16px !important; }
   }
 `;
 
@@ -287,7 +291,6 @@ export default function App() {
   const [viewingCrew, setViewingCrew] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
   const [formPayload, setFormPayload] = useState({});
-  const scrollEngineRef = useRef(null);
 
   const dockItems = [
     { id: 'core', icon: <Hexagon size={22} strokeWidth={1.5}/>, label: 'Dashboard' },
@@ -320,15 +323,28 @@ export default function App() {
     if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
   }, [aiMessages]);
 
-  const handleEngineScroll = () => {
-    if (!scrollEngineRef.current) return;
-    const idx = Math.round(scrollEngineRef.current.scrollTop / window.innerHeight);
-    if (idx !== activeSectionIdx) setActiveSectionIdx(idx);
-  };
+  // 🌟 NEW: INTERSECTION OBSERVER ENGINE FOR FLAWLESS MOBILE & 3D PERFORMANCE 🌟
+  useEffect(() => {
+    const options = { root: null, rootMargin: '0px', threshold: 0.5 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idx = Number(entry.target.getAttribute('data-index'));
+          setActiveSectionIdx(idx);
+        }
+      });
+    }, options);
+
+    const sections = document.querySelectorAll('.scrolling-section');
+    sections.forEach(sec => observer.observe(sec));
+    return () => observer.disconnect();
+  }, []);
 
   const executeEngineNavigation = (idx) => {
-    scrollEngineRef.current.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
-    setActiveSectionIdx(idx);
+    const sections = document.querySelectorAll('.scrolling-section');
+    if (sections[idx]) {
+      sections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleSecurityToggle = () => {
@@ -340,24 +356,28 @@ export default function App() {
     }
   };
 
-  const handleSaveToCloud = async (collectionName) => {
+  const handleSaveToCloud = async (e) => {
+    e.preventDefault();
     try {
-      if (collectionName === 'hq') {
+      if (modalMode === 'hq') {
         await setDoc(doc(db, "unit", "hq"), formPayload);
       } else if (formPayload.id) {
         const { id, ...data } = formPayload;
-        await updateDoc(doc(db, collectionName, id), data);
+        await updateDoc(doc(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), data);
       } else {
-        await addDoc(collection(db, collectionName), { ...formPayload, timestamp: Date.now() });
+        await addDoc(collection(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), { ...formPayload, timestamp: Date.now() });
       }
       setModalMode(null); 
       setFormPayload({});
-    } catch (e) { alert("Failed to save data."); }
+    } catch (err) { alert("Failed to save data."); }
   };
 
   const deleteDocRecord = async (col, id) => {
     if (window.confirm("Are you sure you want to delete this?")) {
       await deleteDoc(doc(db, col, id));
+      setModalMode(null);
+      setViewingCrew(null);
+      setViewingNews(null);
     }
   };
 
@@ -838,13 +858,13 @@ export default function App() {
           </div>
         </div>
         
-        {/* 🌟 ANIMATRONIC SIDEBAR TOGGLE BUTTON 🌟 */}
-        <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <button className={`complex-sidebar-btn ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <Hexagon size={32} className="hex" strokeWidth={1} />
-            <Aperture size={16} className="aperture" strokeWidth={1.5} />
-            <X size={20} className="close-x" strokeWidth={2.5} />
-          </button>
+        {/* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */}
+        <div className="pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <div className={`complex-sidebar-btn ${sidebarOpen ? 'spin' : ''}`}>
+             <Hexagon size={36} className="hex-outer" />
+             <Aperture size={20} className="aperture-inner" />
+             <X size={24} className="close-x" strokeWidth={2} />
+          </div>
         </div>
       </nav>
 
@@ -881,22 +901,23 @@ export default function App() {
 
       <div className="floating-dock">
         {dockItems.map((item, i) => (
-          <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
+          <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)} data-index={i}>
             {item.icon}
             <div className="dock-tooltip">{item.label}</div>
           </div>
         ))}
       </div>
 
-      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
-        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>{renderFunds()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`}>{renderVault()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`}>{renderGallery()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
+      <div className="kinetic-scroll-engine" ref={scrollEngineRef}>
+        {/* We use data-index to let the IntersectionObserver know which section is which */}
+        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`} data-index="0">{renderDashboard()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`} data-index="1">{renderCrew()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`} data-index="2">{renderFunds()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`} data-index="3">{renderVault()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`} data-index="4">{renderGallery()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`} data-index="5">{renderNews()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`} data-index="6">{renderUnitCouncil()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`} data-index="7">{renderRSAIntel()}</section>
       </div>
 
       {/* FULL NEWS READER MODAL */}
