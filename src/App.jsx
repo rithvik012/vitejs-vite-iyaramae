@@ -2,15 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
-  Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
+  Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
-  HardDrive, RadioTower, BookOpen
+  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  HardDrive, RadioTower, BookOpen, Check
 } from 'lucide-react';
 
 // ==========================================
-// FIREBASE DATABASE
+// 1. FIREBASE SECURE KERNEL
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -25,7 +25,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
-// Architectural Quotes Engine
+// ==========================================
+// 2. ARCHITECTURAL QUOTES ENGINE
+// ==========================================
 const ARCH_QUOTES = [
   "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light.\" – Le Corbusier",
   "\"Form ever follows function.\" – Louis Sullivan",
@@ -38,36 +40,71 @@ const ARCH_QUOTES = [
 ];
 
 // ==========================================
-// DESIGN SYSTEM STYLES
+// 3. DESIGN SYSTEM & MOTION LANGUAGE
 // ==========================================
 const GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..500;1,9..40,300..500&family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700&display=swap');
 
   :root {
-    --bg-base: #020202;
-    --glass-bg: rgba(10, 10, 10, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --text-primary: #ffffff;
-    --text-secondary: #8b9bb4;
-    --neon-cyan: #00f0ff;
-    --neon-purple: #7000ff;
-    --neon-gold: #ffbe0b;
-    --neon-pink: #ff0055;
-    --neon-green: #00ff66;
-    --font-heading: 'Playfair Display', serif;
-    --font-body: 'Plus Jakarta Sans', sans-serif;
+    /* Tonal Identity System */
+    --color-void: #000000;
+    --color-obsidian: #0a0a0a;
+    --color-carbon: #111111;
+    --color-iron: #1a1a1a;
+    --color-steel: #252525;
+    --color-chrome: rgba(255,255,255,0.06);
+    --color-smoke: rgba(255,255,255,0.12);
+
+    /* Text Hierarchy */
+    --text-100: #ffffff;
+    --text-200: #d1d5db;
+    --text-300: #9ca3af;
+    --text-400: #6b7280;
+    --text-500: #374151;
+
+    /* Accent System */
+    --accent-dash: #60a5fa;
+    --accent-crew: #34d399;
+    --accent-finance: #fbbf24;
+    --accent-vault: #a78bfa;
+    --accent-gallery: #f472b6;
+    --accent-news: #fb923c;
+    --accent-hq: #94a3b8;
+
+    /* Font Families */
+    --font-heading: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
-    --font-ui: 'Outfit', sans-serif;
+
+    /* Easing */
+    --ease-spring: cubic-bezier(0.34, 1.56, 1, 1);
+    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-  body, html { background-color: var(--bg-base); color: var(--text-primary); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
-  input, textarea, select { user-select: auto; color: #fff !important; background-color: rgba(255,255,255,0.03) !important; outline: none; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; transition: all 0.3s; font-family: var(--font-body); width: 100%; }
-  input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
-  ::-webkit-scrollbar { width: 0px; }
+  body, html { 
+    background-color: var(--color-void); 
+    color: var(--text-100); 
+    font-family: var(--font-body); 
+    overflow: hidden; 
+    height: 100dvh; 
+    width: 100vw; 
+    -webkit-font-smoothing: antialiased; 
+  }
+  ::-webkit-scrollbar { display: none; width: 0px; }
+
+  /* 🌟 TYPOGRAPHY SYSTEM 🌟 */
+  .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(3rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1; }
+  .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
+  .type-h2 { font-family: var(--font-heading); font-weight: 400; font-size: 1.75rem; line-height: 1.2; }
+  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
+  .type-label { font-family: var(--font-body); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.7; color: var(--text-200); }
+  .type-caption { font-family: var(--font-body); font-weight: 300; font-size: 0.8rem; color: var(--text-300); }
+  .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
 
   /* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */
-  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
   .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
@@ -89,39 +126,106 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* CIRCLE FLOW SPLASH SCREEN */
-  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
-  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
-  .splash-brand { font-family: var(--font-heading); font-size: 3.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
-  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
-
-  /* PERFORMANCE SCROLLING */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
-  .scrolling-section {
-    min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
-    opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
-
-  .bento-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; }
-  .bento-card { 
-    background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-    border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+  /* 🌟 CINEMATIC SPLASH SCREEN 🌟 */
+  .splash-container { position: fixed; inset: 0; z-index: 99999; background: var(--color-void); display: flex; align-items: center; justify-content: center; flex-direction: column; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
+  .splash-container.exit { transform: translateY(-100%); }
   
-  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .circle-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  
+  /* Sequence Classes */
+  .show-circles .circle-flow-1 { opacity: 1; }
+  .show-circles .circle-flow-2 { opacity: 0.8; }
+  .show-circles .circle-flow-3 { opacity: 1; }
+  .glitch-active .splash-brand { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
+  
+  .splash-status { position: absolute; bottom: 20%; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-300); }
+  .status-auth { color: var(--neon-green); opacity: 0; animation: revealFade 0.1s 1.8s forwards; }
 
-  /* TOP BAR */
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
+  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
+  @keyframes trackIn { from { margin-left: -50vw; opacity: 0; } to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
+
+  /* 🌟 KINETIC SCROLL ENGINE 🌟 */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+  .scrolling-section { min-height: 100dvh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 24px 80px 24px; position: relative; }
+  
+  /* Staggered Reveal Logic */
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
+  .view-active .stagger-item { opacity: 1; transform: translateY(0); }
+  .stagger-1 { transition-delay: 0ms; }
+  .stagger-2 { transition-delay: 80ms; }
+  .stagger-3 { transition-delay: 160ms; }
+  .stagger-4 { transition-delay: 240ms; }
+
+  /* 🌟 BENTO CARD HIERARCHY 🌟 */
+  .bento-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; margin: 0 auto; }
+  .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+  .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
+
+  .card-base { border-radius: 16px; position: relative; overflow: hidden; transition: all 0.3s var(--ease-smooth); will-change: transform; }
+  .card-header { padding: 24px 24px 16px; border-bottom: 1px solid var(--color-chrome); display: flex; justify-content: space-between; align-items: flex-start; }
+  .card-content { padding: 20px 24px; }
+  
+  .card-ghost { background: transparent; border: 1px solid var(--color-chrome); }
+  .card-ghost:hover { border-color: rgba(255,255,255,0.14); }
+  
+  .card-surface { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); }
+  .card-surface:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(-2px); }
+  
+  .card-elevated { background: rgba(255,255,255,0.07); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 24px rgba(0,0,0,0.6); }
+
+  /* 🌟 MAGNETIC DOCK 🌟 */
+  .floating-dock-wrapper { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+  .floating-dock { 
+    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--color-chrome); border-radius: 100px; 
+    display: flex; gap: 8px; padding: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    transform-origin: bottom center;
+  }
+  .dock-item { 
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+    color: var(--text-300); cursor: pointer; position: relative; 
+    transition: transform 0.15s var(--ease-spring), color 0.2s, background 0.2s, box-shadow 0.2s; 
+    will-change: transform;
+  }
+  .dock-item:active { transform: scale(0.95) !important; }
+  .dock-item.active { color: #fff; }
+  
+  .dock-tooltip { 
+    position: absolute; top: -45px; left: 50%; transform: translateX(-50%) translateY(10px);
+    background: var(--color-steel); border: 1px solid var(--color-chrome); color: #fff; 
+    padding: 6px 12px; border-radius: 8px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; 
+    opacity: 0; transition: all 0.2s; white-space: nowrap; pointer-events: none; 
+    display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px) {
+    .floating-dock-wrapper { width: 92%; max-width: 400px; }
+    .floating-dock { width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; border-radius: 20px; padding: 12px; gap: 12px; }
+    .dock-item { width: auto; min-width: max-content; height: 40px; border-radius: 12px; padding: 0 16px; gap: 8px; }
+    .dock-label-mobile { display: block; font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; }
+    .dock-tooltip { display: none; }
+    .dock-item.active { border-bottom: 2px solid var(--item-accent); background: transparent !important; box-shadow: none !important; border-radius: 0; padding-bottom: 6px; height: 38px; }
+    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 769px) { 
+    .dock-label-mobile { display: none; } 
+    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); bottom: auto; }
+    .floating-dock { flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px; }
+    .dock-item { width: 50px; height: 50px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s; }
+    .dock-item.active { transform: translateX(10px) scale(1.1); }
+    .dock-item:hover:not(.active) { transform: translateX(6px); }
+    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
+    .dock-item:hover .dock-tooltip { transform: translateY(-50%) translateX(0); }
+    .scrolling-section { padding-left: 100px; }
+  }
+
+  /* 🌟 TOP BAR 🌟 */
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none; }
   .top-bar > * { pointer-events: auto; }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
@@ -142,10 +246,13 @@ const GLOBAL_STYLES = `
   .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
   .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.8s ease; }
   .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.8s ease; }
+  
   .complex-sidebar-btn.spin .hex-outer { transform: rotate(180deg) scale(0); opacity: 0; }
-  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); }
+  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
+  .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
-  /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
+  /* SIDEBAR OVERLAY */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
 
@@ -157,73 +264,29 @@ const GLOBAL_STYLES = `
     box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .nasa-sidebar.open { right: 0; }
-  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
-  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
-  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
-  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
-  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
-  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* 🌟 OPTIMIZED FLOATING DOCK (MOBILE vs DESKTOP) 🌟 */
-  .floating-dock {
-    position: fixed; z-index: 100;
-    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
-    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
-  }
-  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
-  .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
-
-  /* Mobile Dock (Bottom, Horizontal) */
-  @media (max-width: 768px) {
-    .floating-dock {
-      bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
-      width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
-    }
-    .dock-item { min-width: 46px; height: 46px; scroll-snap-align: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, color 0.3s; }
-    .dock-item.active { color: #000; background: #fff; transform: translateY(-4px); }
-    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
-    .dock-tooltip { display: none; } /* Hide tooltips on mobile to prevent clipping issues */
-  }
-
-  /* Desktop Dock (Left Side, Vertical, No-Lag Pure CSS) */
-  @media (min-width: 769px) {
-    .floating-dock {
-      top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
-    }
-    .dock-item { width: 50px; height: 50px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s; will-change: transform; }
-    .dock-item.active { color: #000; background: #fff; transform: translateX(10px) scale(1.1); animation: popActive 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(6px); }
-    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
-    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
-    .scrolling-section { padding-left: 100px; }
-    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(10px) scale(1.1); } }
-  }
-
-  /* TYPOGRAPHY & BUTTONS */
-  .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-  .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
+  /* 🌟 MODAL SYSTEM 🌟 */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: revealFade 0.3s ease-out; }
+  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; position: relative; animation: modalSpring 0.5s var(--ease-spring); }
+  @keyframes modalSpring { 0% { transform: scale(0.95) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
   
-  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; font-family: var(--font-ui); letter-spacing: 0.05em; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+  /* Inputs & Buttons */
+  .input-group { position: relative; width: 100%; }
+  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 8px; padding: 20px 16px 8px; color: var(--text-100) !important; font-family: var(--font-body); transition: all 0.2s; }
+  .input-label { position: absolute; left: 16px; top: 16px; font-family: var(--font-body); font-size: 0.95rem; color: var(--text-400); transition: all 0.2s ease-out; pointer-events: none; }
+  .input-field:focus { border-color: var(--accent-dash); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
+  .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--text-200); font-weight: 500; text-transform: uppercase; }
+  
+  .btn-primary { background: #fff; color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s var(--ease-spring), opacity 0.2s; }
+  .btn-primary:active { transform: scale(0.96); }
+  .btn-primary:hover { opacity: 0.9; }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-  .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
+  .btn-icon:hover { color: #fff; background: var(--color-chrome); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
-  
-  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
-  
-  .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; white-space: nowrap; }
-  .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
-  .filter-tab:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.3); }
 
-  .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
-  .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
-  .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
-  .pro-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
 
   /* AI CHAT */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
@@ -233,36 +296,52 @@ const GLOBAL_STYLES = `
   .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
-  
-  /* Modal Overlay */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
-  .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
-  
-  @keyframes fadeIn { to { opacity: 1; } }
-  @keyframes popIn { to { opacity: 1; transform: scale(1); } }
 
-  /* 🌟 MOBILE SPECIFIC REFINEMENTS 🌟 */
   @media (max-width: 768px) {
-    .scrolling-section { min-height: 100dvh; height: auto; padding: 100px 16px 120px 16px; scroll-snap-align: start; }
-    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; }
-    .modal-window { padding: 24px; padding-bottom: 40px; }
+    .text-title { font-size: 2.8rem; }
+    .scrolling-section { padding: 100px 16px 120px 16px; }
+    .modal-window { padding: 24px; }
     .top-bar { padding: 16px 20px; }
     .nasa-sidebar { width: 100%; right: -100%; }
-    .bento-card { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 24px; }
-    .complex-sidebar-btn { width: 44px; height: 44px; right: 20px; top: 16px; }
-    
-    /* Lock Input Font Size on Mobile to prevent iOS Zoom */
-    input, textarea, select { font-size: 16px !important; }
+    .complex-sidebar-btn { width: 44px; height: 44px; }
   }
 `;
 
+// Helper Functions
+const getHashColor = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
+  const colors = ['#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#f472b6', '#fb923c'];
+  return colors[Math.abs(hash) % colors.length];
+};
+
+const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const duration = 1200; 
+    const startTime = performance.now();
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(Math.floor(ease * value));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [value]);
+  return <span className="animate-count">{prefix}{count.toLocaleString()}{suffix}</span>;
+};
+
+// Main App Component
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
+  
+  // Splash & Loading States
+  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
-
+  
   // Core Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
@@ -271,46 +350,52 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
-  // Filters & State
-  const [vaultFilter, setVaultFilter] = useState('All');
-  const vaultCategories = ['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'];
-
-  // Simulated LIVE NASA Feed
-  const liveNasaNews = [
-    { id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' },
-    { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }
-  ];
+  // UI States
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
+  const [modalConfig, setModalConfig] = useState(null); 
+  const [viewingCrew, setViewingCrew] = useState(null);
+  const [viewingNews, setViewingNews] = useState(null);
+  const [formPayload, setFormPayload] = useState({});
 
   // AI State
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Advanced AI initialized. I have complete access to the NASA India telemetry, Unit archives, and architectural knowledge bases. What would you like to explore or design today?' }
+    { sender: 'bot', text: 'RSA Advanced AI initialized. Connected to Unit Z649 archives and NASA India telemetry. Awaiting directive.' }
   ]);
-
-  // Modals
-  const [modalMode, setModalMode] = useState(null); 
-  const [viewingCrew, setViewingCrew] = useState(null);
-  const [viewingNews, setViewingNews] = useState(null);
-  const [formPayload, setFormPayload] = useState({});
+  const chatEndRef = useRef(null);
   const scrollEngineRef = useRef(null);
 
-  const dockItems = [
-    { id: 'core', icon: <Hexagon size={22} strokeWidth={1.5}/>, label: 'Dashboard' },
-    { id: 'crew', icon: <UsersRound size={22} strokeWidth={1.5}/>, label: 'Team' },
-    { id: 'funds', icon: <CircleDollarSign size={22} strokeWidth={1.5}/>, label: 'Treasury' },
-    { id: 'vault', icon: <HardDrive size={22} strokeWidth={1.5}/>, label: 'Files' },
-    { id: 'gallery', icon: <Aperture size={22} strokeWidth={1.5}/>, label: 'Archive Gallery' },
-    { id: 'news', icon: <RadioTower size={22} strokeWidth={1.5}/>, label: 'News' },
-    { id: 'hq', icon: <Crown size={22} strokeWidth={1.5}/>, label: 'Council' },
-    { id: 'ai', icon: <BrainCircuit size={22} strokeWidth={1.5}/>, label: 'AI Chat' }
+  const SECTIONS = [
+    { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
+    { id: 'crew', label: 'Personnel', icon: <UsersRound size={20}/>, accent: 'var(--accent-crew)' },
+    { id: 'fin', label: 'Treasury', icon: <CircleDollarSign size={20}/>, accent: 'var(--accent-finance)' },
+    { id: 'vault', label: 'Vault', icon: <Server size={20}/>, accent: 'var(--accent-vault)' },
+    { id: 'gal', label: 'Gallery', icon: <Aperture size={20}/>, accent: 'var(--accent-gallery)' },
+    { id: 'news', label: 'Broadcasts', icon: <RadioTower size={20}/>, accent: 'var(--accent-news)' },
+    { id: 'hq', label: 'Council', icon: <Crown size={20}/>, accent: 'var(--accent-hq)' },
+    { id: 'ai', label: 'AI Chat', icon: <BrainCircuit size={20}/>, accent: 'var(--neon-cyan)' }
   ];
 
+  // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
-    setTimeout(() => setIsBooting(false), 2200);
-    
+    const seq = [
+      { time: 100, state: 1 }, 
+      { time: 550, state: 2 }, 
+      { time: 630, state: 3 }, 
+      { time: 1000, state: 4 }, 
+      { time: 2000, state: 5 }  
+    ];
+    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
+    setTimeout(() => setIsBooting(false), 2400);
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  // Firebase Listeners
+  useEffect(() => {
     const unsubs = [
-      onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
+      onSnapshot(doc(db, "unit", "hq"), d => { if(d.exists()) setLeadership(prev => ({ ...prev, ...d.data() })); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(collection(db, "finances"), s => setFinancialLog(s.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(collection(db, "vault"), s => setVaultData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -320,499 +405,108 @@ export default function App() {
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
+  // AI Auto-Scroll
   useEffect(() => {
     const chatContainer = document.getElementById('ai-chat-box-container');
     if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
   }, [aiMessages]);
 
-  const handleEngineScroll = (e) => {
-    const target = e.target;
-    if (!target) return;
-    const idx = Math.round(target.scrollTop / window.innerHeight);
-    if (idx !== activeSectionIdx) setActiveSectionIdx(idx);
-  };
+  // 🌟 BULLETPROOF SCROLL INTERSECTION OBSERVER 🌟
+  useEffect(() => {
+    const options = { root: null, rootMargin: '0px', threshold: 0.5 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idx = Number(entry.target.getAttribute('data-index'));
+          setActiveSectionIdx(idx);
+        }
+      });
+    }, options);
 
-  const executeEngineNavigation = (idx) => {
-    if(scrollEngineRef.current) {
-      scrollEngineRef.current.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+    const sections = document.querySelectorAll('.scrolling-section');
+    sections.forEach(sec => observer.observe(sec));
+    return () => observer.disconnect();
+  }, []);
+
+  const navTo = (idx) => {
+    const sections = document.querySelectorAll('.scrolling-section');
+    if (sections[idx]) {
+      sections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    setActiveSectionIdx(idx);
   };
 
-  const handleSecurityToggle = () => {
+  const toggleAdmin = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
-    else {
-      const pass = prompt("Enter Admin Password to Unlock Editing:");
-      if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
-      else if (pass) alert("Incorrect Password.");
-    }
+    else if (prompt("Enter Access Key:") === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
+    else alert("Incorrect Password.");
   };
 
-  const handleSaveToCloud = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    const { type } = modalConfig;
+    const colName = type === 'fin' ? 'finances' : type === 'gal' ? 'gallery' : type;
     try {
-      if (modalMode === 'hq') {
-        await setDoc(doc(db, "unit", "hq"), formPayload);
-      } else if (formPayload.id) {
-        const { id, ...data } = formPayload;
-        await updateDoc(doc(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), data);
-      } else {
-        await addDoc(collection(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), { ...formPayload, timestamp: Date.now() });
-      }
-      setModalMode(null); 
+      if (type === 'hq') await setDoc(doc(db, "unit", "hq"), formPayload);
+      else if (formPayload.id) {
+        const { id, ...saveData } = formPayload;
+        await updateDoc(doc(db, colName, id), saveData);
+      } else await addDoc(collection(db, colName), { ...formPayload, timestamp: Date.now() });
+      setModalConfig(null); 
       setFormPayload({});
-    } catch (err) { alert("Failed to save data."); }
+    } catch (err) { alert("Sync failed."); }
   };
 
-  const deleteDocRecord = async (col, id) => {
-    if (window.confirm("Are you sure you want to delete this?")) {
+  const handleDelete = async (col, id) => {
+    if (window.confirm("Permanently delete record?")) {
       await deleteDoc(doc(db, col, id));
-      setModalMode(null);
+      setModalConfig(null);
       setViewingCrew(null);
       setViewingNews(null);
     }
   };
 
-  const handleArchiveVaultItem = async (item) => {
-    if (!window.confirm("Move this work to the Archive Gallery? It will be permanently removed from the active vault.")) return;
-    try {
-      const currentYear = new Date().getFullYear(); 
-      await addDoc(collection(db, 'gallery'), {
-         title: item.title,
-         category: item.category || 'Archived Work',
-         description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '',
-         fileType: 'Archive',
-         archivedYear: currentYear,
-         timestamp: Date.now()
-      });
-      await deleteDoc(doc(db, 'vault', item.id));
-      alert("Successfully moved to Archive.");
-    } catch(e) {
-      alert("Failed to archive item.");
-    }
-  };
-
-  // 🌟 3D CAMERA TRANSFORM LOGIC FOR BACKGROUND 🌟
-  const getCameraTransform = () => {
-    const transforms = [
-      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dashboard (Isometric out)
-      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew (Straight on inside)
-      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury (High angle corner)
-      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault (Hallway view)
-      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery (Low angle looking up)
-      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News (Bird's eye aerial)
-      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ (Direct frontal zoom)
-      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI (Angled interior)
-    ];
-    return transforms[activeSectionIdx] || transforms[0];
-  };
-
-  // ==========================================
-  // SUPERCHARGED AI BRAIN
-  // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
     if (!aiInput.trim()) return;
-    
     const textRaw = aiInput.trim();
     setAiMessages(prev => [...prev, { sender: 'user', text: textRaw }]);
     setAiInput('');
 
     setTimeout(() => {
       const tokens = textRaw.toLowerCase();
-      let botResponse = "";
-
-      if (tokens.includes("troph") || tokens.includes("lik") || tokens.includes("louis")) {
-        botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Currently, submissions are open on the NASA portal. I recommend focusing on vernacular spatial configurations and timber joints, similar to the Kanchipuram housing typologies we documented. Do you need details on specific vernacular elements?";
-      } else if (tokens.includes("msl") || tokens.includes("landscape") || tokens.includes("shaheer")) {
-        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, our focus is the Velachery site in Chennai. Our 'Hydro-Social Connector' concept acts as a biological machine to manage urban flooding. Ensure your bio-swale and topographical grading metrics are properly mapped in AutoCAD.";
-      } else if (tokens.includes("news") || tokens.includes("live") || tokens.includes("feed")) {
-        botResponse = `Checking live NASA feed... I found ${liveNasaNews.length} recent updates. The latest is: "${liveNasaNews[0].title}". You can view these directly in the News section via the sidebar.`;
-      } else if (tokens.includes("nasa") || tokens.includes("convention")) {
-        botResponse = "The 68th Annual NASA Convention is in preparation stage. Make sure your unit delegates from Chennai are ready. Workshop selections are crucial—refer to the 'How to Select ANC Workshops' guide in our News section to align with our unit's strategic goals.";
-      } else if (tokens.includes("rural") || tokens.includes("varyankaval")) {
-        botResponse = "The Varyankaval Village study in Ariyalur is a prime example of rural documentation. The morphological maps and land-use data you produced are excellent references for understanding organic community growth and shared courtyard spaces.";
-      } else if (tokens.includes("hello") || tokens.includes("hi") || tokens.includes("hey")) {
-        botResponse = "Hello! I am your advanced architectural co-pilot. I am fully synchronized with our unit's legacy, current active phases, and the broader architectural landscape. How can I assist you with your design logic or unit management today?";
-      } else if (tokens.includes("money") || tokens.includes("fund") || tokens.includes("balance") || tokens.includes("treasury")) {
+      let botResponse = "Processing directive... Unit Z649 systems nominal.";
+      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
+      else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "MSL Trophy focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
+      else if (tokens.includes("news") || tokens.includes("live")) botResponse = `Checking live NASA feed... 68th ANC Workshop Details and Louis I. Kahn Trophy deadlines are active.`;
+      else if (tokens.includes("hello") || tokens.includes("hi")) botResponse = "Hello! I am your advanced architectural co-pilot. How can I assist your design logic today?";
+      else if (tokens.includes("money") || tokens.includes("balance")) {
         const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-        botResponse = `Calculating current financial arrays... Our unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
-      } else if (tokens.includes("design") || tokens.includes("concept") || tokens.includes("philosophy") || tokens.includes("architecture")) {
-        botResponse = "When formulating an architectural concept, one must bridge the phenomenological with the structural. Consider how natural light defines the volume, as Louis Kahn suggested. Are you leaning towards a parametric fluid approach or a more strict, rationalist grid configuration for this specific design phase?";
-      } else {
-        botResponse = "That requires deeper synthesis. From an architectural standpoint, we must evaluate how this variable interacts with user circulation, structural integrity, and environmental passive strategies. Can you define the parameters of your query a bit more clearly?";
+        botResponse = `Unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
       }
-
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
     }, 1000);
   };
 
-  // ==========================================
-  // DASHBOARD SECTIONS
-  // ==========================================
-  
-  const renderDashboard = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
-      
-      <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
-        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
-          <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
-          <div style={{ fontSize: '1.4rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>
-            {dailyQuote}
-          </div>
-        </div>
-        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
-          <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status: Nominal</span>
-          <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Preparation is active. Live feed connected. Ensure all delegates review the workshop registration guidelines.</p>
-        </div>
-      </div>
-
-      <div className="bento-grid-3">
-        <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Active Members</span>
-          <div className="text-metric">{crewData.length}</div>
-        </div>
-        <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Saved Files</span>
-          <div className="text-metric">{vaultData.length}</div>
-        </div>
-        <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> News Posts</span>
-          <div className="text-metric">{newsData.length}</div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderCrew = () => {
-    const orderedYears = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
-    const allocation = {};
-    orderedYears.forEach(y => allocation[y] = []);
-
-    crewData.forEach(u => {
-      const y = u.year || 'Unassigned';
-      if (allocation[y]) allocation[y].push(u);
-      else allocation['Unassigned'].push(u);
-    });
-    
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
-          <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
-        </div>
-        
-        {orderedYears.map(year => {
-          if (allocation[year].length === 0) return null;
-          return (
-            <div key={year} style={{ marginTop: '24px' }}>
-              <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
-              <div className="bento-grid-2" style={{ marginTop: '16px' }}>
-                {allocation[year].map(m => {
-                  const isCouncil = ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role);
-                  return (
-                    <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: isCouncil ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                        <span className="status-pill">
-                          {isCouncil && <Crown size={12} style={{marginRight:4}}/>}
-                          {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                        </span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
-                      </div>
-                      <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
-                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
-  const renderFunds = () => {
-    const income = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0);
-    const expense = financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-    const total = income + expense;
-    const net = income - expense;
-    const goal = Number(leadership.financialGoal) || 1; 
-
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
-          {isLeadershipMode && (
-            <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>
-          )}
-        </div>
-
-        <div className="bento-grid-2">
-          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Total Balance</span>
-            <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
-              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>INCOME</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-green)'}}>₹{income.toLocaleString()}</div></div>
-              <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>EXPENSES</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-pink)'}}>₹{expense.toLocaleString()}</div></div>
-            </div>
-          </div>
-          
-          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Current Funds</span>
-            <div className="text-metric">₹{net.toLocaleString()}</div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginTop: '20px' }}>
-               <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
-            </div>
-            <div style={{ display:'flex', justifyContent:'space-between', marginTop: '10px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontFamily:'var(--font-mono)' }}>
-              <span>Goal</span><span>₹{goal.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
-           <table className="pro-table">
-             <thead>
-               <tr><th>Type</th><th>Description</th><th>Amount</th><th>Edit</th></tr>
-             </thead>
-             <tbody>
-               {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>No records found.</td></tr>}
-               {financialLog.map(f => (
-                 <tr key={f.id}>
-                   <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)', borderColor: f.type==='income'?'rgba(0,255,102,0.2)':'rgba(255,0,85,0.2)' }}>{f.type}</span></td>
-                   <td style={{ fontWeight: '500' }}>{f.description}</td>
-                   <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>
-                      {f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}
-                   </td>
-                   <td>
-                     <div style={{ display: 'flex', gap: '8px' }}>
-                       {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(f); setModalMode('finances'); }} title="Edit"><Pencil size={14}/></button>}
-                       {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('finances', f.id)}><Trash2 size={14}/></button>}
-                     </div>
-                   </td>
-                 </tr>
-               ))}
-             </tbody>
-           </table>
-        </div>
-      </div>
-    );
-  };
-
-  const renderVault = () => {
-    const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
-        </div>
-
-        {/* VAULT CATEGORY FILTER */}
-        <div style={{ display: 'flex', gap: '12px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-          {vaultCategories.map(cat => (
-            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
-          ))}
-        </div>
-
-        <div className="bento-grid-3">
-          {filteredVault.map(v => (
-            <div key={v.id} className="bento-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={() => handleArchiveVaultItem(v)}><FolderArchive size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon" title="Edit" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
-                </div>
-              </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
-              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
-            </div>
-          ))}
-          {filteredVault.length === 0 && <div style={{ color: 'var(--text-secondary)', padding: '16px' }}>No files found in this category.</div>}
-        </div>
-      </div>
-    );
-  };
-
-  const renderGallery = () => {
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
-        </div>
-        <div className="bento-grid-2">
-          {galleryData.map(g => (
-            <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-              {g.fileType === 'Archive' ? (
-                <div style={{ padding: '32px', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
-                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
-                  </div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
-                  <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6', flex: 1 }}>{g.description}</div>
-                  {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>View Saved Data <ArrowUpRight size={14}/></a>}
-                </div>
-              ) : (
-                <>
-                  <div style={{ height: '250px', background: g.fileType === 'Image URL' || g.fileType === 'Image' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {(g.fileType !== 'Image URL' && g.fileType !== 'Image') && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
-                  </div>
-                  <div style={{ padding: '32px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                      <span className="status-pill">{g.category}</span>
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
-                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
-                    <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderNews = () => (
-    <div className="bento-container" style={{ maxWidth: '1400px' }}>
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
-      </div>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
-        
-        {/* MANUAL UNIT NEWS (Gist View) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
-          {newsData.length === 0 && <div className="text-sm text-white/50 px-4">No unit news right now.</div>}
-          {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-            <div key={n.id} className="bento-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
-                <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
-                </div>
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
-              <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
-                {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
-              </div>
-              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingNews(n)}>
-                <BookOpen size={14}/> Read Full Story
-              </button>
-            </div>
-          ))}
-        </div>
-
-        {/* LIVE NASA FEED SECTION */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
-          <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {liveNasaNews.map(live => (
-                <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{live.tag}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{live.date}</span>
-                  </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{live.title}</div>
-                  <a href={live.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>Official Portal <ArrowUpRight size={14}/></a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-
-  const renderUnitCouncil = () => {
-    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role));
-
-    return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-          <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
-            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
-          </div>
-        </div>
-        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
-          <span className="text-subtitle" style={{color: '#fff'}}>Unit Information</span>
-          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
-          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
-        </div>
-
-        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
-        <div className="bento-grid-2">
-          {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
-          {councilMembers.map(m => (
-            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
-                  {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                </span>
-              </div>
-              <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
-                <Eye size={14}/> View Dossier
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderRSAIntel = () => {
-    return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
-        <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
-        
-        <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
-          <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> Chat with RSA AI</span>
-          <div className="ai-terminal" style={{ marginTop: '16px' }}>
-            <div id="ai-chat-box-container" className="ai-chat-box">
-              {aiMessages.map((msg, idx) => (
-                <div key={idx} className={`ai-msg ${msg.sender}`}>
-                  {msg.text}
-                </div>
-              ))}
-            </div>
-            <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
-              <input 
-                className="ai-input" 
-                placeholder="Ask complex architecture queries or request live NASA updates..." 
-                value={aiInput}
-                onChange={(e) => setAiInput(e.target.value)}
-              />
-              <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
+  // 🌟 3D CAMERA TRANSFORM LOGIC 🌟
+  const getCameraTransform = () => {
+    const transforms = [
+      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash
+      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew
+      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury
+      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault
+      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News
+      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ
+      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI
+    ];
+    return transforms[activeSectionIdx] || transforms[0];
   };
 
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 🌟 FULL 3D ARCHITECTURAL BACKGROUND 🌟 */}
+      {/* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */}
       <div className="arch-environment">
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
@@ -825,13 +519,13 @@ export default function App() {
         </div>
       </div>
 
-      {/* SPLASH SCREEN */}
+      {/* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
-          <div className="circle-flow-1"></div>
-          <div className="circle-flow-2"></div>
-          <div className="circle-flow-3"></div>
-          <div className="splash-brand">RSA</div>
+          <div className={`circle-flow-1 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`circle-flow-2 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`circle-flow-3 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`splash-brand ${splashState === 2 ? 'glitch-active' : ''}`}>RSA</div>
         </div>
       </div>
 
@@ -840,21 +534,21 @@ export default function App() {
 
       <nav className="top-bar">
         <div className="pointer-events-auto">
-          <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={handleSecurityToggle}>
+          <div className={`security-hud ${isLeadershipMode ? 'hud-unlocked' : 'hud-locked'}`} onClick={toggleAdmin}>
             <div className="hud-icon-box">
                {isLeadershipMode ? <Unlock size={14} strokeWidth={2.5}/> : <Lock size={14} strokeWidth={2.5}/>}
             </div>
-            <div className="hud-text">
+            <div className="hud-text hidden sm:block">
                [ ADMIN: {isLeadershipMode ? 'ON' : 'OFF'} ]
             </div>
           </div>
         </div>
         
-        {/* 🌟 KINETIC SIDEBAR MENU TOGGLE 🌟 */}
+        {/* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */}
         <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <button className={`complex-sidebar-btn ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <Hexagon size={32} className="hex-outer" strokeWidth={1} />
-            <Aperture size={16} className="aperture-inner" strokeWidth={1.5} />
+          <button className={`complex-sidebar-btn ${sidebarOpen ? 'spin' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <Hexagon size={28} className="hex-outer" strokeWidth={1.5} />
+            <Aperture size={16} className="aperture-inner" strokeWidth={2} />
             <X size={20} className="close-x" strokeWidth={2.5} />
           </button>
         </div>
@@ -869,19 +563,16 @@ export default function App() {
         
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '10px' }}>
           <div className="sidebar-section-title"><Activity size={14}/> Live Information</div>
-          
           <div className="sidebar-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>EVENT</span><CalendarClock size={14}/></div>
             <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>68th Annual Convention</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Preparation</div>
           </div>
-
           <div className="sidebar-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff' }}><span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.1em' }}>TROPHIES</span><Shield size={14}/></div>
             <div style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>Louis I. Kahn Trophy</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>Status: Open</div>
           </div>
-
           <div className="sidebar-section-title" style={{ marginTop: '30px' }}><Zap size={14}/> Quick Links</div>
           <a href="https://nasaindia.co/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="sidebar-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -891,24 +582,288 @@ export default function App() {
         </div>
       </div>
 
-      <div className="floating-dock">
-        {dockItems.map((item, i) => (
-          <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
-            {item.icon}
-            <div className="dock-tooltip">{item.label}</div>
-          </div>
-        ))}
+      {/* DOCK */}
+      <div className="floating-dock-wrapper">
+        <div className="floating-dock">
+          {SECTIONS.map((sec, i) => (
+            <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
+              {sec.icon}
+              <div className="dock-tooltip">{sec.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="kinetic-scroll-engine" ref={scrollEngineRef} onScroll={handleEngineScroll}>
-        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`}>{renderDashboard()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`}>{renderCrew()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`}>{renderFunds()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`}>{renderVault()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`}>{renderGallery()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
+      {/* SCROLL ENGINE */}
+      <div className="kinetic-scroll-engine" ref={scrollEngineRef}>
+        
+        {/* DASHBOARD */}
+        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`} data-index="0">
+          <div className="bento-container">
+            <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
+            <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
+              <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
+                <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
+                <div style={{ fontSize: '1.4rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
+              </div>
+              <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
+                <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status</span>
+                <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
+                <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Preparation is active. Live feed connected.</p>
+              </div>
+            </div>
+            <div className="bento-grid-3">
+              <div className="bento-card"><span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Members</span><div className="text-metric">{crewData.length}</div></div>
+              <div className="bento-card"><span className="text-subtitle" style={{color: '#fff'}}><HardDrive size={14}/> Files</span><div className="text-metric">{vaultData.length}</div></div>
+              <div className="bento-card"><span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> News</span><div className="text-metric">{newsData.length}</div></div>
+            </div>
+          </div>
+        </section>
+
+        {/* CREW */}
+        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`} data-index="1">
+          <div className="bento-container">
+            <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+              <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
+              <button className="btn-primary" onClick={() => setModalConfig({type: 'crew', data: { role: 'Member', year: '1' }})}><Plus size={16}/> Register Profile</button>
+            </div>
+            {['1', '2', '3', '4', '5', 'Alumni', 'Unassigned'].map(year => {
+              const members = crewData.filter(m => (m.year || 'Unassigned') === year);
+              if (members.length === 0) return null;
+              return (
+                <div key={year} style={{ marginTop: '24px' }}>
+                  <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
+                  <div className="bento-grid-2" style={{ marginTop: '16px' }}>
+                    {members.map(m => {
+                      const isCouncil = ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role);
+                      return (
+                        <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: isCouncil ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                            <span className="status-pill">{isCouncil && <Crown size={12} style={{marginRight:4}}/>}{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
+                          </div>
+                          <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
+                          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* TREASURY */}
+        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`} data-index="2">
+          <div className="bento-container">
+            <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+              <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
+              {isLeadershipMode && <button className="btn-primary" onClick={() => setModalConfig({type: 'fin', data: { type: 'income' }})}><Plus size={16}/> Add Record</button>}
+            </div>
+            <div className="bento-grid-2">
+              <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
+                <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
+                  <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>INCOME</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-green)'}}>₹{financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0).toLocaleString()}</div></div>
+                  <div><span style={{fontSize:'0.75rem', color:'var(--text-secondary)'}}>EXPENSES</span><div style={{fontSize:'1.8rem', fontWeight:'600', color:'var(--neon-pink)'}}>₹{financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0).toLocaleString()}</div></div>
+                </div>
+              </div>
+              <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <span className="text-subtitle" style={{color:'#fff'}}><Zap size={14}/> Current Funds</span>
+                <div className="text-metric">₹{(financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0)).toLocaleString()}</div>
+              </div>
+            </div>
+            <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
+               <table className="pro-table">
+                 <thead><tr><th>Type</th><th>Description</th><th>Amount</th><th>Edit</th></tr></thead>
+                 <tbody>
+                   {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>No records found.</td></tr>}
+                   {financialLog.map(f => (
+                     <tr key={f.id}>
+                       <td><span className="status-pill" style={{ color: f.type==='income'?'var(--neon-green)':'var(--neon-pink)' }}>{f.type}</span></td>
+                       <td style={{ fontWeight: '500' }}>{f.description}</td>
+                       <td style={{ fontWeight:'600', color: f.type==='income'?'var(--neon-green)':'#fff' }}>{f.type==='income'?'+ ':'- '}₹{Number(f.amount).toLocaleString()}</td>
+                       <td>
+                         <div style={{ display: 'flex', gap: '8px' }}>
+                           {isLeadershipMode && <button className="btn-icon" onClick={() => setModalConfig({type:'fin', data: f})}><Pencil size={14}/></button>}
+                           {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('finances', f.id)}><Trash2 size={14}/></button>}
+                         </div>
+                       </td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+            </div>
+          </div>
+        </section>
+
+        {/* VAULT */}
+        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`} data-index="3">
+          <div className="bento-container">
+            <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+              <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
+              {isLeadershipMode && <button className="btn-primary" onClick={() => setModalConfig({type: 'vault', data: { category: 'Programs' }})}><Plus size={16}/> Add File</button>}
+            </div>
+            <div className="bento-grid-3">
+              {vaultData.map(v => (
+                <div key={v.id} className="bento-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      {isLeadershipMode && <button className="btn-icon" title="Archive" onClick={() => handleArchiveVaultItem(v)}><FolderArchive size={14}/></button>}
+                      {isLeadershipMode && <button className="btn-icon" onClick={() => setModalConfig({type:'vault', data: v})}><Pencil size={14}/></button>}
+                      {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('vault', v.id)}><Trash2 size={14}/></button>}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
+                  <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* GALLERY */}
+        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`} data-index="4">
+          <div className="bento-container">
+            <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+              <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
+              {isLeadershipMode && <button className="btn-primary" onClick={() => setModalConfig({type: 'gal', data: { fileType: 'Image' }})}><Plus size={16}/> Add Direct Image</button>}
+            </div>
+            <div className="bento-grid-2">
+              {galleryData.map(g => (
+                <div key={g.id} className="bento-card" style={{ padding: 0 }}>
+                  {g.fileType === 'Archive' ? (
+                    <div style={{ padding: '32px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                        <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
+                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>}
+                      </div>
+                      <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                      <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6', flex: 1 }}>{g.description}</div>
+                      {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px' }}>View Saved Data <ArrowUpRight size={14}/></a>}
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ height: '250px', background: `url("${g.link}") center/cover` }}></div>
+                      <div style={{ padding: '32px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                          <span className="status-pill">{g.category}</span>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            {isLeadershipMode && <button className="btn-icon" onClick={() => setModalConfig({type:'gal', data: g})}><Pencil size={14}/></button>}
+                            {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('gallery', g.id)}><Trash2 size={14}/></button>}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                        <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* NEWS */}
+        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`} data-index="5">
+          <div className="bento-container" style={{ maxWidth: '1400px' }}>
+            <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+              <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
+              {isLeadershipMode && <button className="btn-primary" onClick={() => setModalConfig({type: 'news', data: {}})}><Plus size={16}/> Add Unit News</button>}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
+                {newsData.length === 0 && <div className="text-sm text-white/50 px-4">No unit news right now.</div>}
+                {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
+                  <div key={n.id} className="bento-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {isLeadershipMode && <button className="btn-icon" onClick={() => setModalConfig({type:'news', data: n})}><Pencil size={14}/></button>}
+                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => handleDelete('news', n.id)}><Trash2 size={14}/></button>}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
+                    <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
+                      {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
+                    </div>
+                    <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingNews(n)}><BookOpen size={14}/> Read Full Story</button>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
+                <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {[{ id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' }, { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }].map(live => (
+                      <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                          <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{live.tag}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{live.date}</span>
+                        </div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{live.title}</div>
+                        <a href={live.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>Official Portal <ArrowUpRight size={14}/></a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* HQ */}
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`} data-index="6">
+          <div className="bento-container">
+            <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+              <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
+              {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => setModalConfig({type: 'hq', data: leadership})}><Settings size={16}/> Edit Unit Info</button>}
+            </div>
+            <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
+              <span className="text-subtitle" style={{color: '#fff'}}>Unit Information</span>
+              <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
+              <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+            </div>
+            <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
+            <div className="bento-grid-2">
+              {crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role)).map(m => (
+                <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
+                  </div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
+                  <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}><Eye size={14}/> View Dossier</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* AI */}
+        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`} data-index="7">
+          <div className="bento-container" style={{ maxWidth: '1400px' }}>
+            <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
+            <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
+              <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> Chat with RSA AI</span>
+              <div className="ai-terminal" style={{ marginTop: '16px' }}>
+                <div id="ai-chat-box-container" className="ai-chat-box">
+                  {aiMessages.map((msg, idx) => (
+                    <div key={idx} className={`ai-msg ${msg.sender}`}>{msg.text}</div>
+                  ))}
+                </div>
+                <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
+                  <input className="ai-input" placeholder="Ask complex architecture queries or request live NASA updates..." value={aiInput} onChange={(e) => setAiInput(e.target.value)} />
+                  <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <div style={{ height: '80px', width: '100%', scrollSnapAlign: 'end' }}></div>
       </div>
 
       {/* FULL NEWS READER MODAL */}
@@ -970,16 +925,15 @@ export default function App() {
               <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
             </div>
             
-            <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(e); }}>
+            <form onSubmit={handleSave}>
               
               {modalMode === 'crew' && (
-                <>
-                  <input required placeholder="Name" className="mb-4" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
-                  <input type="email" placeholder="Email" className="mb-4" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
-                  <input type="tel" placeholder="Phone Number" className="mb-4" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
+                <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                  <input required placeholder="Name" className="input-field" value={formPayload.name||''} onChange={e=>setFormPayload({...formPayload, name:e.target.value})} />
+                  <input type="email" placeholder="Email" className="input-field" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
+                  <input type="tel" placeholder="Phone Number" className="input-field" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
                   
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Role (Adds Executive to Council)</span>
-                  <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
+                  <select required className="input-field" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
                     <option value="" disabled>Select Role...</option>
                     <option value="Member">Student Member</option>
                     {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
@@ -989,58 +943,53 @@ export default function App() {
                   </select>
 
                   {formPayload.role === 'Coordinator' && (
-                    <input required placeholder="Coordinator Type (e.g., Design, Events)" className="mb-4" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
+                    <input required placeholder="Coordinator Type (e.g., Design, Events)" className="input-field" value={formPayload.coordinatorType||''} onChange={e=>setFormPayload({...formPayload, coordinatorType:e.target.value})} />
                   )}
 
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Year</span>
-                  <select className="mb-4" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
+                  <select className="input-field" value={formPayload.year||'1'} onChange={e=>setFormPayload({...formPayload, year:e.target.value})}>
                     <option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option><option value="5">5th Year</option><option value="Alumni">Alumni</option>
                   </select>
-                </>
+                </div>
               )}
 
               {modalMode === 'finances' && isLeadershipMode && (
-                <>
-                  <span className="text-subtitle">Type</span>
-                  <select className="mb-4" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                  <select className="input-field" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
                     <option value="income">INCOME (+)</option>
                     <option value="expense">EXPENSE (-)</option>
                   </select>
-                  <span className="text-subtitle">Description</span>
-                  <input required placeholder="What was this for?" className="mb-4" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
-                  <span className="text-subtitle">Amount (INR)</span>
-                  <input required type="number" placeholder="Amount (INR)" className="mb-4" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
-                </>
+                  <input required placeholder="What was this for?" className="input-field" value={formPayload.description||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value})} />
+                  <input required type="number" placeholder="Amount (INR)" className="input-field" value={formPayload.amount||''} onChange={e=>setFormPayload({...formPayload, amount:e.target.value})} />
+                </div>
               )}
 
               {modalMode === 'hq' && isLeadershipMode && (
-                <>
-                  <input placeholder="Unit Code (e.g. Z649)" className="mb-4" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
-                  <input placeholder="Official Email" className="mb-4" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
-                  <input type="number" placeholder="Goal Amount (INR)" className="mb-4" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
-                </>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                  <input placeholder="Unit Code (e.g. Z649)" className="input-field" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
+                  <input placeholder="Official Email" className="input-field" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
+                  <input type="number" placeholder="Goal Amount (INR)" className="input-field" value={formPayload.financialGoal||''} onChange={e=>setFormPayload({...formPayload, financialGoal:e.target.value})} />
+                </div>
               )}
 
               {modalMode === 'vault' && isLeadershipMode && (
-                <>
-                  <span className="text-subtitle">Category</span>
-                  <select className="mb-4" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
-                    {vaultCategories.filter(c=>c!=='All').map(c => <option key={c} value={c}>{c}</option>)}
+                <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                  <select className="input-field" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
+                    <option value="Trophies">Trophies</option><option value="Programs">Programs</option><option value="Events">Events</option><option value="Meetings">Meetings</option><option value="Other">Other</option>
                   </select>
-                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
-                </>
+                  <input required placeholder="Title" className="input-field" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <input placeholder="Link / URL" className="input-field" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                </div>
               )}
 
               {['gallery', 'news'].includes(modalMode) && isLeadershipMode && (
-                <>
-                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
-                  {modalMode !== 'news' && <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
-                  <textarea placeholder="Description..." className="mb-4" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
-                </>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                  <input required placeholder="Title" className="input-field" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  {modalMode !== 'news' && <input placeholder="Link / URL" className="input-field" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
+                  <textarea placeholder="Description..." className="input-field" rows="4" value={formPayload.description||formPayload.content||''} onChange={e=>setFormPayload({...formPayload, description:e.target.value, content:e.target.value})}></textarea>
+                </div>
               )}
 
-              <button type="submit" className="btn-primary w-full justify-center mt-4" style={{ padding: '18px', fontSize: '1rem', letterSpacing: '0.1em' }}>
+              <button type="submit" className="btn-primary w-full justify-center mt-6" style={{ padding: '18px', fontSize: '1rem', letterSpacing: '0.1em' }}>
                 SAVE DATA
               </button>
             </form>
