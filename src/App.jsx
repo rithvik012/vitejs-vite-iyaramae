@@ -127,56 +127,56 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* 🌟 RESTORED CIRCULAR SPLASH SCREEN 🌟 */
+  /* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); animation: pulseBrand 2s infinite alternate; }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; transition: opacity 0.5s; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+  
+  .show-circles .circle-flow-1 { opacity: 1; }
+  .show-circles .circle-flow-2 { opacity: 0.8; }
+  .show-circles .circle-flow-3 { opacity: 1; }
+  .show-circles .splash-brand { opacity: 1; margin-left: 0; letter-spacing: 0.08em; }
+  .glitch-active .splash-brand { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
   
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
-  @keyframes pulseBrand { 0% { opacity: 0.8; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
+  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* 🌟 SCROLL ENGINE 🌟 */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  /* 🌟 HYBRID SCROLL ENGINE (Intersection Observer Powered) 🌟 */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
+  /* Desktop Layout */
   @media (min-width: 769px) {
     .scrolling-section { height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 40px 80px 100px; position: relative; }
     .bento-container { width: 100%; max-width: 1100px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 10px 10px 40px 10px; margin: 0 auto; scrollbar-width: none; }
     .bento-container::-webkit-scrollbar { display: none; }
   }
 
+  /* Mobile Layout */
   @media (max-width: 768px) {
     .scrolling-section { height: auto; min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; flex-direction: column; padding: 100px 16px 120px 16px; position: relative; }
     .bento-container { width: 100%; max-width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 0; overflow-y: visible; max-height: none; }
   }
 
-  /* Staggered Reveal */
-  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
+  /* Staggered Reveal Logic */
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
   .view-active .stagger-item { opacity: 1; transform: translateY(0); }
   .stagger-1 { transition-delay: 0ms; }
   .stagger-2 { transition-delay: 80ms; }
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* 🌟 ANIMATRONIC BENTO CARDS 🌟 */
+  /* 🌟 BENTO CARDS 🌟 */
   .bento-card { 
-    background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
     position: relative; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.4s var(--ease-spring);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth);
   }
-  
-  /* The Card Glow Splash */
-  .bento-card::before {
-    content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 70%);
-    opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-spring); pointer-events: none; z-index: 0;
-  }
-  .bento-card:hover { border-color: rgba(255,255,255,0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.8); transform: translateY(-4px); }
-  .bento-card:hover::before { opacity: 1; transform: scale(1.5); }
-  .bento-card > * { position: relative; z-index: 1; }
+  .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
   
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
@@ -192,36 +192,30 @@ const GLOBAL_STYLES = `
   .top-bar > * { pointer-events: auto; }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
-  .security-hud:hover { border-color: var(--neon-cyan); transform: scale(1.05); }
+  .security-hud:hover { border-color: var(--neon-cyan); }
   .hud-icon-box { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; background: rgba(255,255,255,0.1); color: #fff; }
-  .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); animation: iconPop 0.4s var(--ease-spring); }
+  .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
   /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
   .complex-sidebar-btn { 
-    position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
-    transition: transform 0.6s var(--ease-spring); color: #fff; cursor: pointer;
+    position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: #fff; cursor: pointer;
     background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
     backdrop-filter: blur(10px);
   }
-  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.3); transform: scale(1.1); }
+  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); }
   .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
-  
-  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.6s var(--ease-spring); }
-  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s var(--ease-spring); }
-  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s var(--ease-spring); }
+  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.8s ease; }
   
   .complex-sidebar-btn.spin .hex-outer { transform: scale(0); opacity: 0; }
-  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.5); opacity: 0; }
+  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
-  @media (max-width: 768px) {
-    .top-bar { padding: 16px 20px; }
-    .complex-sidebar-btn { width: 44px; height: 44px; }
-  }
-
-  /* SIDEBAR OVERLAY */
-  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.4s; }
+  /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
+  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
 
   /* SIDEBAR */
@@ -229,84 +223,70 @@ const GLOBAL_STYLES = `
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
 
-  /* 🌟 ANIMATRONIC DOCK 🌟 */
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
+  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
+  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
+  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
+  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+
+  /* 🌟 OPTIMIZED FLOATING DOCK (CSS ONLY, NO JS LAG) 🌟 */
   .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
   .floating-dock { 
     background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
     display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto;
   }
-  .dock-item { 
-    display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; 
-    position: relative; transition: all 0.3s var(--ease-spring); overflow: hidden;
-  }
-  /* Splash Ripple for Dock Items */
-  .dock-item::before {
-    content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0; border-radius: inherit;
-    transform: scale(0.5); transition: transform 0.4s var(--ease-spring), opacity 0.4s; z-index: -1;
-  }
-  .dock-item:active::before { opacity: 0.2; transform: scale(1.5); transition: 0s; }
-  
+  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
+  .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
+
+  /* Desktop Dock */
   @media (min-width: 769px) {
-    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); position: fixed; z-index: 100; }
+    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
-    .dock-item { width: 48px; height: 48px; border-radius: 50%; }
-    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.2); }
-    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px) scale(1.05); }
+    .dock-item { width: 48px; height: 48px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s; }
+    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); animation: popActive 0.4s var(--ease-spring); }
+    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
+    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
+    .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .dock-label-mobile { display: none; }
+    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(12px) scale(1.1); } }
   }
 
+  /* Mobile Dock */
   @media (max-width: 768px) {
-    .floating-dock-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+    .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
     .floating-dock::-webkit-scrollbar { display: none; }
     .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
     .dock-item.active { background: #fff; color: #000; transform: translateY(-4px); box-shadow: 0 8px 16px rgba(255,255,255,0.2); }
     .dock-label-mobile { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; }
+    .dock-tooltip { display: none; }
   }
 
-  /* 🌟 ANIMATRONIC BUTTONS & ICONS 🌟 */
-  @keyframes iconPop { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
-
-  .btn-primary { 
-    background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; 
-    cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
-    position: relative; overflow: hidden; transition: all 0.3s var(--ease-spring); z-index: 1;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,255,255,0.3); letter-spacing: 0.05em; }
-  
-  /* Primary Button Splash */
-  .btn-primary::after {
-    content: ''; position: absolute; top: 50%; left: 50%; width: 150%; height: 150%;
-    background: rgba(0, 0, 0, 0.1); transform: translate(-50%, -50%) scale(0);
-    border-radius: 50%; transition: transform 0.4s var(--ease-spring), opacity 0.4s; opacity: 0; z-index: -1;
-  }
-  .btn-primary:active::after { transform: translate(-50%, -50%) scale(1); opacity: 1; transition: 0s; }
-
+  /* BUTTONS & PILLS */
+  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .btn-primary:active { transform: scale(0.95); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
-  .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  .btn-secondary::after { background: rgba(255,255,255,0.2); } /* White splash for dark buttons */
-
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
-  .btn-icon:hover svg { animation: iconPop 0.4s var(--ease-spring); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
-  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-family: var(--font-body); font-weight: 600; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; white-space: nowrap; transition: all 0.3s; }
-  .status-pill:hover { transform: scale(1.05); background: rgba(255,255,255,0.1); }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-family: var(--font-body); font-weight: 600; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; white-space: nowrap; }
 
   /* 🌟 BOTTOM SHEET MODALS 🌟 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
-  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.4s 0.1s forwards var(--ease-spring); }
+  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards var(--ease-spring); }
   
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
     .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
-    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
+    input, textarea, select { font-size: 16px !important; }
   }
 
   @keyframes fadeIn { to { opacity: 1; } }
@@ -315,15 +295,12 @@ const GLOBAL_STYLES = `
   
   /* Input Floating Labels */
   .input-group { position: relative; width: 100%; }
-  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 12px; padding: 24px 16px 8px; color: var(--text-100) !important; transition: all 0.3s var(--ease-spring); }
-  .input-label { position: absolute; left: 16px; top: 18px; font-size: 0.95rem; color: var(--text-400); transition: all 0.3s var(--ease-spring); pointer-events: none; }
-  .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); transform: scale(1.02); }
+  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 12px; padding: 24px 16px 8px; color: var(--text-100) !important; transition: all 0.2s; }
+  .input-label { position: absolute; left: 16px; top: 18px; font-size: 0.95rem; color: var(--text-400); transition: all 0.2s ease-out; pointer-events: none; }
+  .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); }
   .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--neon-cyan); font-weight: 600; letter-spacing: 0.05em; }
 
-  /* Generic Utils */
-  .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; transition: transform 0.3s var(--ease-spring); }
-  .bento-card:hover .avatar { transform: scale(1.1) rotate(5deg); }
-  
+  .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; }
   .animate-count { animation: countUpAnim 0.8s ease-out forwards; }
   @keyframes countUpAnim { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -339,6 +316,7 @@ const GLOBAL_STYLES = `
 // ==========================================
 // 4. HELPER COMPONENTS
 // ==========================================
+
 const getHashColor = (str) => {
   if (!str) return '#60a5fa'; 
   let hash = 0;
@@ -371,6 +349,9 @@ const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
+  
+  // Splash States
+  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
   
   // Core Databases
@@ -398,7 +379,6 @@ export default function App() {
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
-  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
@@ -414,8 +394,16 @@ export default function App() {
   // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
-    // Just a clean 2 second circular loading state
-    setTimeout(() => setIsBooting(false), 2200);
+    const seq = [
+      { time: 100, state: 1 }, 
+      { time: 550, state: 2 }, 
+      { time: 630, state: 3 }, 
+      { time: 1000, state: 4 }, 
+      { time: 2000, state: 5 }  
+    ];
+    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
+    setTimeout(() => setIsBooting(false), 2400);
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   // Firebase Listeners
@@ -556,6 +544,7 @@ export default function App() {
   // ==========================================
   // DASHBOARD SECTIONS
   // ==========================================
+
   const renderDashboard = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
@@ -680,20 +669,14 @@ export default function App() {
   };
 
   const renderVault = () => {
-    const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
     return (
       <div className="bento-container">
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
-        <div className="stagger-item stagger-2" style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
-          {['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'].map(cat => (
-            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
-          ))}
-        </div>
-        <div className="bento-grid-3">
-          {filteredVault.map((v, i) => (
+        <div className="bento-grid-3 mt-4">
+          {vaultData.map((v, i) => (
             <div key={v.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
@@ -772,20 +755,15 @@ export default function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    {/* 🌟 BROADCAST EMAIL BUTTON 🌟 */}
                     {isLeadershipMode && (
-                      <button 
-                        className="btn-icon" 
-                        title="Broadcast via Email"
-                        onClick={(e) => { 
+                      <button className="btn-icon" title="Broadcast via Email" onClick={(e) => { 
                           e.stopPropagation(); 
                           const emails = crewData.map(c => c.email).filter(Boolean).join(',');
                           if(!emails) return alert('No emails found in directory.');
                           const subject = encodeURIComponent(`[RSA Unit ${leadership.unitCode} UPDATE] ${n.title}`);
                           const body = encodeURIComponent(`${n.content}\n\n--\nSent via RSA Command Center`);
                           window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
-                        }}
-                      >
+                        }}>
                         <Mail size={14}/>
                       </button>
                     )}
@@ -898,10 +876,10 @@ export default function App() {
       {/* SPLASH SCREEN */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
-          <div className="circle-flow-1"></div>
-          <div className="circle-flow-2"></div>
-          <div className="circle-flow-3"></div>
-          <div className="splash-brand">RSA</div>
+          <div className={`circle-flow-1 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`circle-flow-2 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`circle-flow-3 ${splashState >= 1 ? 'show-circles' : ''}`}></div>
+          <div className={`splash-brand ${splashState === 2 ? 'glitch-active' : ''}`}>RSA</div>
         </div>
       </div>
 
@@ -957,7 +935,7 @@ export default function App() {
 
       {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock" ref={dockRef}>
+        <div className="floating-dock">
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
@@ -968,14 +946,14 @@ export default function App() {
       </div>
 
       <div className="kinetic-scroll-engine" ref={scrollEngineRef}>
-        <section className="scrolling-section" data-index="0">{renderDashboard()}</section>
-        <section className="scrolling-section" data-index="1">{renderCrew()}</section>
-        <section className="scrolling-section" data-index="2">{renderFunds()}</section>
-        <section className="scrolling-section" data-index="3">{renderVault()}</section>
-        <section className="scrolling-section" data-index="4">{renderGallery()}</section>
-        <section className="scrolling-section" data-index="5">{renderNews()}</section>
-        <section className="scrolling-section" data-index="6">{renderUnitCouncil()}</section>
-        <section className="scrolling-section" data-index="7">{renderRSAIntel()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`} data-index="0">{renderDashboard()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`} data-index="1">{renderCrew()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`} data-index="2">{renderFunds()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`} data-index="3">{renderVault()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`} data-index="4">{renderGallery()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`} data-index="5">{renderNews()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`} data-index="6">{renderUnitCouncil()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`} data-index="7">{renderRSAIntel()}</section>
       </div>
 
       {/* MODALS */}
