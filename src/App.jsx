@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
-  Shield, ShieldAlert, Plus, Trash2, Users, DollarSign, 
+  Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
-  Globe, Activity, Crown, Cpu, Send, Calendar,
-  Hexagon, Zap, Lock, Unlock, Pencil, Eye, Archive,
-  HardDrive, Radio, BookOpen, Check
+  Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
+  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  HardDrive, RadioTower, BookOpen, Check
 } from 'lucide-react';
 
 // ==========================================
@@ -127,7 +127,7 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* CIRCLE FLOW SPLASH SCREEN */
+  /* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
@@ -144,8 +144,8 @@ const GLOBAL_STYLES = `
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
   @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* PERFORMANCE SCROLLING */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  /* 🌟 PERFORMANCE SCROLLING 🌟 */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   /* Desktop Layout */
   @media (min-width: 769px) {
@@ -168,7 +168,7 @@ const GLOBAL_STYLES = `
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* BENTO CARDS */
+  /* 🌟 BENTO CARDS 🌟 */
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
@@ -186,7 +186,7 @@ const GLOBAL_STYLES = `
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
   }
 
-  /* TOP BAR */
+  /* 🌟 TOP BAR 🌟 */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -213,11 +213,15 @@ const GLOBAL_STYLES = `
   .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
-  /* SIDEBAR OVERLAY */
+  @media (max-width: 768px) {
+    .top-bar { padding: 16px 20px; }
+    .complex-sidebar-btn { width: 44px; height: 44px; }
+  }
+
+  /* 🌟 SIDEBAR & OVERLAY 🌟 */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
 
-  /* SIDEBAR */
   .nasa-sidebar {
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
@@ -228,18 +232,18 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
 
   /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
-  .floating-dock {
-    position: fixed; z-index: 100;
-    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
-    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+  .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
+  .floating-dock { 
+    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
+    display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto;
   }
-  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
+  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
   
-  /* Desktop Dock (Left Side, Vertical) */
+  /* Desktop Dock */
   @media (min-width: 769px) {
-    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); position: fixed; z-index: 100; }
+    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
-    .dock-item { width: 48px; height: 48px; }
+    .dock-item { width: 48px; height: 48px; border-radius: 50%; }
     .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); }
     .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
     
@@ -253,9 +257,9 @@ const GLOBAL_STYLES = `
     .dock-label-mobile { display: none; }
   }
 
-  /* Mobile Dock (Bottom, Horizontal) */
+  /* Mobile Dock */
   @media (max-width: 768px) {
-    .floating-dock-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+    .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
     .floating-dock::-webkit-scrollbar { display: none; }
     .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
@@ -264,7 +268,7 @@ const GLOBAL_STYLES = `
     .dock-tooltip { display: none; }
   }
 
-  /* BUTTONS & PILLS */
+  /* 🌟 BUTTONS & PILLS 🌟 */
   .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
   .btn-primary:active { transform: scale(0.95); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
@@ -281,7 +285,7 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
     .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
-    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
+    input, textarea, select { font-size: 16px !important; }
   }
 
   @keyframes fadeIn { to { opacity: 1; } }
@@ -376,16 +380,18 @@ export default function App() {
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
+  // Dock Ref restored to ensure hover physics don't cause reference errors
+  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
-    { id: 'crew', label: 'Personnel', icon: <Users size={20}/>, accent: 'var(--accent-crew)' },
-    { id: 'fin', label: 'Treasury', icon: <DollarSign size={20}/>, accent: 'var(--accent-finance)' },
+    { id: 'crew', label: 'Personnel', icon: <UsersRound size={20}/>, accent: 'var(--accent-crew)' },
+    { id: 'fin', label: 'Treasury', icon: <CircleDollarSign size={20}/>, accent: 'var(--accent-finance)' },
     { id: 'vault', label: 'Vault', icon: <Server size={20}/>, accent: 'var(--accent-vault)' },
     { id: 'gal', label: 'Gallery', icon: <Aperture size={20}/>, accent: 'var(--accent-gallery)' },
-    { id: 'news', label: 'Broadcasts', icon: <Radio size={20}/>, accent: 'var(--accent-news)' },
+    { id: 'news', label: 'Broadcasts', icon: <RadioTower size={20}/>, accent: 'var(--accent-news)' },
     { id: 'hq', label: 'Council', icon: <Crown size={20}/>, accent: 'var(--accent-hq)' },
-    { id: 'ai', label: 'AI Chat', icon: <Cpu size={20}/>, accent: 'var(--neon-cyan)' }
+    { id: 'ai', label: 'AI Chat', icon: <BrainCircuit size={20}/>, accent: 'var(--neon-cyan)' }
   ];
 
   // Boot Sequence
@@ -446,7 +452,8 @@ export default function App() {
     }
   };
 
-  const toggleAdmin = () => {
+  // 🌟 ADMIN TOGGLE LOGIC (FIXED) 🌟
+  const handleSecurityToggle = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
     else {
       const pass = prompt("Enter Access Key:");
@@ -542,7 +549,7 @@ export default function App() {
   // ==========================================
   const getSectionStyle = (idx) => {
     return {
-      '--reveal-dir': '40px', // Fixed static scroll reveal to prevent crashing
+      '--reveal-dir': '40px',
       '--section-accent': SECTIONS[idx].accent
     };
   };
@@ -562,9 +569,9 @@ export default function App() {
         </div>
       </div>
       <div className="bento-grid-3">
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Users size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
         <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Radio size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
       </div>
     </div>
   );
@@ -689,7 +696,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><Archive size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><FolderArchive size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('vault', v.id); }}><Trash2 size={14}/></button>}
                 </div>
@@ -716,7 +723,7 @@ export default function App() {
               {g.fileType === 'Archive' ? (
                 <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><Archive size={12}/> YEAR {g.archivedYear || '2026'}</span>
+                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
                     {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('gallery', g.id); }}><Trash2 size={14}/></button>}
                   </div>
                   <div className="type-h2">{g.title}</div>
@@ -853,7 +860,7 @@ export default function App() {
       <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(7) }}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
         <div className="bento-card stagger-item stagger-2 mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-          <span className="text-subtitle text-white"><Cpu size={14}/> Chat with RSA AI</span>
+          <span className="text-subtitle text-white"><BrainCircuit size={14}/> Chat with RSA AI</span>
           <div className="ai-terminal">
             <div id="ai-chat-box-container" className="ai-chat-box">
               {aiMessages.map((msg, idx) => (<div key={idx} className={`ai-msg ${msg.sender}`}>{msg.text}</div>))}
@@ -948,7 +955,7 @@ export default function App() {
 
       {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock">
+        <div className="floating-dock" ref={dockRef}>
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
