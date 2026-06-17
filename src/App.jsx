@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
-
-// ALL ICONS DOWNGRADED TO BASE LEVEL TO PREVENT CRASHES
 import { 
-  Shield, Plus, Trash2, Users, DollarSign, 
+  Shield, ShieldAlert, Plus, Trash2, Users, DollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, Cpu, Send, Calendar,
   Hexagon, Zap, Lock, Unlock, Pencil, Eye, Archive,
-  HardDrive, Radio, BookOpen
+  HardDrive, Radio, BookOpen, Check
 } from 'lucide-react';
 
 // ==========================================
@@ -129,24 +127,17 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */
+  /* 🌟 ORIGINAL CIRCLE FLOW SPLASH SCREEN 🌟 */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; transition: opacity 0.5s; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; transition: opacity 0.5s; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; transition: opacity 0.5s; }
-  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-  
-  .show-circles .circle-flow-1 { opacity: 1; }
-  .show-circles .circle-flow-2 { opacity: 0.8; }
-  .show-circles .circle-flow-3 { opacity: 1; }
-  .show-circles .splash-brand { opacity: 1; margin-left: 0; letter-spacing: 0.08em; }
-  
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
-  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* 🌟 HYBRID SCROLL ENGINE 🌟 */
+  /* PERFORMANCE SCROLLING */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   /* Desktop Layout */
@@ -170,12 +161,12 @@ const GLOBAL_STYLES = `
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* 🌟 BENTO CARDS 🌟 */
+  /* BENTO CARDS */
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
     position: relative; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-spring);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease;
   }
   
   /* The Card Glow Splash */
@@ -183,7 +174,7 @@ const GLOBAL_STYLES = `
     content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 70%);
     opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-spring); pointer-events: none; z-index: 0;
   }
-  .bento-card:hover { border-color: rgba(255,255,255,0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.8); transform: translateY(-4px); }
+  .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
   .bento-card:hover::before { opacity: 1; transform: scale(1.5); }
   .bento-card > * { position: relative; z-index: 1; }
   
@@ -196,7 +187,7 @@ const GLOBAL_STYLES = `
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
   }
 
-  /* 🌟 TOP BAR 🌟 */
+  /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -208,29 +199,23 @@ const GLOBAL_STYLES = `
 
   /* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */
   .complex-sidebar-btn { 
-    position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
-    transition: transform 0.6s var(--ease-spring); color: #fff; cursor: pointer;
+    position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: #fff; cursor: pointer;
     background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
     backdrop-filter: blur(10px);
   }
-  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.3); transform: scale(1.1); }
+  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.1); }
   .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
-  
-  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.6s var(--ease-spring); }
-  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s var(--ease-spring); }
-  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s var(--ease-spring); }
+  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.8s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.8s ease; }
   
   .complex-sidebar-btn.spin .hex-outer { transform: scale(0); opacity: 0; }
-  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.5); opacity: 0; }
+  .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.4); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
-  @media (max-width: 768px) {
-    .top-bar { padding: 16px 20px; }
-    .complex-sidebar-btn { width: 44px; height: 44px; }
-  }
-
-  /* SIDEBAR OVERLAY */
-  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.4s; }
+  /* SIDEBAR OVERLAY FOR CLICK-TO-CLOSE */
+  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
 
   /* SIDEBAR */
@@ -238,11 +223,11 @@ const GLOBAL_STYLES = `
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
-
+  
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
   .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
@@ -250,7 +235,7 @@ const GLOBAL_STYLES = `
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
 
-  /* 🌟 ANIMATRONIC DOCK 🌟 */
+  /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
   .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
   .floating-dock { 
     background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
@@ -267,11 +252,12 @@ const GLOBAL_STYLES = `
   }
   .dock-item:active::before { opacity: 0.2; transform: scale(1.5); transition: 0s; }
   
+  /* Desktop Dock */
   @media (min-width: 769px) {
     .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
     .dock-item { width: 48px; height: 48px; border-radius: 50%; }
-    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); }
+    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); animation: popActive 0.4s var(--ease-spring); }
     .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px) scale(1.05); }
     
     .dock-tooltip { 
@@ -282,8 +268,10 @@ const GLOBAL_STYLES = `
     }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .dock-label-mobile { display: none; }
+    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(12px) scale(1.1); } }
   }
 
+  /* Mobile Dock */
   @media (max-width: 768px) {
     .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
@@ -294,7 +282,7 @@ const GLOBAL_STYLES = `
     .dock-tooltip { display: none; }
   }
 
-  /* 🌟 ANIMATRONIC BUTTONS & ICONS 🌟 */
+  /* BUTTONS & PILLS */
   @keyframes iconPop { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
 
   .btn-primary { 
@@ -314,7 +302,7 @@ const GLOBAL_STYLES = `
 
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  .btn-secondary::after { background: rgba(255,255,255,0.2); } /* White splash for dark buttons */
+  .btn-secondary::after { background: rgba(255,255,255,0.2); }
 
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
@@ -353,7 +341,6 @@ const GLOBAL_STYLES = `
   .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); transform: scale(1.02); }
   .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--neon-cyan); font-weight: 600; letter-spacing: 0.05em; }
 
-  /* Generic Utils */
   .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; transition: transform 0.3s var(--ease-spring); }
   .bento-card:hover .avatar { transform: scale(1.1) rotate(5deg); }
   
@@ -372,7 +359,6 @@ const GLOBAL_STYLES = `
 // ==========================================
 // 4. HELPER COMPONENTS
 // ==========================================
-
 const getHashColor = (str) => {
   if (!str) return '#60a5fa'; 
   let hash = 0;
@@ -407,7 +393,6 @@ export default function App() {
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
   
   // Splash States
-  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
   
   // Core Databases
@@ -452,15 +437,7 @@ export default function App() {
   // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
-    const seq = [
-      { time: 100, state: 1 }, 
-      { time: 550, state: 2 }, 
-      { time: 1000, state: 3 }, 
-      { time: 2000, state: 4 }  
-    ];
-    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
     setTimeout(() => setIsBooting(false), 2400);
-    return () => timers.forEach(clearTimeout);
   }, []);
 
   // Firebase Listeners
@@ -532,7 +509,7 @@ export default function App() {
     } catch (err) { alert("Sync failed."); }
   };
 
-  const deleteDocRecord = async (col, id) => {
+  const handleDelete = async (col, id) => {
     if (window.confirm("Permanently delete record?")) {
       await deleteDoc(doc(db, col, id));
       setModalMode(null);
@@ -1009,7 +986,7 @@ export default function App() {
 
       {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock">
+        <div className="floating-dock" ref={dockRef}>
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
