@@ -102,72 +102,91 @@ const GLOBAL_STYLES = `
   .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.7; color: var(--text-200); }
   .type-caption { font-family: var(--font-body); font-weight: 300; font-size: 0.8rem; color: var(--text-300); }
   .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
+  .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
 
-  /* 🌟 5-LAYER BACKGROUND SYSTEM 🌟 */
-  .bg-system { position: fixed; inset: 0; z-index: -10; overflow: hidden; pointer-events: none; }
-  .aurora-mesh { position: absolute; inset: -20%; filter: blur(80px); opacity: 0.22; mix-blend-mode: screen; }
-  .blob { position: absolute; border-radius: 50%; }
-  .blob-1 { top: 0; left: 0; width: 50vw; height: 50vw; background: #1a1aff; animation: blobFloat 18s infinite alternate ease-in-out; }
-  .blob-2 { top: 0; right: 0; width: 45vw; height: 45vw; background: #6600cc; animation: blobFloat 22s infinite alternate-reverse ease-in-out; }
-  .blob-3 { bottom: 0; left: 0; width: 60vw; height: 60vw; background: #003366; animation: blobFloat 25s infinite alternate ease-in-out; }
-  .blob-4 { bottom: 0; right: 0; width: 55vw; height: 55vw; background: #330066; animation: blobFloat 30s infinite alternate-reverse ease-in-out; }
-  .scan-line { position: absolute; width: 100%; height: 1px; background: rgba(255,255,255,0.03); animation: scan 8s linear infinite; z-index: -3; }
-  .noise-grain { position: absolute; inset: 0; opacity: 0.06; z-index: -2; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: noiseShift 0.4s steps(10) infinite; }
-  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at center, transparent 40%, rgba(0,0,0,0.5) 100%); z-index: -1; }
+  /* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */
+  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
+  .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
+  .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
+  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
-  @keyframes blobFloat { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(10%, 10%) scale(1.1); } }
-  @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-  @keyframes noiseShift { 0% { background-position: 0 0; } 100% { background-position: 100% 100%; } }
+  .arch-scene { 
+    position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
+    will-change: transform;
+  }
+  .arch-wall {
+    position: absolute; border: 1px solid rgba(0, 240, 255, 0.15);
+    background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px; backface-visibility: visible;
+  }
+  .wall-floor { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(90deg) translateZ(40vh); }
+  .wall-ceil { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(-90deg) translateZ(40vh); }
+  .wall-left { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(90deg) translateZ(40vw); }
+  .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
+  .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* 🌟 CINEMATIC SPLASH SCREEN 🌟 */
-  .splash-container { position: fixed; inset: 0; z-index: 99999; background: var(--color-void); display: flex; align-items: center; justify-content: center; flex-direction: column; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
-  .splash-container.exit { transform: translateY(-100%); }
-  .splash-grid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px); background-size: 40px 40px; animation: gridPulse 0.4s ease-out forwards; opacity: 0; }
-  .splash-hr { position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #fff; transform-origin: left center; animation: hrSweep 0.3s 0.3s ease-out forwards; transform: scaleX(0); opacity: 0; }
-  .splash-logo-container { display: flex; flex-direction: column; align-items: flex-start; z-index: 10; margin-left: -50vw; animation: slideInLeft 0.1s 0.6s forwards; opacity: 0; }
-  .splash-logo { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-  .glitch-active { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
-  .splash-sub { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-200); margin-top: -10px; clip-path: inset(0 100% 0 0); animation: wipeReveal 0.4s 1s ease-out forwards; }
-  .splash-status { position: absolute; bottom: 20%; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-300); }
-  .status-auth { color: var(--neon-green); opacity: 0; animation: revealFade 0.1s 1.8s forwards; }
-
-  @keyframes gridPulse { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-  @keyframes hrSweep { 0% { transform: scaleX(0); opacity: 1; } 99% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
-  @keyframes trackIn { to { letter-spacing: 0.08em; } }
-  @keyframes wipeReveal { to { clip-path: inset(0 0% 0 0); } }
-  @keyframes slideInLeft { to { margin-left: 0; opacity: 1; } }
-
-  /* 🌟 HYBRID SCROLL ENGINE (Intersection Observer Powered) 🌟 */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
-  .scrolling-section { min-height: 100dvh; width: 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 24px 80px 24px; position: relative; }
+  /* CIRCLE FLOW SPLASH SCREEN */
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
+  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; transition: opacity 0.5s; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
   
-  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
+  .show-circles .circle-flow-1 { opacity: 1; }
+  .show-circles .circle-flow-2 { opacity: 0.8; }
+  .show-circles .circle-flow-3 { opacity: 1; }
+  .show-circles .splash-brand { opacity: 1; margin-left: 0; letter-spacing: 0.08em; }
+  
+  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
+  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
+
+  /* PERFORMANCE SCROLLING */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  
+  /* Desktop Layout */
+  @media (min-width: 769px) {
+    .scrolling-section { height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 40px 80px 100px; position: relative; }
+    .bento-container { width: 100%; max-width: 1100px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 10px 10px 40px 10px; margin: 0 auto; scrollbar-width: none; }
+    .bento-container::-webkit-scrollbar { display: none; }
+  }
+
+  /* Mobile Layout */
+  @media (max-width: 768px) {
+    .scrolling-section { height: auto; min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; flex-direction: column; padding: 100px 16px 120px 16px; position: relative; }
+    .bento-container { width: 100%; max-width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 0; overflow-y: visible; max-height: none; }
+  }
+
+  /* Staggered Reveal Logic */
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
   .view-active .stagger-item { opacity: 1; transform: translateY(0); }
   .stagger-1 { transition-delay: 0ms; }
   .stagger-2 { transition-delay: 80ms; }
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  .scroll-indicator { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); width: 1px; height: 200px; background: rgba(255,255,255,0.1); z-index: 80; display: none; }
-  .scroll-pill { position: absolute; left: -1px; width: 3px; height: 30px; background: #fff; border-radius: 3px; transition: top 0.4s var(--ease-smooth); }
-  @media (min-width: 1024px) { .scroll-indicator { display: block; } }
-
-  /* 🌟 BENTO CARDS 🌟 */
-  .bento-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; margin: 0 auto; }
+  /* BENTO CARDS */
+  .bento-card { 
+    background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease;
+  }
+  .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
+  
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
 
-  .card-base { border-radius: 16px; position: relative; overflow: hidden; transition: all 0.3s var(--ease-smooth); will-change: transform; }
-  .card-header { padding: 24px 24px 16px; border-bottom: 1px solid var(--color-chrome); display: flex; justify-content: space-between; align-items: flex-start; }
-  .card-content { padding: 20px 24px; }
-  
-  .card-ghost { background: transparent; border: 1px solid var(--color-chrome); }
-  .card-ghost:hover { border-color: rgba(255,255,255,0.14); }
-  .card-surface { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); }
-  .card-surface:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(-2px); }
-  .card-elevated { background: rgba(255,255,255,0.07); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 24px rgba(0,0,0,0.6); }
+  @media (min-width: 769px) { .bento-card { padding: 32px; border-radius: 20px; } }
+  @media (max-width: 768px) { 
+    .bento-card { padding: 20px; border-radius: 16px; } 
+    .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
+  }
 
-  /* 🌟 TOP BAR 🌟 */
+  /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -208,21 +227,21 @@ const GLOBAL_STYLES = `
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
 
-  /* 🌟 CSS ONLY MAGNETIC DOCK (No JS Lag) 🌟 */
-  .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
-  .floating-dock { 
-    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
-    display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto;
+  /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
+  .floating-dock {
+    position: fixed; z-index: 100;
+    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
+    display: flex; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
   }
-  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s var(--ease-spring); }
+  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
   
-  /* Desktop Dock (Left, Vertical) */
+  /* Desktop Dock (Left Side, Vertical) */
   @media (min-width: 769px) {
-    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
+    .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); position: fixed; z-index: 100; }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
-    .dock-item { width: 48px; height: 48px; border-radius: 50%; }
+    .dock-item { width: 48px; height: 48px; }
     .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); }
-    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px) scale(1.05); }
+    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
     
     .dock-tooltip { 
       position: absolute; left: 100%; top: 50%; margin-left: 16px; transform: translateY(-50%) translateX(-10px);
@@ -236,7 +255,7 @@ const GLOBAL_STYLES = `
 
   /* Mobile Dock (Bottom, Horizontal) */
   @media (max-width: 768px) {
-    .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
+    .floating-dock-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
     .floating-dock::-webkit-scrollbar { display: none; }
     .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
@@ -257,11 +276,11 @@ const GLOBAL_STYLES = `
 
   /* 🌟 BOTTOM SHEET MODALS 🌟 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
-  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards var(--ease-spring); }
+  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
   
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
-    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
+    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
     input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
   }
 
@@ -295,7 +314,7 @@ const GLOBAL_STYLES = `
 
 // Safely generate hash color, preventing crashes if name is undefined/null
 const getHashColor = (str) => {
-  if (!str) return '#60a5fa'; // Safe fallback
+  if (!str) return '#60a5fa'; 
   let hash = 0;
   for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
   const colors = ['#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#f472b6', '#fb923c'];
@@ -354,9 +373,10 @@ export default function App() {
     { sender: 'bot', text: 'RSA Advanced AI initialized. Connected to Unit Z649 archives and NASA India telemetry. Awaiting directive.' }
   ]);
 
-  // Ref
+  // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
+  const dockRef = useRef(null); // FIXED: Dock Reference Restored to prevent crash
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
@@ -461,6 +481,26 @@ export default function App() {
     }
   };
 
+  const handleArchiveVaultItem = async (item) => {
+    if (!window.confirm("Move this work to the Archive Gallery? It will be permanently removed from the active vault.")) return;
+    try {
+      const currentYear = new Date().getFullYear(); 
+      await addDoc(collection(db, 'gallery'), {
+         title: item.title,
+         category: item.category || 'Archived Work',
+         description: `Archived File (${currentYear}). ${item.description || ''}`,
+         link: item.link || '',
+         fileType: 'Archive',
+         archivedYear: currentYear,
+         timestamp: Date.now()
+      });
+      await deleteDoc(doc(db, 'vault', item.id));
+      alert("Successfully moved to Archive.");
+    } catch(e) {
+      alert("Failed to archive item.");
+    }
+  };
+
   // 🌟 3D CAMERA TRANSFORM LOGIC (Matches specific rooms) 🌟
   const getCameraTransform = () => {
     const transforms = [
@@ -486,8 +526,8 @@ export default function App() {
     setTimeout(() => {
       const tokens = textRaw.toLowerCase();
       let botResponse = "Processing directive... Unit systems nominal.";
-      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
-      else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "MSL Trophy focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
+      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
+      else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "For the MSL Trophy, our focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
       else if (tokens.includes("news") || tokens.includes("live")) botResponse = `Checking live NASA feed... 68th ANC Workshop Details and Louis I. Kahn Trophy deadlines are active.`;
       else if (tokens.includes("hello") || tokens.includes("hi")) botResponse = "Hello! I am your advanced architectural co-pilot. How can I assist your design logic today?";
       else if (tokens.includes("money") || tokens.includes("balance")) {
@@ -501,24 +541,31 @@ export default function App() {
   // ==========================================
   // DASHBOARD SECTIONS
   // ==========================================
+  const getSectionStyle = (idx) => {
+    return {
+      '--reveal-dir': '40px', // Fixed static scroll reveal to prevent crashing
+      '--section-accent': SECTIONS[idx].accent
+    };
+  };
+
   const renderDashboard = () => (
-    <div className="bento-container">
+    <div className="bento-container" style={getSectionStyle(0)}>
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
       <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
-        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
+        <div className="bento-card stagger-item stagger-2" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
           <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
         </div>
-        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
+        <div className="bento-card stagger-item stagger-3" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status</span>
           <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
           <p className="type-body mt-2">Preparation is active. Live feed connected.</p>
         </div>
       </div>
       <div className="bento-grid-3">
-        <div className="bento-card"><span className="text-subtitle text-white"><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
-        <div className="bento-card"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
-        <div className="bento-card"><span className="text-subtitle text-white"><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
       </div>
     </div>
   );
@@ -530,15 +577,15 @@ export default function App() {
     crewData.forEach(u => { const y = u.year || 'Unassigned'; if (allocation[y]) allocation[y].push(u); else allocation['Unassigned'].push(u); });
     
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={getSectionStyle(1)}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
           <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
         </div>
-        {orderedYears.map(year => {
+        {orderedYears.map((year, idx) => {
           if (allocation[year].length === 0) return null;
           return (
-            <div key={year} style={{ marginTop: '16px' }}>
+            <div key={year} className={`stagger-item stagger-${Math.min((idx%3)+2, 4)}`} style={{ marginTop: '16px' }}>
               <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
               <div className="bento-grid-2" style={{ marginTop: '16px' }}>
                 {allocation[year].map(m => {
@@ -574,20 +621,20 @@ export default function App() {
     const goal = Number(leadership.financialGoal) || 1; 
 
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={getSectionStyle(2)}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>}
         </div>
         <div className="bento-grid-2">
-          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="bento-card stagger-item stagger-2" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
             <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
               <div><span className="type-mono-sm">INCOME</span><div className="type-metric text-[var(--neon-green)]">₹<AnimatedCounter value={income} /></div></div>
               <div><span className="type-mono-sm">EXPENSES</span><div className="type-metric text-[var(--neon-pink)]">₹<AnimatedCounter value={expense} /></div></div>
             </div>
           </div>
-          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="bento-card stagger-item stagger-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle text-white"><Zap size={14}/> Current Funds</span>
             <div className="type-metric">₹<AnimatedCounter value={net} /></div>
             <div style={{ width: '100%', height: '4px', background: 'var(--color-chrome)', borderRadius: '2px', overflow: 'hidden', marginTop: '16px' }}>
@@ -595,7 +642,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="bento-card" style={{ padding: '0' }}>
+        <div className="bento-card stagger-item stagger-4" style={{ padding: '0' }}>
           {financialLog.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-300)' }}>No financial records found.</div>
           ) : (
@@ -627,19 +674,19 @@ export default function App() {
   const renderVault = () => {
     const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={getSectionStyle(3)}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
-        <div style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
+        <div className="stagger-item stagger-2" style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
           {['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'].map(cat => (
             <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
           ))}
         </div>
         <div className="bento-grid-3">
-          {filteredVault.map(v => (
-            <div key={v.id} className="bento-card">
+          {filteredVault.map((v, i) => (
+            <div key={v.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
@@ -659,14 +706,14 @@ export default function App() {
 
   const renderGallery = () => {
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={getSectionStyle(4)}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
         </div>
         <div className="bento-grid-2">
-          {galleryData.map(g => (
-            <div key={g.id} className="bento-card" style={{ padding: 0 }}>
+          {galleryData.map((g, i) => (
+            <div key={g.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ padding: 0 }}>
               {g.fileType === 'Archive' ? (
                 <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -704,16 +751,16 @@ export default function App() {
 
   const renderNews = () => {
     return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(5) }}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '24px', marginTop: '16px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <span className="text-subtitle text-white"><Activity size={14}/> Unit Updates</span>
-            {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-              <div key={n.id} className="bento-card" style={{ padding: '24px' }}>
+            <span className="text-subtitle text-white stagger-item stagger-2"><Activity size={14}/> Unit Updates</span>
+            {newsData.sort((a,b)=>b.timestamp-a.timestamp).map((n, i) => (
+              <div key={n.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
@@ -745,8 +792,8 @@ export default function App() {
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <span className="text-subtitle text-[var(--neon-gold)]"><Globe size={14}/> Live NASA India Feed</span>
-            <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', padding: '24px' }}>
+            <span className="text-subtitle text-[var(--neon-gold)] stagger-item stagger-2"><Globe size={14}/> Live NASA India Feed</span>
+            <div className="bento-card stagger-item stagger-3" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', padding: '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[{ id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' }, { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }].map(live => (
                   <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
@@ -769,15 +816,15 @@ export default function App() {
   const renderUnitCouncil = () => {
     const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role));
     return (
-      <div className="bento-container">
-        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={getSectionStyle(6)}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
             {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
             {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
           </div>
         </div>
-        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
+        <div className="bento-card stagger-item stagger-2" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <span className="type-label block mb-2 text-white">Unit Information</span>
@@ -786,10 +833,10 @@ export default function App() {
             <div className="status-pill" style={{ textTransform: 'lowercase' }}><Globe size={12}/> {leadership.officialEmail}</div>
           </div>
         </div>
-        <span className="text-subtitle text-[var(--neon-gold)] px-4 mt-4"><Crown size={14}/> High Command Directory</span>
+        <span className="text-subtitle text-[var(--neon-gold)] px-4 mt-4 stagger-item stagger-3"><Crown size={14}/> High Command Directory</span>
         <div className="bento-grid-2">
-          {councilMembers.map(m => (
-            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
+          {councilMembers.map((m, i) => (
+            <div key={m.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span className="status-pill" style={{ color: 'var(--neon-gold)' }}>{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
               </div>
@@ -804,9 +851,9 @@ export default function App() {
 
   const renderRSAIntel = () => {
     return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
-        <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
-        <div className="bento-card mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+      <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(7) }}>
+        <div className="stagger-item stagger-1" style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
+        <div className="bento-card stagger-item stagger-2 mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
           <span className="text-subtitle text-white"><BrainCircuit size={14}/> Chat with RSA AI</span>
           <div className="ai-terminal">
             <div id="ai-chat-box-container" className="ai-chat-box">
@@ -902,10 +949,11 @@ export default function App() {
 
       {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock">
+        <div className="floating-dock" ref={dockRef}>
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
+              <span className="dock-label-mobile" style={{ color: activeSectionIdx===i ? sec.accent : 'inherit' }}>{sec.label}</span>
               <div className="dock-tooltip">{sec.label}</div>
             </div>
           ))}
@@ -913,14 +961,14 @@ export default function App() {
       </div>
 
       <div className="kinetic-scroll-engine" ref={scrollEngineRef}>
-        <section className="scrolling-section" data-index="0">{renderDashboard()}</section>
-        <section className="scrolling-section" data-index="1">{renderCrew()}</section>
-        <section className="scrolling-section" data-index="2">{renderFunds()}</section>
-        <section className="scrolling-section" data-index="3">{renderVault()}</section>
-        <section className="scrolling-section" data-index="4">{renderGallery()}</section>
-        <section className="scrolling-section" data-index="5">{renderNews()}</section>
-        <section className="scrolling-section" data-index="6">{renderUnitCouncil()}</section>
-        <section className="scrolling-section" data-index="7">{renderRSAIntel()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`} data-index="0">{renderDashboard()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`} data-index="1">{renderCrew()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`} data-index="2">{renderFunds()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`} data-index="3">{renderVault()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`} data-index="4">{renderGallery()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`} data-index="5">{renderNews()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`} data-index="6">{renderUnitCouncil()}</section>
+        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`} data-index="7">{renderRSAIntel()}</section>
       </div>
 
       {/* MODALS */}
@@ -961,8 +1009,8 @@ export default function App() {
             <div style={{ display: 'flex', gap: '12px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
               {isLeadershipMode ? (
                 <>
-                  <button className="btn-primary btn-secondary" style={{flex: 1}} onClick={() => { setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Edit</button>
-                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={() => deleteDocRecord('crew', viewingCrew.id)}><Trash2 size={16}/> Delete</button>
+                  <button className="btn-primary btn-secondary" style={{flex: 1}} onClick={(e) => { e.stopPropagation(); setFormPayload(viewingCrew); setModalMode('crew'); }}><Pencil size={16}/> Edit</button>
+                  <button className="btn-primary btn-secondary danger" style={{color:'var(--neon-pink)', borderColor:'rgba(255,0,85,0.3)'}} onClick={(e) => { e.stopPropagation(); deleteDocRecord('crew', viewingCrew.id); }}><Trash2 size={16}/> Delete</button>
                 </>
               ) : (
                 <div className="type-caption"><Lock size={12} style={{display:'inline', marginBottom:'-2px'}}/> Only Admins can edit or delete.</div>
