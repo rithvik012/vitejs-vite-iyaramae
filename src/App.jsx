@@ -6,7 +6,7 @@ import {
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
   Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
-  HardDrive, RadioTower, TrendingUp, TrendingDown, BookOpen
+  HardDrive, RadioTower, BookOpen
 } from 'lucide-react';
 
 // ==========================================
@@ -66,12 +66,27 @@ const GLOBAL_STYLES = `
   input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
   ::-webkit-scrollbar { width: 0px; }
 
-  /* BACKGROUND */
-  .animatronic-bg { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
-  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
-  .orb-c { width: 65vw; height: 65vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
-  .orb-p { width: 55vw; height: 55vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -7s; }
-  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw, 5vh) scale(1.05); } }
+  /* 🌟 3D ARCHITECTURAL WIREFRAME BACKGROUND 🌟 */
+  .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; perspective: 1200px; display: flex; align-items: center; justify-content: center; }
+  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.2; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+  .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
+  .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
+  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
+
+  .arch-camera { 
+    position: absolute; width: 0; height: 0; transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+  }
+  .arch-plane {
+    position: absolute; width: 200vw; height: 200vh; left: -100vw; top: -100vh;
+    border: 1px solid rgba(0, 240, 255, 0.03);
+    background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  .plane-floor { transform: rotateX(90deg) translateZ(-30vh); }
+  .plane-wall-l { transform: rotateY(90deg) translateZ(-30vw); }
+  .plane-wall-r { transform: rotateY(-90deg) translateZ(-30vw); }
+  .plane-ceil { transform: rotateX(-90deg) translateZ(-30vh); }
 
   /* CIRCLE FLOW SPLASH SCREEN */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
@@ -100,11 +115,10 @@ const GLOBAL_STYLES = `
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .bento-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
-  
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
-  /* TOP BAR & ANIMATED TOGGLE */
+  /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -115,47 +129,36 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
-  /* KINETIC MENU TOGGLE BUTTON */
-  .sidebar-menu-btn {
-    position: relative; width: 52px; height: 52px; border-radius: 50%;
+  /* 🌟 KINETIC SIDEBAR TOGGLE 🌟 */
+  .sidebar-toggle-btn {
+    position: relative; width: 48px; height: 48px; border-radius: 12px;
     background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-    display: flex; align-items: center; justify-content: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
     cursor: pointer; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    z-index: 120; backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px); z-index: 120;
   }
-  .sidebar-menu-btn:hover { background: rgba(0, 240, 255, 0.1); border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.3); transform: scale(1.1); }
-  
-  .menu-icon-lines { position: relative; width: 22px; height: 16px; }
-  .menu-icon-lines span {
-    position: absolute; left: 0; width: 100%; height: 2px; background: #fff;
-    border-radius: 2px; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  .menu-icon-lines span:nth-child(1) { top: 0; }
-  .menu-icon-lines span:nth-child(2) { top: 7px; width: 70%; right: 0; left: auto; }
-  .menu-icon-lines span:nth-child(3) { top: 14px; }
-
-  .sidebar-menu-btn.open { transform: rotate(90deg); border-color: var(--neon-pink); background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255,0,85,0.3); }
-  .sidebar-menu-btn.open .menu-icon-lines span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: #fff; width: 100%; }
-  .sidebar-menu-btn.open .menu-icon-lines span:nth-child(2) { opacity: 0; transform: translateX(20px); }
-  .sidebar-menu-btn.open .menu-icon-lines span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: #fff; width: 100%; }
+  .sidebar-toggle-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,240,255,0.2); transform: scale(1.05); }
+  .st-line { width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+  .sidebar-toggle-btn.open { border-radius: 50%; border-color: var(--neon-pink); background: rgba(255,0,85,0.1); transform: rotate(180deg); box-shadow: 0 0 20px rgba(255,0,85,0.3); }
+  .sidebar-toggle-btn.open .st-line:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--neon-pink); }
+  .sidebar-toggle-btn.open .st-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .sidebar-toggle-btn.open .st-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--neon-pink); }
 
   /* SIDEBAR */
   .nasa-sidebar {
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
     background: #050505; border-left: 1px solid var(--glass-border); z-index: 110;
-    padding: 32px 24px; display: flex; flex-direction: column;
+    padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
     box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .nasa-sidebar.open { right: 0; }
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
-  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
-  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
   .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* 🌟 ANIMATRONIC FLOATING DOCK (MOBILE vs DESKTOP) 🌟 */
+  /* 🌟 ANIMATRONIC FLOATING DOCK 🌟 */
   .floating-dock {
     position: fixed; z-index: 100;
     background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); 
@@ -171,25 +174,25 @@ const GLOBAL_STYLES = `
       width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch;
     }
     .dock-item { min-width: 46px; height: 46px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+    .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); animation: dockPulseMobile 2s infinite ease-in-out; }
     .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
     .dock-tooltip { top: -45px; left: 50%; transform: translateX(-50%) translateY(10px); }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @keyframes dockPulseMobile { 0%, 100% { transform: translateY(-6px) scale(1); } 50% { transform: translateY(-8px) scale(1.05); } }
   }
 
   /* Desktop Dock (Left Side, Vertical, Animatronic) */
   @media (min-width: 769px) {
     .floating-dock {
       top: 50%; left: 32px; transform: translateY(-50%); flex-direction: column; gap: 12px; padding: 16px 10px; border-radius: 100px;
-      animation: dockFloat 6s ease-in-out infinite;
     }
-    @keyframes dockFloat { 0%, 100% { transform: translateY(-50%); } 50% { transform: translateY(calc(-50% - 10px)); } }
     .dock-item { width: 50px; height: 50px; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-    .dock-item.active { color: #000; background: #fff; transform: translateX(12px) scale(1.1); box-shadow: -10px 10px 20px rgba(255,255,255,0.1); }
+    .dock-item.active { color: #000; background: #fff; transform: translateX(12px) scale(1.1); box-shadow: -10px 10px 20px rgba(255,255,255,0.1); animation: dockPulseDesk 2s infinite ease-in-out; }
     .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(8px); }
     .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
-    .scrolling-section { padding-left: 100px; } /* Prevent overlap on desktop */
+    .scrolling-section { padding-left: 100px; }
+    @keyframes dockPulseDesk { 0%, 100% { transform: translateX(12px) scale(1.1); } 50% { transform: translateX(16px) scale(1.15); } }
   }
 
   /* TYPOGRAPHY & BUTTONS */
@@ -235,7 +238,6 @@ const GLOBAL_STYLES = `
     .scrolling-section { padding: 100px 16px 120px 16px; }
     .modal-window { padding: 24px; }
     .top-bar { padding: 16px 20px; }
-    .nasa-sidebar { width: 100%; right: -100%; }
   }
 `;
 
@@ -409,6 +411,21 @@ export default function App() {
     }, 1000);
   };
 
+  // 🌟 DYNAMIC ARCHITECTURAL 3D BACKGROUND CAMERA 🌟
+  const getCameraTransform = () => {
+    const transforms = [
+      "rotateX(15deg) rotateY(15deg) translateZ(-100px)",  // 0: Dashboard - Isometric outside
+      "rotateX(5deg) rotateY(0deg) translateZ(150px)",     // 1: Crew - Straight on inside
+      "rotateX(25deg) rotateY(-20deg) translateZ(50px)",   // 2: Treasury - High angle corner
+      "rotateX(0deg) rotateY(45deg) translateZ(250px)",    // 3: Vault - Hallway view
+      "rotateX(-15deg) rotateY(-10deg) translateZ(150px)", // 4: Gallery - Low angle looking up
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News - Bird's eye aerial
+      "rotateX(0deg) rotateY(0deg) translateZ(400px)",     // 6: HQ - Direct frontal
+      "rotateX(10deg) rotateY(-35deg) translateZ(200px)"   // 7: AI - Angled interior
+    ];
+    return transforms[activeSectionIdx] || transforms[0];
+  };
+
   // ==========================================
   // DASHBOARD SECTIONS
   // ==========================================
@@ -463,7 +480,6 @@ export default function App() {
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
-          {/* OPEN ACCESS FOR ALL TO REGISTER */}
           <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
         </div>
         
@@ -668,7 +684,6 @@ export default function App() {
                 </div>
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
-              {/* GIST VIEW: Show only first 120 chars */}
               <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
                 {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
               </div>
@@ -710,6 +725,7 @@ export default function App() {
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
+            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
             {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
           </div>
         </div>
@@ -723,7 +739,7 @@ export default function App() {
         <div className="bento-grid-2">
           {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
           {councilMembers.map(m => (
-            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
                   {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
@@ -774,10 +790,16 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      <div className="animatronic-bg">
-        <div className="laser-grid"></div>
+      {/* 🌟 3D ARCHITECTURAL WIREFRAME BACKGROUND 🌟 */}
+      <div className="arch-environment">
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
+        <div className="arch-camera" style={{ transform: getCameraTransform() }}>
+          <div className="arch-plane plane-floor"></div>
+          <div className="arch-plane plane-wall-l"></div>
+          <div className="arch-plane plane-wall-r"></div>
+          <div className="arch-plane plane-ceil"></div>
+        </div>
       </div>
 
       {/* 🌟 NEW COMPLEX CIRCLE FLOW SPLASH SCREEN 🌟 */}
@@ -803,16 +825,11 @@ export default function App() {
         </div>
         
         {/* 🌟 KINETIC SIDEBAR MENU TOGGLE 🌟 */}
-        <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '700', letterSpacing: '0.02em', color: '#fff', textShadow: '0 0 20px rgba(0, 240, 255, 0.2)' }}>
-            RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
-          </div>
-          <button className={`sidebar-menu-btn ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <div className="menu-icon-lines">
-              <span></span><span></span><span></span>
-            </div>
-          </button>
-        </div>
+        <button className={`sidebar-toggle-btn pointer-events-auto ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <div className="st-line"></div>
+          <div className="st-line"></div>
+          <div className="st-line"></div>
+        </button>
       </nav>
 
       {/* SIDEBAR */}
@@ -916,7 +933,7 @@ export default function App() {
         </div>
       )}
 
-      {/* EDIT/ADD MODAL */}
+      {/* EDIT/ADD MODAL (Normal users can ONLY add to CREW) */}
       {modalMode && (
         <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
@@ -937,6 +954,7 @@ export default function App() {
                   <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
                     <option value="" disabled>Select Role...</option>
                     <option value="Member">Student Member</option>
+                    {/* Normal users cannot select Admin roles */}
                     {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
                     {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
                     {isLeadershipMode && <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>}
@@ -954,7 +972,7 @@ export default function App() {
                 </>
               )}
 
-              {modalMode === 'finances' && (
+              {modalMode === 'finances' && isLeadershipMode && (
                 <>
                   <span className="text-subtitle">Type</span>
                   <select className="mb-4" value={formPayload.type||'income'} onChange={e=>setFormPayload({...formPayload, type:e.target.value})}>
@@ -968,7 +986,7 @@ export default function App() {
                 </>
               )}
 
-              {modalMode === 'hq' && (
+              {modalMode === 'hq' && isLeadershipMode && (
                 <>
                   <input placeholder="Unit Code (e.g. Z649)" className="mb-4" value={formPayload.unitCode||''} onChange={e=>setFormPayload({...formPayload, unitCode:e.target.value})} />
                   <input placeholder="Official Email" className="mb-4" value={formPayload.officialEmail||''} onChange={e=>setFormPayload({...formPayload, officialEmail:e.target.value})} />
@@ -976,7 +994,7 @@ export default function App() {
                 </>
               )}
 
-              {modalMode === 'vault' && (
+              {modalMode === 'vault' && isLeadershipMode && (
                 <>
                   <span className="text-subtitle">Category</span>
                   <select className="mb-4" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
@@ -987,7 +1005,7 @@ export default function App() {
                 </>
               )}
 
-              {['gallery', 'news'].includes(modalMode) && (
+              {['gallery', 'news'].includes(modalMode) && isLeadershipMode && (
                 <>
                   <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
                   {modalMode !== 'news' && <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
