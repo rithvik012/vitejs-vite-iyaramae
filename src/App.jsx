@@ -5,7 +5,7 @@ import {
   Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
   HardDrive, RadioTower, BookOpen, Check
 } from 'lucide-react';
 
@@ -40,29 +40,29 @@ const ARCH_QUOTES = [
 ];
 
 // ==========================================
-// 3. HYBRID DESIGN SYSTEM (Desktop + Mobile)
+// 3. DESIGN SYSTEM & MOTION LANGUAGE
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..500;1,9..40,300..500&family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700&display=swap');
 
   :root {
-    --bg-base: #020202;
-    --glass-bg: rgba(10, 10, 10, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --text-primary: #ffffff;
-    --text-secondary: #8b9bb4;
-    --neon-cyan: #00f0ff;
-    --neon-purple: #7000ff;
-    --neon-gold: #ffbe0b;
-    --neon-pink: #ff0055;
-    --neon-green: #00ff66;
-    
+    /* Tonal Identity System */
     --color-void: #000000;
     --color-obsidian: #0a0a0a;
+    --color-carbon: #111111;
     --color-iron: #1a1a1a;
     --color-steel: #252525;
     --color-chrome: rgba(255,255,255,0.06);
-    
+    --color-smoke: rgba(255,255,255,0.12);
+
+    /* Text Hierarchy */
+    --text-100: #ffffff;
+    --text-200: #d1d5db;
+    --text-300: #9ca3af;
+    --text-400: #6b7280;
+    --text-500: #374151;
+
+    /* Accent System */
     --accent-dash: #60a5fa;
     --accent-crew: #34d399;
     --accent-finance: #fbbf24;
@@ -71,17 +71,16 @@ const GLOBAL_STYLES = `
     --accent-news: #fb923c;
     --accent-hq: #94a3b8;
 
+    /* Font Families */
     --font-heading: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
-    --ease-spring: cubic-bezier(0.34, 1.56, 1, 1);
-    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
   body, html { 
     background-color: var(--color-void); 
-    color: var(--text-primary); 
+    color: var(--text-100); 
     font-family: var(--font-body); 
     overflow: hidden; 
     height: 100dvh; 
@@ -90,79 +89,86 @@ const GLOBAL_STYLES = `
   }
   ::-webkit-scrollbar { display: none; width: 0px; }
 
-  /* 🌟 TYPOGRAPHY 🌟 */
-  .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1.1; }
+  /* 🌟 TYPOGRAPHY SYSTEM 🌟 */
+  .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(3rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1; }
   .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
-  .type-h2 { font-family: var(--font-heading); font-weight: 400; font-size: clamp(1.4rem, 2vw, 1.75rem); line-height: 1.2; }
-  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.02em; }
+  .type-h2 { font-family: var(--font-heading); font-weight: 400; font-size: 1.75rem; line-height: 1.2; }
+  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
   .type-label { font-family: var(--font-body); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
-  .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); }
-  .type-caption { font-family: var(--font-body); font-weight: 300; font-size: 0.8rem; color: #9ca3af; }
-  .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: #9ca3af; }
+  .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.7; color: var(--text-200); }
+  .type-caption { font-family: var(--font-body); font-weight: 300; font-size: 0.8rem; color: var(--text-300); }
+  .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
   .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
 
-  /* 🌟 3D ARCHITECTURAL WIREFRAME 🌟 */
+  /* 🌟 3D ARCHITECTURAL WIREFRAME ENVIRONMENT 🌟 */
   .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1000px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
   .orb-c { width: 60vw; height: 60vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 50vw; height: 50vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -5s; }
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
-  .arch-scene { position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
-  .arch-wall { position: absolute; border: 1px solid rgba(0, 240, 255, 0.15); background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px); background-size: 80px 80px; backface-visibility: visible; }
+  .arch-scene { 
+    position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
+    will-change: transform;
+  }
+  .arch-wall {
+    position: absolute; border: 1px solid rgba(0, 240, 255, 0.15);
+    background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px; backface-visibility: visible;
+  }
   .wall-floor { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(90deg) translateZ(40vh); }
   .wall-ceil { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(-90deg) translateZ(40vh); }
   .wall-left { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(90deg) translateZ(40vw); }
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* 🌟 SPLASH SCREEN 🌟 */
-  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
-  .boot-splash.exit { transform: translateY(-100%); }
+  /* CIRCLE FLOW SPLASH SCREEN */
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
+  .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; }
-  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; animation: trackIn 0.6s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0; transition: opacity 0.5s; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; opacity: 0; transition: opacity 0.5s; }
+  .splash-brand { font-family: var(--font-heading); font-size: 5rem; font-weight: 700; color: #fff; letter-spacing: 0.4em; opacity: 0; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); margin-left: -50vw; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
   
   .show-circles .circle-flow-1 { opacity: 1; }
   .show-circles .circle-flow-2 { opacity: 0.8; }
   .show-circles .circle-flow-3 { opacity: 1; }
+  .show-circles .splash-brand { opacity: 1; margin-left: 0; letter-spacing: 0.08em; }
   .glitch-active .splash-brand { text-shadow: 2px 0 0 red, -2px 0 0 blue, 0 2px 0 green; }
-  
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
-  @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* 🌟 HYBRID SCROLL ENGINE 🌟 */
+  /* KINETIC SCROLL ENGINE */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
-  /* Desktop Layout (Locked 100vh) */
+  /* Desktop Layout */
   @media (min-width: 769px) {
     .scrolling-section { height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 40px 80px 100px; position: relative; }
     .bento-container { width: 100%; max-width: 1100px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 10px 10px 40px 10px; margin: 0 auto; scrollbar-width: none; }
     .bento-container::-webkit-scrollbar { display: none; }
   }
 
-  /* Mobile Layout (Auto Height, Natural Scroll) */
+  /* Mobile Layout */
   @media (max-width: 768px) {
     .scrolling-section { height: auto; min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; flex-direction: column; padding: 100px 16px 120px 16px; position: relative; }
     .bento-container { width: 100%; max-width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 0; overflow-y: visible; max-height: none; }
   }
 
   /* Staggered Reveal Logic */
-  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
   .view-active .stagger-item { opacity: 1; transform: translateY(0); }
   .stagger-1 { transition-delay: 0ms; }
   .stagger-2 { transition-delay: 80ms; }
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* 🌟 BENTO CARDS 🌟 */
+  /* BENTO CARDS */
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
     position: relative; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease;
   }
   .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
   
@@ -175,7 +181,7 @@ const GLOBAL_STYLES = `
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
   }
 
-  /* 🌟 TOP BAR & ANIMATRONIC LOGO 🌟 */
+  /* TOP BAR & ANIMATRONIC LOGO */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none; }
   .top-bar > * { pointer-events: auto; }
   
@@ -187,7 +193,7 @@ const GLOBAL_STYLES = `
 
   .complex-sidebar-btn { 
     position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
-    transition: transform 0.8s var(--ease-spring); color: #fff; cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); color: #fff; cursor: pointer;
     background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px;
     backdrop-filter: blur(10px);
   }
@@ -206,18 +212,25 @@ const GLOBAL_STYLES = `
     .complex-sidebar-btn { width: 44px; height: 44px; }
   }
 
-  /* 🌟 SIDEBAR & OVERLAY 🌟 */
-  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: rgba(0,0,0,0); pointer-events: none; transition: background 0.3s; }
+  /* SIDEBAR & OVERLAY */
+  .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.3s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
 
   .nasa-sidebar {
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
+  
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
+  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
+  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
+  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
 
   /* 🌟 HYBRID MAGNETIC DOCK 🌟 */
   .floating-dock-wrapper { position: fixed; z-index: 100; display: flex; pointer-events: none; }
@@ -227,7 +240,7 @@ const GLOBAL_STYLES = `
   }
   .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s ease; }
   
-  /* Desktop Dock (Left, Vertical, Pop-out) */
+  /* Desktop Dock (Left, Vertical) */
   @media (min-width: 769px) {
     .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
@@ -245,7 +258,7 @@ const GLOBAL_STYLES = `
     .dock-label-mobile { display: none; }
   }
 
-  /* Mobile Dock (Bottom, Horizontal, Scrollable) */
+  /* Mobile Dock (Bottom, Horizontal) */
   @media (max-width: 768px) {
     .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
@@ -256,7 +269,7 @@ const GLOBAL_STYLES = `
     .dock-tooltip { display: none; }
   }
 
-  /* 🌟 BUTTONS & PILLS 🌟 */
+  /* BUTTONS, PILLS & TABLES */
   .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
   .btn-primary:active { transform: scale(0.95); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
@@ -268,13 +281,12 @@ const GLOBAL_STYLES = `
   .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; white-space: nowrap; }
   .filter-tab.active { background: #fff; color: #000; }
 
-  /* 🌟 CUSTOM FINANCE ROW (Replaces Table for Mobile) 🌟 */
   .finance-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--color-chrome); transition: background 0.2s; }
   .finance-row:hover { background: rgba(255,255,255,0.02); }
   .finance-row.income { border-left: 3px solid var(--accent-crew); background: linear-gradient(90deg, rgba(52, 211, 153, 0.05) 0%, transparent 100%); }
   .finance-row.expense { border-left: 3px solid var(--accent-news); background: linear-gradient(90deg, rgba(251, 146, 60, 0.05) 0%, transparent 100%); }
 
-  /* 🌟 AI TERMINAL 🌟 */
+  /* AI TERMINAL */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
   .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-behavior: smooth; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; }
@@ -282,14 +294,14 @@ const GLOBAL_STYLES = `
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); align-self: flex-end; border-bottom-right-radius: 4px; }
   @media (max-width: 768px) { .ai-terminal { height: calc(100dvh - 300px); min-height: 350px; } }
 
-  /* 🌟 BOTTOM SHEET MODALS (Mobile & Desktop) 🌟 */
+  /* 🌟 BOTTOM SHEET MODALS 🌟 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
-  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards var(--ease-spring); }
+  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
   
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
-    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
-    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
+    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
+    input, textarea, select { font-size: 16px !important; }
   }
 
   @keyframes fadeIn { to { opacity: 1; } }
@@ -303,7 +315,6 @@ const GLOBAL_STYLES = `
   .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); }
   .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--neon-cyan); font-weight: 600; letter-spacing: 0.05em; }
 
-  /* Generic Utils */
   .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; }
   .animate-count { animation: countUpAnim 0.8s ease-out forwards; }
   @keyframes countUpAnim { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -420,9 +431,8 @@ export default function App() {
     if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
   }, [aiMessages]);
 
-  // 🌟 BULLETPROOF INTERSECTION OBSERVER FOR MOBILE & DESKTOP SCROLLING 🌟
+  // 🌟 BULLETPROOF INTERSECTION OBSERVER FOR SCROLL SYNC 🌟
   useEffect(() => {
-    // Root margin helps trigger slightly before it hits dead center
     const options = { root: scrollEngineRef.current, rootMargin: '-20% 0px -40% 0px', threshold: 0 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -445,29 +455,37 @@ export default function App() {
     }
   };
 
-  const toggleAdmin = () => {
+  const handleSecurityToggle = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
-    else if (prompt("Enter Access Key:") === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
-    else alert("Incorrect Password.");
+    else {
+      const pass = prompt("Enter Admin Password to Unlock Editing:");
+      if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
+      else if (pass) alert("Incorrect Password.");
+    }
   };
 
   const handleSaveToCloud = async (e) => {
     e.preventDefault();
     try {
-      if (modalMode === 'hq') await setDoc(doc(db, "unit", "hq"), formPayload);
-      else if (formPayload.id) {
+      if (modalMode === 'hq') {
+        await setDoc(doc(db, "unit", "hq"), formPayload);
+      } else if (formPayload.id) {
         const { id, ...data } = formPayload;
         await updateDoc(doc(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), data);
-      } else await addDoc(collection(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), { ...formPayload, timestamp: Date.now() });
+      } else {
+        await addDoc(collection(db, modalMode === 'finances' ? 'finances' : modalMode === 'gal' ? 'gallery' : modalMode), { ...formPayload, timestamp: Date.now() });
+      }
       setModalMode(null); 
       setFormPayload({});
-    } catch (err) { alert("Sync failed."); }
+    } catch (err) { alert("Failed to save data."); }
   };
 
   const deleteDocRecord = async (col, id) => {
     if (window.confirm("Permanently delete record?")) {
       await deleteDoc(doc(db, col, id));
-      setModalMode(null); setViewingCrew(null); setViewingNews(null);
+      setModalMode(null);
+      setViewingCrew(null);
+      setViewingNews(null);
     }
   };
 
@@ -476,14 +494,39 @@ export default function App() {
     try {
       const currentYear = new Date().getFullYear(); 
       await addDoc(collection(db, 'gallery'), {
-         title: item.title, category: item.category || 'Archived Work',
+         title: item.title,
+         category: item.category || 'Archived Work',
          description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '', fileType: 'Archive', archivedYear: currentYear, timestamp: Date.now()
+         link: item.link || '',
+         fileType: 'Archive',
+         archivedYear: currentYear,
+         timestamp: Date.now()
       });
       await deleteDoc(doc(db, 'vault', item.id));
-    } catch(e) { alert("Failed to archive item."); }
+      alert("Successfully moved to Archive.");
+    } catch(e) {
+      alert("Failed to archive item.");
+    }
   };
 
+  // 🌟 3D CAMERA TRANSFORM LOGIC 🌟
+  const getCameraTransform = () => {
+    const transforms = [
+      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash
+      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew
+      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury
+      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault
+      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery
+      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News
+      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ
+      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI
+    ];
+    return transforms[activeSectionIdx] || transforms[0];
+  };
+
+  // ==========================================
+  // SUPERCHARGED AI BRAIN
+  // ==========================================
   const handleAiSubmit = (e) => {
     e.preventDefault();
     if (!aiInput.trim()) return;
@@ -503,31 +546,16 @@ export default function App() {
         botResponse = `Unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
       }
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 800);
-  };
-
-  // 🌟 3D CAMERA TRANSFORM LOGIC (Matches specific rooms) 🌟
-  const getCameraTransform = () => {
-    const transforms = [
-      "rotateX(15deg) rotateY(15deg) translateZ(-150px)",  // 0: Dash - Exterior
-      "rotateX(5deg) rotateY(0deg) translateZ(100px)",     // 1: Crew - Interior Living
-      "rotateX(25deg) rotateY(-20deg) translateZ(0px)",    // 2: Treasury - Corner Office
-      "rotateX(0deg) rotateY(45deg) translateZ(200px)",    // 3: Vault - Corridor
-      "rotateX(-15deg) rotateY(-10deg) translateZ(100px)", // 4: Gallery - Low angle up
-      "rotateX(40deg) rotateY(30deg) translateZ(-300px)",  // 5: News - Bird's eye aerial
-      "rotateX(0deg) rotateY(0deg) translateZ(300px)",     // 6: HQ - Boardroom
-      "rotateX(10deg) rotateY(-35deg) translateZ(150px)"   // 7: AI - Server Room
-    ];
-    return transforms[activeSectionIdx] || transforms[0];
+    }, 1000);
   };
 
   // ==========================================
-  // RENDER: DASHBOARD
+  // DASHBOARD SECTIONS
   // ==========================================
   const renderDashboard = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
-      <div className="bento-grid-2">
+      <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
           <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
@@ -548,7 +576,8 @@ export default function App() {
 
   const renderCrew = () => {
     const orderedYears = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
-    const allocation = {}; orderedYears.forEach(y => allocation[y] = []);
+    const allocation = {};
+    orderedYears.forEach(y => allocation[y] = []);
     crewData.forEach(u => { const y = u.year || 'Unassigned'; if (allocation[y]) allocation[y].push(u); else allocation['Unassigned'].push(u); });
     
     return (
@@ -778,8 +807,7 @@ export default function App() {
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
-            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit</button>}
+            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
           </div>
         </div>
         <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
@@ -907,11 +935,10 @@ export default function App() {
 
       {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock" ref={dockRef}>
+        <div className="floating-dock">
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
-              <span className="dock-label-mobile" style={{ color: activeSectionIdx===i ? sec.accent : 'inherit' }}>{sec.label}</span>
               <div className="dock-tooltip">{sec.label}</div>
             </div>
           ))}
@@ -988,7 +1015,7 @@ export default function App() {
               <button className="btn-icon" onClick={() => setModalMode(null)}><X size={24}/></button>
             </div>
             
-            <form onSubmit={handleSaveToCloud}>
+            <form onSubmit={(e) => { e.preventDefault(); handleSaveToCloud(e); }}>
               
               {modalMode === 'crew' && (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
