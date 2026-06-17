@@ -5,7 +5,7 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Zap, Lock, Unlock, Menu, Pencil, Eye, FolderArchive,
+  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye, FolderArchive,
   HardDrive, RadioTower, TrendingUp, TrendingDown, BookOpen
 } from 'lucide-react';
 
@@ -24,6 +24,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
+
+// Architectural Quotes Engine
+const ARCH_QUOTES = [
+  "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light.\" – Le Corbusier",
+  "\"Form ever follows function.\" – Louis Sullivan",
+  "\"Less is more.\" – Ludwig Mies van der Rohe",
+  "\"There are 360 degrees, so why stick to one?\" – Zaha Hadid",
+  "\"Architecture should speak of its time and place, but yearn for timelessness.\" – Frank Gehry",
+  "\"To create, one must first question everything.\" – Eileen Gray",
+  "\"A room is not a room without natural light.\" – Louis Kahn",
+  "\"Recognizing the need is the primary condition for design.\" – Charles Eames"
+];
 
 // ==========================================
 // DESIGN SYSTEM STYLES
@@ -61,7 +73,7 @@ const GLOBAL_STYLES = `
   .orb-p { width: 55vw; height: 55vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -7s; }
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw, 5vh) scale(1.05); } }
 
-  /* NEW CIRCLE FLOW SPLASH SCREEN */
+  /* CIRCLE FLOW SPLASH SCREEN */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
@@ -72,7 +84,7 @@ const GLOBAL_STYLES = `
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
 
   /* SCROLLING */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
     min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
     opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
@@ -95,6 +107,7 @@ const GLOBAL_STYLES = `
   /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
+  
   .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 700; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
   .logo-toggle:hover { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
   
@@ -105,6 +118,12 @@ const GLOBAL_STYLES = `
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
 
+  /* COMPLEX ANIMATRONIC SIDEBAR LOGO */
+  .complex-sidebar-logo { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); color: var(--neon-cyan); }
+  .complex-sidebar-logo.spin { transform: rotate(180deg) scale(1.1); }
+  .complex-sidebar-logo .hex-outer { position: absolute; animation: spinRings 12s linear infinite; }
+  .complex-sidebar-logo .aperture-inner { position: absolute; animation: spinRings 6s linear infinite reverse; color: var(--neon-gold); }
+
   /* SIDEBAR */
   .nasa-sidebar {
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px;
@@ -114,7 +133,6 @@ const GLOBAL_STYLES = `
   }
   .nasa-sidebar.open { right: 0; }
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
   .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
   .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
@@ -141,6 +159,7 @@ const GLOBAL_STYLES = `
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
@@ -187,6 +206,7 @@ export default function App() {
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
 
   // Core Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
@@ -209,7 +229,7 @@ export default function App() {
   // AI State
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Advanced AI initialized. Location: Chennai. Year: 2026. Connected to live NASA feeds and local archives. What would you like to explore?' }
+    { sender: 'bot', text: 'RSA Advanced AI initialized. I have complete access to the NASA India telemetry, Unit archives, and architectural knowledge bases. What would you like to explore?' }
   ]);
 
   // Modals
@@ -231,7 +251,9 @@ export default function App() {
   ];
 
   useEffect(() => {
+    setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
     setTimeout(() => setIsBooting(false), 2200);
+    
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -289,11 +311,10 @@ export default function App() {
     }
   };
 
-  // ARCHIVE PIPELINE: Moves an active Vault file to the Archive Gallery permanently.
   const handleArchiveVaultItem = async (item) => {
-    if (!window.confirm("Move this work to the Archive Gallery? It will be marked with the year 2026 and removed from the active vault.")) return;
+    if (!window.confirm("Move this work to the Archive Gallery? It will be permanently removed from the active vault.")) return;
     try {
-      const currentYear = new Date().getFullYear(); // e.g., 2026
+      const currentYear = new Date().getFullYear(); 
       await addDoc(collection(db, 'gallery'), {
          title: item.title,
          category: item.category || 'Archived Work',
@@ -325,23 +346,24 @@ export default function App() {
       const tokens = textRaw.toLowerCase();
       let botResponse = "";
 
-      if (tokens.includes("troph") || tokens.includes("lik") || tokens.includes("louis")) {
-        botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Currently, submissions are open on the NASA portal. I recommend focusing on vernacular spatial configurations and timber joints, similar to the Kanchipuram housing typologies we documented.";
-      } else if (tokens.includes("msl") || tokens.includes("landscape") || tokens.includes("shaheer")) {
-        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, our focus is the Velachery site in Chennai. Our 'Hydro-Social Connector' concept acts as a biological machine to manage urban flooding. Ensure the bio-swale metrics are updated.";
-      } else if (tokens.includes("news") || tokens.includes("live") || tokens.includes("feed")) {
-        botResponse = `Checking live NASA feed... I found ${liveNasaNews.length} recent updates. The latest is: "${liveNasaNews[0].title}". You can view these directly in the News section.`;
-      } else if (tokens.includes("nasa") || tokens.includes("convention")) {
-        botResponse = "The 68th Annual NASA Convention is in preparation stage. Make sure your unit delegates from Chennai are ready. Workshop selections are crucial—refer to the 'How to Select ANC Workshops' guide in our News section.";
-      } else if (tokens.includes("rural") || tokens.includes("varyankaval")) {
-        botResponse = "The Varyankaval Village study in Ariyalur is a prime example of rural documentation. The morphological maps and land-use data you produced are excellent references for future interventions.";
+      // Advanced Knowledge Routing
+      if (tokens.includes("troph") || tokens.includes("participate") || tokens.includes("available")) {
+        botResponse = `Parsing live telemetry... Current active vectors: \n1. ${liveNasaNews.find(n=>n.title.includes("Kahn"))?.title || "Louis I. Kahn Trophy"}\n2. Reubens Showcase\n3. Mohammad Shaheer Landscape Trophy (MSL).`;
+      } else if (tokens.includes("event") || tokens.includes("program")) {
+        botResponse = `NASA India live tracking indicates upcoming operations: 68th Annual Convention and Zonal Workshops. Ensure all members check the Official Portal for deadlines.`;
+      } else if (tokens.includes("nasa") || tokens.includes("national association")) {
+        botResponse = `Network synced to NASA India. Unit ${leadership.unitCode} connection secure. You can review Official Trophies and Convention metrics directly via the sidebar Uplink.`;
+      } else if (tokens.includes("shaheer") || tokens.includes("msl") || tokens.includes("landscape")) {
+        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, focus on ecological integration. Our past concepts utilized biological machines to counteract urban flooding. Ensure bio-swale metrics are updated.";
+      } else if (tokens.includes("design") || tokens.includes("idea") || tokens.includes("concept") || tokens.includes("architect")) {
+        botResponse = "As Le Corbusier said, architecture is the play of forms in light. Consider starting your design by analyzing the site context (sun path, wind patterns) before finalizing the morphology. Would you like to explore parametric forms or vernacular adaptive reuse?";
       } else if (tokens.includes("hello") || tokens.includes("hi") || tokens.includes("hey")) {
-        botResponse = "Hello! I am your advanced architectural co-pilot. I have access to our Unit Z649 databases, Chennai climate data, and the live NASA network. How can I help you design today?";
-      } else if (tokens.includes("money") || tokens.includes("fund") || tokens.includes("balance")) {
+        botResponse = "Hello! I am your advanced architectural co-pilot. I have access to our Unit databases, design philosophies, and the live NASA network. How can I help you today?";
+      } else if (tokens.includes("money") || tokens.includes("fund") || tokens.includes("balance") || tokens.includes("treasury")) {
         const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
         botResponse = `Our current unit treasury balance is ₹${net.toLocaleString()}.`;
       } else {
-        botResponse = "That is a complex query. As an AI focused on architectural strategy, I suggest considering how that impacts user experience, structure, and the environmental context. Can you provide more details?";
+        botResponse = "That is an interesting concept. As an architectural AI, I suggest considering how that impacts user experience, structure, and the environmental context. Can you provide more details?";
       }
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
@@ -359,9 +381,10 @@ export default function App() {
       {/* LIVELY DASHBOARD WIDGETS */}
       <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
-          <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Location Context: Chennai, TN</span>
-          <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>Active Studio Phase</div>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Currently analyzing vernacular typologies and developing the MSL Trophy landscape solutions for Velachery.</p>
+          <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
+          <div style={{ fontSize: '1.4rem', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>
+            {dailyQuote}
+          </div>
         </div>
         <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status: Nominal</span>
@@ -388,8 +411,16 @@ export default function App() {
   );
 
   const renderCrew = () => {
-    const allocation = crewData.reduce((acc, u) => { const y = u.year||"Unassigned"; if(!acc[y]) acc[y]=[]; acc[y].push(u); return acc; }, {});
-    const order = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
+    // Force strict sorting logic
+    const orderedYears = ['1', '2', '3', '4', '5', 'Alumni', 'Unassigned']; 
+    const allocation = {};
+    orderedYears.forEach(y => allocation[y] = []);
+
+    crewData.forEach(u => {
+      const y = u.year || 'Unassigned';
+      if (allocation[y]) allocation[y].push(u);
+      else allocation['Unassigned'].push(u);
+    });
     
     return (
       <div className="bento-container">
@@ -398,26 +429,29 @@ export default function App() {
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Member</button>}
         </div>
         
-        {order.map(year => allocation[year] && (
-          <div key={year} style={{ marginTop: '24px' }}>
-            <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `Year ${year}`}</span>
-            <div className="bento-grid-2" style={{ marginTop: '16px' }}>
-              {allocation[year].map(m => (
-                <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: ['UD', 'USEC', 'Coordinator'].includes(m.role) ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill">
-                      {['UD', 'USEC', 'Coordinator'].includes(m.role) && <Crown size={12} style={{marginRight:4}}/>}
-                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
+        {orderedYears.map(year => {
+          if (allocation[year].length === 0) return null;
+          return (
+            <div key={year} style={{ marginTop: '24px' }}>
+              <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
+              <div className="bento-grid-2" style={{ marginTop: '16px' }}>
+                {allocation[year].map(m => (
+                  <div key={m.id} className="bento-card" style={{ padding: '24px', cursor: 'pointer', border: ['UD', 'USEC', 'Coordinator'].includes(m.role) ? '1px solid var(--neon-gold)' : '' }} onClick={() => setViewingCrew(m)}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <span className="status-pill">
+                        {['UD', 'USEC', 'Coordinator'].includes(m.role) && <Crown size={12} style={{marginRight:4}}/>}
+                        {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display:'flex', alignItems:'center', gap:'4px' }}><Eye size={12}/> Details</span>
+                    </div>
+                    <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
                   </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{m.name}</div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>{m.email}</div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   };
@@ -433,7 +467,9 @@ export default function App() {
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>}
+          {isLeadershipMode && (
+            <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>
+          )}
         </div>
 
         <div className="bento-grid-2">
@@ -524,7 +560,6 @@ export default function App() {
   };
 
   const renderGallery = () => {
-    // Show both images and archived text/documents
     return (
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
@@ -535,7 +570,6 @@ export default function App() {
           {galleryData.map(g => (
             <div key={g.id} className="bento-card" style={{ padding: 0 }}>
               {g.fileType === 'Archive' ? (
-                // Render text-based Archive format
                 <div style={{ padding: '32px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
@@ -546,7 +580,6 @@ export default function App() {
                   {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px' }}>View Saved Data <ArrowUpRight size={14}/></a>}
                 </div>
               ) : (
-                // Render traditional Image format
                 <>
                   <div style={{ height: '250px', background: g.fileType === 'Image URL' || g.fileType === 'Image' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {(g.fileType !== 'Image URL' && g.fileType !== 'Image') && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
@@ -628,25 +661,49 @@ export default function App() {
     </div>
   );
 
-  const renderUnitCouncil = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Leadership</span><h1 className="text-title">Unit Council</h1></div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
+  const renderUnitCouncil = () => {
+    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
+
+    return (
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {/* ADD EXECUTIVE OPENS CREW MODAL */}
+            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
+            {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
+          </div>
+        </div>
+        <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)', marginBottom: '24px' }}>
+          <span className="text-subtitle" style={{color: '#fff'}}>Unit Information</span>
+          <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
+          <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
+        </div>
+
+        <span className="text-subtitle" style={{ padding: '0 16px', marginTop: '16px', color: 'var(--neon-gold)' }}><Crown size={14}/> High Command Directory</span>
+        <div className="bento-grid-2">
+          {councilMembers.length === 0 && <div className="text-sm text-white/50 px-4">No executives initialized inside the matrix.</div>}
+          {councilMembers.map(m => (
+            <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', background: 'rgba(255,255,255,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
+                  {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
+                </span>
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
+              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
+                <Eye size={14}/> View Dossier
+              </button>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="bento-card" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.15)' }}>
-        <span className="text-subtitle" style={{color: '#fff'}}>Unit Information</span>
-        <div style={{ fontSize: '3.5rem', fontWeight: '600', margin: '10px 0', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>Unit {leadership.unitCode}</div>
-        <div className="status-pill" style={{fontFamily: 'var(--font-mono)', textTransform: 'lowercase'}}><Globe size={12}/> {leadership.officialEmail}</div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderRSAIntel = () => {
     return (
-      <div className="bento-container">
+      <div className="bento-container" style={{ maxWidth: '1400px' }}>
         <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
         
         <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
@@ -706,14 +763,17 @@ export default function App() {
           </div>
         </div>
         
+        {/* 🌟 COMPLEX ANIMATRONIC SIDEBAR LOGO 🌟 */}
         <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
+          <div className={`complex-sidebar-logo ${sidebarOpen ? 'spin' : ''}`}>
+             <Hexagon size={36} className="hex-outer" />
+             <Aperture size={20} className="aperture-inner" />
+          </div>
         </div>
       </nav>
 
       {/* SIDEBAR */}
       <div className={`nasa-sidebar ${sidebarOpen ? 'open' : ''}`}>
-        
         <div className="sidebar-header">
           <div className="sidebar-logo">RSA<span style={{color: '#fff'}}>.</span> <span style={{fontSize:'1rem', color:'#fff', fontStyle:'normal', fontFamily:'var(--font-body)', fontWeight:'400'}}>X</span> NASA</div>
           <button className="sidebar-close" onClick={() => setSidebarOpen(false)}><X size={28}/></button>
@@ -747,6 +807,7 @@ export default function App() {
         {dockItems.map((item, i) => (
           <div key={item.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => executeEngineNavigation(i)}>
             {item.icon}
+            <div className="dock-tooltip">{item.label}</div>
           </div>
         ))}
       </div>
@@ -760,6 +821,8 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`}>{renderNews()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
+        {/* Transparent spacer to prevent cutting off the bottom AI section */}
+        <div style={{ height: '40px', width: '100%', scrollSnapAlign: 'end' }}></div>
       </div>
 
       {/* FULL NEWS READER MODAL */}
@@ -827,7 +890,7 @@ export default function App() {
                   <input type="email" placeholder="Email" className="mb-4" value={formPayload.email||''} onChange={e=>setFormPayload({...formPayload, email:e.target.value})} />
                   <input type="tel" placeholder="Phone Number" className="mb-4" value={formPayload.phone||''} onChange={e=>setFormPayload({...formPayload, phone:e.target.value})} />
                   
-                  <span className="text-subtitle" style={{marginTop:'16px'}}>Role</span>
+                  <span className="text-subtitle" style={{marginTop:'16px'}}>Role (Adds Executive to Council)</span>
                   <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
                     <option value="" disabled>Select Role...</option>
                     <option value="Member">Student Member</option>
