@@ -5,7 +5,7 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye, FolderArchive,
+  Hexagon, Fingerprint, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
   HardDrive, RadioTower, TrendingUp, TrendingDown, BookOpen
 } from 'lucide-react';
 
@@ -104,12 +104,9 @@ const GLOBAL_STYLES = `
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
-  /* TOP BAR */
+  /* TOP BAR & ANIMATED TOGGLE */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
-  
-  .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 700; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-  .logo-toggle:hover { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
   .security-hud:hover { border-color: var(--neon-cyan); }
@@ -117,6 +114,30 @@ const GLOBAL_STYLES = `
   .hud-locked .hud-icon-box { background: rgba(255, 255, 255, 0.1); color: #fff; }
   .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
+
+  /* KINETIC MENU TOGGLE BUTTON */
+  .sidebar-menu-btn {
+    position: relative; width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 120; backdrop-filter: blur(10px);
+  }
+  .sidebar-menu-btn:hover { background: rgba(0, 240, 255, 0.1); border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.3); transform: scale(1.1); }
+  
+  .menu-icon-lines { position: relative; width: 22px; height: 16px; }
+  .menu-icon-lines span {
+    position: absolute; left: 0; width: 100%; height: 2px; background: #fff;
+    border-radius: 2px; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  .menu-icon-lines span:nth-child(1) { top: 0; }
+  .menu-icon-lines span:nth-child(2) { top: 7px; width: 70%; right: 0; left: auto; }
+  .menu-icon-lines span:nth-child(3) { top: 14px; }
+
+  .sidebar-menu-btn.open { transform: rotate(90deg); border-color: var(--neon-pink); background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255,0,85,0.3); }
+  .sidebar-menu-btn.open .menu-icon-lines span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: #fff; width: 100%; }
+  .sidebar-menu-btn.open .menu-icon-lines span:nth-child(2) { opacity: 0; transform: translateX(20px); }
+  .sidebar-menu-btn.open .menu-icon-lines span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: #fff; width: 100%; }
 
   /* SIDEBAR */
   .nasa-sidebar {
@@ -147,7 +168,7 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) {
     .floating-dock {
       bottom: 24px; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; padding: 8px; border-radius: 100px;
-      width: 92%; overflow-x: auto; justify-content: flex-start;
+      width: 92%; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch;
     }
     .dock-item { min-width: 46px; height: 46px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
     .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
@@ -198,7 +219,7 @@ const GLOBAL_STYLES = `
 
   /* AI CHAT */
   .ai-terminal { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 16px; height: 500px; }
-  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scroll-bar-width: none; }
+  .ai-chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; scrollbar-width: none; }
   .ai-chat-box::-webkit-scrollbar { display: none; }
   .ai-msg { padding: 14px 18px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; font-family: var(--font-body); }
   .ai-msg.bot { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
@@ -214,7 +235,6 @@ const GLOBAL_STYLES = `
     .scrolling-section { padding: 100px 16px 120px 16px; }
     .modal-window { padding: 24px; }
     .top-bar { padding: 16px 20px; }
-    .logo-toggle { font-size: 1.8rem; }
     .nasa-sidebar { width: 100%; right: -100%; }
   }
 `;
@@ -443,7 +463,8 @@ export default function App() {
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
-          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Member</button>}
+          {/* OPEN ACCESS FOR ALL TO REGISTER */}
+          <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
         </div>
         
         {orderedYears.map(year => {
@@ -551,6 +572,7 @@ export default function App() {
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
 
+        {/* VAULT CATEGORY FILTER */}
         <div style={{ display: 'flex', gap: '12px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
           {vaultCategories.map(cat => (
             <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
@@ -632,6 +654,7 @@ export default function App() {
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
         
+        {/* MANUAL UNIT NEWS (Gist View) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
           {newsData.length === 0 && <div className="text-sm text-white/50 px-4">No unit news right now.</div>}
@@ -645,6 +668,7 @@ export default function App() {
                 </div>
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
+              {/* GIST VIEW: Show only first 120 chars */}
               <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
                 {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
               </div>
@@ -655,6 +679,7 @@ export default function App() {
           ))}
         </div>
 
+        {/* LIVE NASA FEED SECTION */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
           <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
@@ -685,7 +710,6 @@ export default function App() {
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Coordinator', year: '4' }); setModalMode('crew'); }}><Plus size={16}/> Add Executive</button>}
             {isLeadershipMode && <button className="btn-primary btn-secondary" onClick={() => { setFormPayload(leadership); setModalMode('hq'); }}><Settings size={16}/> Edit Unit Info</button>}
           </div>
         </div>
@@ -756,6 +780,7 @@ export default function App() {
         <div className="plasma-orb orb-p"></div>
       </div>
 
+      {/* 🌟 NEW COMPLEX CIRCLE FLOW SPLASH SCREEN 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
         <div className="splash-container">
           <div className="circle-flow-1"></div>
@@ -777,8 +802,16 @@ export default function App() {
           </div>
         </div>
         
-        <div className="logo-toggle pointer-events-auto" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
+        {/* 🌟 KINETIC SIDEBAR MENU TOGGLE 🌟 */}
+        <div className="pointer-events-auto" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '700', letterSpacing: '0.02em', color: '#fff', textShadow: '0 0 20px rgba(0, 240, 255, 0.2)' }}>
+            RSA<span style={{color: 'var(--neon-cyan)'}}>.</span>
+          </div>
+          <button className={`sidebar-menu-btn ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <div className="menu-icon-lines">
+              <span></span><span></span><span></span>
+            </div>
+          </button>
         </div>
       </nav>
 
@@ -904,10 +937,10 @@ export default function App() {
                   <select required className="mb-4" value={formPayload.role||''} onChange={e=>setFormPayload({...formPayload, role:e.target.value})}>
                     <option value="" disabled>Select Role...</option>
                     <option value="Member">Student Member</option>
-                    <option value="UD">Unit Designee (UD)</option>
-                    <option value="USEC">Unit Secretary (USEC)</option>
-                    <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>
-                    <option value="Coordinator">Coordinator</option>
+                    {isLeadershipMode && <option value="UD">Unit Designee (UD)</option>}
+                    {isLeadershipMode && <option value="USEC">Unit Secretary (USEC)</option>}
+                    {isLeadershipMode && <option value="EX USEC">Ex-Unit Secretary (EX USEC)</option>}
+                    {isLeadershipMode && <option value="Coordinator">Coordinator</option>}
                   </select>
 
                   {formPayload.role === 'Coordinator' && (
