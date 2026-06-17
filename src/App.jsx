@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { 
-  Shield, ShieldAlert, Plus, Trash2, Users, DollarSign, 
+  Shield, ShieldAlert, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
-  Globe, Activity, Crown, Cpu, Send, Calendar,
-  Hexagon, Zap, Lock, Unlock, Pencil, Eye, Archive,
-  HardDrive, Radio, BookOpen, Check
+  Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
+  Hexagon, Zap, Lock, Unlock, Pencil, Eye, FolderArchive,
+  HardDrive, RadioTower, BookOpen, Check
 } from 'lucide-react';
 
 // ==========================================
@@ -127,7 +127,7 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* 🌟 CIRCLE FLOW SPLASH SCREEN 🌟 */
+  /* CIRCLE FLOW SPLASH SCREEN */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
@@ -145,8 +145,8 @@ const GLOBAL_STYLES = `
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
   @keyframes trackIn { to { margin-left: 0; letter-spacing: 0.08em; opacity: 1; } }
 
-  /* 🌟 HYBRID SCROLL ENGINE (Intersection Observer Powered) 🌟 */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  /* PERFORMANCE SCROLLING */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   /* Desktop Layout */
   @media (min-width: 769px) {
@@ -162,19 +162,19 @@ const GLOBAL_STYLES = `
   }
 
   /* Staggered Reveal Logic */
-  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
+  .stagger-item { opacity: 0; transform: translateY(40px); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
   .view-active .stagger-item { opacity: 1; transform: translateY(0); }
   .stagger-1 { transition-delay: 0ms; }
   .stagger-2 { transition-delay: 80ms; }
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* 🌟 BENTO CARDS 🌟 */
+  /* BENTO CARDS */
   .bento-card { 
-    background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
     position: relative; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease;
   }
   .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-2px); }
   
@@ -187,7 +187,7 @@ const GLOBAL_STYLES = `
     .bento-grid-2, .bento-grid-3 { grid-template-columns: 1fr; gap: 16px; }
   }
 
-  /* 🌟 TOP BAR 🌟 */
+  /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -223,42 +223,46 @@ const GLOBAL_STYLES = `
     position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw;
     background: var(--color-obsidian); border-left: 1px solid var(--glass-border); z-index: 110;
     padding: 100px 24px 30px 24px; display: flex; flex-direction: column;
-    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
-
+  
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
   .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
   .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
-  .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
 
-  /* 🌟 OPTIMIZED FLOATING DOCK (CSS ONLY, NO JS LAG) 🌟 */
+  /* 🌟 OPTIMIZED FLOATING DOCK 🌟 */
   .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
   .floating-dock { 
     background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); 
     display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto;
   }
-  .dock-item { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.3s ease; }
-  .dock-tooltip { position: absolute; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; }
-
-  /* Desktop Dock */
+  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s ease; }
+  
+  /* Desktop Dock (Left, Vertical) */
   @media (min-width: 769px) {
     .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
-    .dock-item { width: 48px; height: 48px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s; }
+    .dock-item { width: 48px; height: 48px; border-radius: 50%; }
     .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); animation: popActive 0.4s var(--ease-spring); }
     .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
-    .dock-tooltip { top: 50%; left: 100%; margin-left: 15px; transform: translateY(-50%) translateX(-10px); }
+    
+    .dock-tooltip { 
+      position: absolute; left: 100%; top: 50%; margin-left: 16px; transform: translateY(-50%) translateX(-10px);
+      background: var(--color-steel); border: 1px solid var(--color-chrome); color: #fff; 
+      padding: 6px 12px; border-radius: 8px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; 
+      opacity: 0; transition: all 0.2s; white-space: nowrap; pointer-events: none; display: flex; align-items: center; gap: 6px;
+    }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .dock-label-mobile { display: none; }
     @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(12px) scale(1.1); } }
   }
 
-  /* Mobile Dock */
+  /* Mobile Dock (Bottom, Horizontal) */
   @media (max-width: 768px) {
     .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; }
@@ -286,7 +290,7 @@ const GLOBAL_STYLES = `
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
     .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
-    input, textarea, select { font-size: 16px !important; }
+    input, textarea, select { font-size: 16px !important; } /* Prevents iOS Zoom */
   }
 
   @keyframes fadeIn { to { opacity: 1; } }
@@ -316,7 +320,6 @@ const GLOBAL_STYLES = `
 // ==========================================
 // 4. HELPER COMPONENTS
 // ==========================================
-
 const getHashColor = (str) => {
   if (!str) return '#60a5fa'; 
   let hash = 0;
@@ -379,16 +382,17 @@ export default function App() {
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
+  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
-    { id: 'crew', label: 'Personnel', icon: <Users size={20}/>, accent: 'var(--accent-crew)' },
-    { id: 'fin', label: 'Treasury', icon: <DollarSign size={20}/>, accent: 'var(--accent-finance)' },
+    { id: 'crew', label: 'Personnel', icon: <UsersRound size={20}/>, accent: 'var(--accent-crew)' },
+    { id: 'fin', label: 'Treasury', icon: <CircleDollarSign size={20}/>, accent: 'var(--accent-finance)' },
     { id: 'vault', label: 'Vault', icon: <Server size={20}/>, accent: 'var(--accent-vault)' },
     { id: 'gal', label: 'Gallery', icon: <Aperture size={20}/>, accent: 'var(--accent-gallery)' },
-    { id: 'news', label: 'Broadcasts', icon: <Radio size={20}/>, accent: 'var(--accent-news)' },
+    { id: 'news', label: 'Broadcasts', icon: <RadioTower size={20}/>, accent: 'var(--accent-news)' },
     { id: 'hq', label: 'Council', icon: <Crown size={20}/>, accent: 'var(--accent-hq)' },
-    { id: 'ai', label: 'AI Chat', icon: <Cpu size={20}/>, accent: 'var(--neon-cyan)' }
+    { id: 'ai', label: 'AI Chat', icon: <BrainCircuit size={20}/>, accent: 'var(--neon-cyan)' }
   ];
 
   // Boot Sequence
@@ -450,7 +454,7 @@ export default function App() {
     }
   };
 
-  const handleSecurityToggle = () => {
+  const toggleAdmin = () => {
     if (isLeadershipMode) setIsLeadershipMode(false);
     else {
       const pass = prompt("Enter Access Key:");
@@ -544,9 +548,15 @@ export default function App() {
   // ==========================================
   // DASHBOARD SECTIONS
   // ==========================================
+  const getSectionStyle = (idx) => {
+    return {
+      '--reveal-dir': '40px',
+      '--section-accent': SECTIONS[idx].accent
+    };
+  };
 
   const renderDashboard = () => (
-    <div className="bento-container">
+    <div className="bento-container" style={getSectionStyle(0)}>
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
       <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
         <div className="bento-card stagger-item stagger-2" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
@@ -560,9 +570,9 @@ export default function App() {
         </div>
       </div>
       <div className="bento-grid-3">
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Users size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><UsersRound size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
         <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Radio size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
+        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><RadioTower size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
       </div>
     </div>
   );
@@ -574,7 +584,7 @@ export default function App() {
     crewData.forEach(u => { const y = u.year || 'Unassigned'; if (allocation[y]) allocation[y].push(u); else allocation['Unassigned'].push(u); });
     
     return (
-      <div className="bento-container">
+      <div className="bento-container" style={getSectionStyle(1)}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
           <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
@@ -618,7 +628,7 @@ export default function App() {
     const goal = Number(leadership.financialGoal) || 1; 
 
     return (
-      <div className="bento-container">
+      <div className="bento-container" style={getSectionStyle(2)}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>}
@@ -670,7 +680,7 @@ export default function App() {
 
   const renderVault = () => {
     return (
-      <div className="bento-container">
+      <div className="bento-container" style={getSectionStyle(3)}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
@@ -681,7 +691,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><Archive size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><FolderArchive size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('vault', v.id); }}><Trash2 size={14}/></button>}
                 </div>
@@ -697,7 +707,7 @@ export default function App() {
 
   const renderGallery = () => {
     return (
-      <div className="bento-container">
+      <div className="bento-container" style={getSectionStyle(4)}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
@@ -708,7 +718,7 @@ export default function App() {
               {g.fileType === 'Archive' ? (
                 <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><Archive size={12}/> YEAR {g.archivedYear || '2026'}</span>
+                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
                     {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('gallery', g.id); }}><Trash2 size={14}/></button>}
                   </div>
                   <div className="type-h2">{g.title}</div>
@@ -742,7 +752,7 @@ export default function App() {
 
   const renderNews = () => {
     return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
+      <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(5) }}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
@@ -756,14 +766,18 @@ export default function App() {
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
                     {isLeadershipMode && (
-                      <button className="btn-icon" title="Broadcast via Email" onClick={(e) => { 
+                      <button 
+                        className="btn-icon" 
+                        title="Broadcast via Email"
+                        onClick={(e) => { 
                           e.stopPropagation(); 
                           const emails = crewData.map(c => c.email).filter(Boolean).join(',');
                           if(!emails) return alert('No emails found in directory.');
                           const subject = encodeURIComponent(`[RSA Unit ${leadership.unitCode} UPDATE] ${n.title}`);
                           const body = encodeURIComponent(`${n.content}\n\n--\nSent via RSA Command Center`);
                           window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
-                        }}>
+                        }}
+                      >
                         <Mail size={14}/>
                       </button>
                     )}
@@ -802,7 +816,7 @@ export default function App() {
   const renderUnitCouncil = () => {
     const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator', 'EX USEC'].includes(m.role));
     return (
-      <div className="bento-container">
+      <div className="bento-container" style={getSectionStyle(6)}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Administration Layer</span><h1 className="text-title">Executive Core</h1></div>
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -837,10 +851,10 @@ export default function App() {
 
   const renderRSAIntel = () => {
     return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
+      <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(7) }}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
         <div className="bento-card stagger-item stagger-2 mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-          <span className="text-subtitle text-white"><Cpu size={14}/> Chat with RSA AI</span>
+          <span className="text-subtitle text-white"><BrainCircuit size={14}/> Chat with RSA AI</span>
           <div className="ai-terminal">
             <div id="ai-chat-box-container" className="ai-chat-box">
               {aiMessages.map((msg, idx) => (<div key={idx} className={`ai-msg ${msg.sender}`}>{msg.text}</div>))}
