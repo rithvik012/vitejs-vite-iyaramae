@@ -5,12 +5,12 @@ import {
   Shield, Plus, Trash2, UsersRound, CircleDollarSign, 
   Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
   Globe, Activity, Crown, BrainCircuit, Send, CalendarClock,
-  Hexagon, Fingerprint, Zap, Lock, Unlock, Menu, Pencil, Eye,
-  HardDrive, ImagePlus, RadioTower, TrendingUp, TrendingDown
+  Hexagon, Zap, Lock, Unlock, Menu, Pencil, Eye, FolderArchive,
+  HardDrive, RadioTower, TrendingUp, TrendingDown, BookOpen
 } from 'lucide-react';
 
 // ==========================================
-// FIREBASE SECURE DATABASE
+// FIREBASE DATABASE
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAYyPimaOuXEPi6R6wFNgsrhGOaemQE9J4",
@@ -26,7 +26,7 @@ const db = getFirestore(app);
 const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
-// DESIGN SYSTEM & STYLES
+// DESIGN SYSTEM STYLES
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -54,16 +54,24 @@ const GLOBAL_STYLES = `
   input:focus, textarea:focus, select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); background: rgba(0,0,0,0.8) !important; }
   ::-webkit-scrollbar { width: 0px; }
 
+  /* BACKGROUND */
   .animatronic-bg { position: fixed; inset: 0; z-index: -5; background: var(--bg-base); overflow: hidden; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; animation: plasmaDrift 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
   .orb-c { width: 65vw; height: 65vw; background: var(--neon-cyan); top: -20vh; left: -15vw; }
   .orb-p { width: 55vw; height: 55vw; background: var(--neon-purple); bottom: -15vh; right: -15vw; animation-delay: -7s; }
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw, 5vh) scale(1.05); } }
 
+  /* NEW CIRCLE FLOW SPLASH SCREEN */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1.2s ease-in-out, visibility 1.2s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; }
+  .splash-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
+  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
+  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
+  .splash-brand { font-family: var(--font-heading); font-size: 3.5rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
 
+  /* SCROLLING */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; perspective: 1000px; -webkit-overflow-scrolling: touch; }
   .scrolling-section {
     min-height: 100dvh; width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 120px 24px 100px 24px;
@@ -73,7 +81,6 @@ const GLOBAL_STYLES = `
   .scrolling-section.view-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
 
   .bento-container { width: 100%; max-width: 1100px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 20px 0; scrollbar-width: none; }
-  
   .bento-card { 
     background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
     border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.12);
@@ -85,9 +92,9 @@ const GLOBAL_STYLES = `
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
 
+  /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
-  
   .logo-toggle { font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; font-weight: 700; letter-spacing: 0.02em; color: #fff; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
   .logo-toggle:hover { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
   
@@ -110,7 +117,6 @@ const GLOBAL_STYLES = `
   .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
   .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
   .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
-  
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
   .sidebar-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
@@ -123,8 +129,10 @@ const GLOBAL_STYLES = `
   .dock-item { min-width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .dock-item.active { color: #000; background: #fff; transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
   .dock-item:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
-  
-  /* TYPOGRAPHY */
+  .dock-tooltip { position: absolute; top: -45px; background: #fff; color: #000; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; opacity: 0; transition: all 0.2s; white-space: nowrap; text-transform: uppercase; font-family: var(--font-ui); pointer-events: none; letter-spacing: 0.1em; transform: translateY(10px); }
+  .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(0); }
+
+  /* TYPOGRAPHY & BUTTONS */
   .text-title { font-family: var(--font-heading); font-style: italic; font-weight: 600; font-size: 4.2rem; letter-spacing: -0.02em; line-height: 1.1; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
   .text-subtitle { font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .text-metric { font-family: var(--font-ui); font-weight: 300; font-size: 3.5rem; letter-spacing: -0.04em; color: #fff; }
@@ -133,13 +141,16 @@ const GLOBAL_STYLES = `
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
   
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); font-family: var(--font-ui); }
   
+  .filter-tab { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 100px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; }
+  .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
+  .filter-tab:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.3); }
+
   .pro-table { width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; }
   .pro-table th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
   .pro-table td { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
@@ -154,6 +165,7 @@ const GLOBAL_STYLES = `
   .ai-msg.user { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .ai-input-wrapper { display: flex; gap: 8px; margin-top: auto; }
   
+  /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .modal-window { background: #050505; border: 1px solid rgba(255,255,255,0.15); width: 100%; max-width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; }
 
@@ -184,15 +196,26 @@ export default function App() {
   const [galleryData, setGalleryData] = useState([]);
   const [newsData, setNewsData] = useState([]);
 
+  // Filters & State
+  const [vaultFilter, setVaultFilter] = useState('All');
+  const vaultCategories = ['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'];
+
+  // Simulated LIVE NASA Feed
+  const liveNasaNews = [
+    { id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' },
+    { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }
+  ];
+
   // AI State
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'Hi! I am the RSA AI Assistant. I can help you with NASA India information, architecture tips, or unit details. Ask me anything.' }
+    { sender: 'bot', text: 'RSA Advanced AI initialized. Location: Chennai. Year: 2026. Connected to live NASA feeds and local archives. What would you like to explore?' }
   ]);
 
   // Modals
   const [modalMode, setModalMode] = useState(null); 
   const [viewingCrew, setViewingCrew] = useState(null);
+  const [viewingNews, setViewingNews] = useState(null);
   const [formPayload, setFormPayload] = useState({});
   const scrollEngineRef = useRef(null);
 
@@ -201,14 +224,14 @@ export default function App() {
     { id: 'crew', icon: <UsersRound size={22} strokeWidth={1.5}/>, label: 'Team' },
     { id: 'funds', icon: <CircleDollarSign size={22} strokeWidth={1.5}/>, label: 'Treasury' },
     { id: 'vault', icon: <HardDrive size={22} strokeWidth={1.5}/>, label: 'Files' },
-    { id: 'gallery', icon: <Aperture size={22} strokeWidth={1.5}/>, label: 'Gallery' },
+    { id: 'gallery', icon: <Aperture size={22} strokeWidth={1.5}/>, label: 'Archive Gallery' },
     { id: 'news', icon: <RadioTower size={22} strokeWidth={1.5}/>, label: 'News' },
     { id: 'hq', icon: <Crown size={22} strokeWidth={1.5}/>, label: 'Council' },
     { id: 'ai', icon: <BrainCircuit size={22} strokeWidth={1.5}/>, label: 'AI Chat' }
   ];
 
   useEffect(() => {
-    setTimeout(() => setIsBooting(false), 2000);
+    setTimeout(() => setIsBooting(false), 2200);
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { d.exists() && setLeadership({ ...leadership, ...d.data() }); }),
       onSnapshot(collection(db, "crew"), s => setCrewData(s.docs.map(d => ({ id: d.id, ...d.data() })))),
@@ -220,13 +243,9 @@ export default function App() {
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
-  // 🌟 FIX FOR AI SCROLL BUG 🌟
-  // Instead of scrolling the whole window, we strictly scroll the chat container inside the div.
   useEffect(() => {
     const chatContainer = document.getElementById('ai-chat-box-container');
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
   }, [aiMessages]);
 
   const handleEngineScroll = () => {
@@ -241,9 +260,8 @@ export default function App() {
   };
 
   const handleSecurityToggle = () => {
-    if (isLeadershipMode) {
-      setIsLeadershipMode(false);
-    } else {
+    if (isLeadershipMode) setIsLeadershipMode(false);
+    else {
       const pass = prompt("Enter Admin Password to Unlock Editing:");
       if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
       else if (pass) alert("Incorrect Password.");
@@ -261,18 +279,34 @@ export default function App() {
         await addDoc(collection(db, collectionName), { ...formPayload, timestamp: Date.now() });
       }
       setModalMode(null); 
-      setViewingCrew(null);
       setFormPayload({});
-    } catch (e) { 
-      alert("Failed to save data."); 
-    }
+    } catch (e) { alert("Failed to save data."); }
   };
 
   const deleteDocRecord = async (col, id) => {
     if (window.confirm("Are you sure you want to delete this?")) {
       await deleteDoc(doc(db, col, id));
-      setModalMode(null);
-      setViewingCrew(null);
+    }
+  };
+
+  // ARCHIVE PIPELINE: Moves an active Vault file to the Archive Gallery permanently.
+  const handleArchiveVaultItem = async (item) => {
+    if (!window.confirm("Move this work to the Archive Gallery? It will be marked with the year 2026 and removed from the active vault.")) return;
+    try {
+      const currentYear = new Date().getFullYear(); // e.g., 2026
+      await addDoc(collection(db, 'gallery'), {
+         title: item.title,
+         category: item.category || 'Archived Work',
+         description: `Archived File (${currentYear}). ${item.description || ''}`,
+         link: item.link || '',
+         fileType: 'Archive',
+         archivedYear: currentYear,
+         timestamp: Date.now()
+      });
+      await deleteDoc(doc(db, 'vault', item.id));
+      alert("Successfully moved to Archive.");
+    } catch(e) {
+      alert("Failed to archive item.");
     }
   };
 
@@ -291,28 +325,27 @@ export default function App() {
       const tokens = textRaw.toLowerCase();
       let botResponse = "";
 
-      // Advanced NASA & Architecture Knowledge
       if (tokens.includes("troph") || tokens.includes("lik") || tokens.includes("louis")) {
-        botResponse = "The Louis I. Kahn (LIK) Trophy focuses on documenting unrecorded heritage architecture. Remember to focus on structural accuracy, joinery details, and vernacular materials. Submissions usually require base maps, sections, and cultural context.";
+        botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Currently, submissions are open on the NASA portal. I recommend focusing on vernacular spatial configurations and timber joints, similar to the Kanchipuram housing typologies we documented.";
       } else if (tokens.includes("msl") || tokens.includes("landscape") || tokens.includes("shaheer")) {
-        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, the goal is often ecological integration. If you are working on the Velachery site, focus on flood mitigation, bio-swales, and creating a 'biological machine' that heals the urban fabric.";
-      } else if (tokens.includes("design") || tokens.includes("idea") || tokens.includes("concept")) {
-        botResponse = "When starting a design concept, always begin with the site context (sun path, wind, local culture). Consider concepts like parametric forms, biomimicry (copying nature), or adaptive reuse of old structures. What kind of building are you designing?";
+        botResponse = "For the Mohammad Shaheer Landscape (MSL) Trophy, our focus is the Velachery site in Chennai. Our 'Hydro-Social Connector' concept acts as a biological machine to manage urban flooding. Ensure the bio-swale metrics are updated.";
+      } else if (tokens.includes("news") || tokens.includes("live") || tokens.includes("feed")) {
+        botResponse = `Checking live NASA feed... I found ${liveNasaNews.length} recent updates. The latest is: "${liveNasaNews[0].title}". You can view these directly in the News section.`;
       } else if (tokens.includes("nasa") || tokens.includes("convention")) {
-        botResponse = "The 68th Annual NASA Convention is approaching! Make sure your unit delegates are prepared. You should look into the workshop lists early to secure spots that match your team's skills.";
-      } else if (tokens.includes("rural") || tokens.includes("village")) {
-        botResponse = "Rural documentation (like your work in Varyankaval Village) is crucial. Focus on land-use mapping, street elevations, and how the community interacts with common spaces like courtyards or village squares.";
+        botResponse = "The 68th Annual NASA Convention is in preparation stage. Make sure your unit delegates from Chennai are ready. Workshop selections are crucial—refer to the 'How to Select ANC Workshops' guide in our News section.";
+      } else if (tokens.includes("rural") || tokens.includes("varyankaval")) {
+        botResponse = "The Varyankaval Village study in Ariyalur is a prime example of rural documentation. The morphological maps and land-use data you produced are excellent references for future interventions.";
       } else if (tokens.includes("hello") || tokens.includes("hi") || tokens.includes("hey")) {
-        botResponse = "Hello! I am ready to help you with architecture studies, unit management, or NASA updates. What do you need?";
+        botResponse = "Hello! I am your advanced architectural co-pilot. I have access to our Unit Z649 databases, Chennai climate data, and the live NASA network. How can I help you design today?";
       } else if (tokens.includes("money") || tokens.includes("fund") || tokens.includes("balance")) {
         const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-        botResponse = `Right now, the unit has a total balance of ₹${net.toLocaleString()}. You can add more transactions in the Treasury section.`;
+        botResponse = `Our current unit treasury balance is ₹${net.toLocaleString()}.`;
       } else {
-        botResponse = "That is an interesting topic. As an architecture AI, I suggest looking at how that impacts user experience, structure, and the environment. Can you give me more specific details?";
+        botResponse = "That is a complex query. As an AI focused on architectural strategy, I suggest considering how that impacts user experience, structure, and the environmental context. Can you provide more details?";
       }
 
       setAiMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 800);
+    }, 1000);
   };
 
   // ==========================================
@@ -322,6 +355,21 @@ export default function App() {
   const renderDashboard = () => (
     <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
+      
+      {/* LIVELY DASHBOARD WIDGETS */}
+      <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
+        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
+          <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Location Context: Chennai, TN</span>
+          <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>Active Studio Phase</div>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Currently analyzing vernacular typologies and developing the MSL Trophy landscape solutions for Velachery.</p>
+        </div>
+        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
+          <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status: Nominal</span>
+          <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.5' }}>Preparation is active. Live feed connected. Ensure all delegates review the workshop registration guidelines.</p>
+        </div>
+      </div>
+
       <div className="bento-grid-3">
         <div className="bento-card">
           <span className="text-subtitle" style={{color: '#fff'}}><UsersRound size={14}/> Active Members</span>
@@ -332,7 +380,7 @@ export default function App() {
           <div className="text-metric">{vaultData.length}</div>
         </div>
         <div className="bento-card">
-          <span className="text-subtitle" style={{color: '#fff'}}><Activity size={14}/> News Posts</span>
+          <span className="text-subtitle" style={{color: '#fff'}}><RadioTower size={14}/> News Posts</span>
           <div className="text-metric">{newsData.length}</div>
         </div>
       </div>
@@ -347,9 +395,7 @@ export default function App() {
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
-          {isLeadershipMode && (
-            <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Member</button>
-          )}
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Add Member</button>}
         </div>
         
         {order.map(year => allocation[year] && (
@@ -387,9 +433,7 @@ export default function App() {
       <div className="bento-container">
         <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
-          {isLeadershipMode && (
-            <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>
-          )}
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>}
         </div>
 
         <div className="bento-grid-2">
@@ -408,8 +452,7 @@ export default function App() {
                <div style={{ width: `${Math.min((net/goal)*100, 100)}%`, height: '100%', background: '#fff' }}></div>
             </div>
             <div style={{ display:'flex', justifyContent:'space-between', marginTop: '10px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontFamily:'var(--font-mono)' }}>
-              <span>Goal</span>
-              <span>₹{goal.toLocaleString()}</span>
+              <span>Goal</span><span>₹{goal.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -417,12 +460,7 @@ export default function App() {
         <div className="bento-card" style={{ padding: '8px 24px 24px 24px', overflowX: 'auto' }}>
            <table className="pro-table">
              <thead>
-               <tr>
-                 <th>Type</th>
-                 <th>Description</th>
-                 <th>Amount</th>
-                 <th>Edit</th>
-               </tr>
+               <tr><th>Type</th><th>Description</th><th>Amount</th><th>Edit</th></tr>
              </thead>
              <tbody>
                {financialLog.length === 0 && <tr><td colSpan="4" style={{textAlign:'center', padding:'40px', color:'rgba(255,255,255,0.5)'}}>No records found.</td></tr>}
@@ -448,80 +486,144 @@ export default function App() {
     );
   };
 
-  const renderVault = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Files & Links</span><h1 className="text-title">Secure Vault</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
-      </div>
-      <div className="bento-grid-3">
-        {vaultData.map(v => (
-          <div key={v.id} className="bento-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span className="status-pill"><HardDrive size={12}/> {v.type}</span>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
-                {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
-              </div>
-            </div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
-            <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const renderVault = () => {
+    const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
+    return (
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
+        </div>
 
-  const renderGallery = () => (
-    <div className="bento-container">
-      <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-        <div><span className="text-subtitle">Images</span><h1 className="text-title">Gallery</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Image</button>}
-      </div>
-      <div className="bento-grid-2">
-        {galleryData.map(g => (
-          <div key={g.id} className="bento-card" style={{ padding: 0 }}>
-            <div style={{ height: '250px', background: g.fileType === 'Image URL' || g.fileType === 'Image' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {(g.fileType !== 'Image URL' && g.fileType !== 'Image') && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
-            </div>
-            <div style={{ padding: '32px' }}>
+        {/* VAULT CATEGORY FILTER */}
+        <div style={{ display: 'flex', gap: '12px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {vaultCategories.map(cat => (
+            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
+          ))}
+        </div>
+
+        <div className="bento-grid-3">
+          {filteredVault.map(v => (
+            <div key={v.id} className="bento-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <span className="status-pill">{g.category}</span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
-                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                <span className="status-pill"><HardDrive size={12}/> {v.category || 'File'}</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={() => handleArchiveVaultItem(v)}><FolderArchive size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon" title="Edit" onClick={() => { setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('vault', v.id)}><Trash2 size={14}/></button>}
                 </div>
               </div>
-              <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
-              <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: '500', marginBottom: '24px', fontFamily: 'var(--font-heading)', fontStyle: 'italic' }}>{v.title}</div>
+              <a href={v.link||'#'} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>Open Link <ArrowUpRight size={14}/></a>
             </div>
-          </div>
-        ))}
+          ))}
+          {filteredVault.length === 0 && <div style={{ color: 'var(--text-secondary)', padding: '16px' }}>No files found in this category.</div>}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const renderGallery = () => {
+    // Show both images and archived text/documents
+    return (
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
+          {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
+        </div>
+        <div className="bento-grid-2">
+          {galleryData.map(g => (
+            <div key={g.id} className="bento-card" style={{ padding: 0 }}>
+              {g.fileType === 'Archive' ? (
+                // Render text-based Archive format
+                <div style={{ padding: '32px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <span className="status-pill" style={{ borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)' }}><FolderArchive size={12}/> YEAR {g.archivedYear || '2026'}</span>
+                    {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                  </div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                  <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6', flex: 1 }}>{g.description}</div>
+                  {g.link && <a href={g.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px' }}>View Saved Data <ArrowUpRight size={14}/></a>}
+                </div>
+              ) : (
+                // Render traditional Image format
+                <>
+                  <div style={{ height: '250px', background: g.fileType === 'Image URL' || g.fileType === 'Image' ? `url("${g.link}") center/cover` : 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {(g.fileType !== 'Image URL' && g.fileType !== 'Image') && <Aperture size={40} color="rgba(255,255,255,0.3)" />}
+                  </div>
+                  <div style={{ padding: '32px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <span className="status-pill">{g.category}</span>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(g); setModalMode('gallery'); }}><Pencil size={14}/></button>}
+                        {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('gallery', g.id)}><Trash2 size={14}/></button>}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{g.title}</div>
+                    <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '0.95rem', lineHeight: '1.6' }}>{g.description}</div>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   const renderNews = () => (
-    <div className="bento-container">
+    <div className="bento-container" style={{ maxWidth: '1400px' }}>
       <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
         <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
-        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add News</button>}
+        {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '16px' }}>
-        {newsData.length === 0 && <div className="text-sm text-white/50" style={{padding:'0 16px'}}>No news right now.</div>}
-        {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
-          <div key={n.id} className="bento-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '16px' }}>
-              <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}><Activity size={12}/> {n.tag}</span>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
-                {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
+        
+        {/* MANUAL UNIT NEWS (Gist View) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <span className="text-subtitle" style={{color: '#fff', marginLeft: '8px'}}><Activity size={14}/> Unit Updates</span>
+          {newsData.length === 0 && <div className="text-sm text-white/50 px-4">No unit news right now.</div>}
+          {newsData.sort((a,b)=>b.timestamp-a.timestamp).map(n => (
+            <div key={n.id} className="bento-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
+                <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {isLeadershipMode && <button className="btn-icon" onClick={() => { setFormPayload(n); setModalMode('news'); }}><Pencil size={14}/></button>}
+                  {isLeadershipMode && <button className="btn-icon danger" onClick={() => deleteDocRecord('news', n.id)}><Trash2 size={14}/></button>}
+                </div>
               </div>
+              <div style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '16px', fontFamily: "var(--font-heading)", fontStyle: 'italic' }}>{n.title}</div>
+              {/* GIST VIEW: Show only first 120 chars */}
+              <div style={{ whiteSpace: 'pre-wrap', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6', marginBottom: '20px' }}>
+                {n.content && n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content}
+              </div>
+              <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingNews(n)}>
+                <BookOpen size={14}/> Read Full Story
+              </button>
             </div>
-            <div style={{ fontSize: '2.2rem', fontWeight: '600', marginBottom: '24px', fontFamily: "var(--font-heading)", fontStyle: 'italic', letterSpacing: '0.02em' }}>{n.title}</div>
-            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: '1.8' }}>{n.content}</div>
+          ))}
+        </div>
+
+        {/* LIVE NASA FEED SECTION */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <span className="text-subtitle" style={{color: 'var(--neon-gold)', marginLeft: '8px'}}><Globe size={14}/> Live NASA India Feed</span>
+          <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {liveNasaNews.map(live => (
+                <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>{live.tag}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{live.date}</span>
+                  </div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: '600', fontFamily: 'var(--font-heading)' }}>{live.title}</div>
+                  <a href={live.link} target="_blank" rel="noreferrer" className="btn-primary btn-secondary" style={{ marginTop: '16px', display: 'flex', width: 'fit-content' }}>Official Portal <ArrowUpRight size={14}/></a>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+        </div>
+
       </div>
     </div>
   );
@@ -543,57 +645,30 @@ export default function App() {
   );
 
   const renderRSAIntel = () => {
-    const councilMembers = crewData.filter(m => ['UD', 'USEC', 'Coordinator'].includes(m.role));
-
     return (
-      <div className="bento-container" style={{ maxWidth: '1400px' }}>
+      <div className="bento-container">
         <div style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginTop: '16px' }}>
-          
-          <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-            <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> Chat with RSA AI</span>
-            <div className="ai-terminal" style={{ marginTop: '16px' }}>
-              {/* TARGETED SCROLL CONTAINER */}
-              <div id="ai-chat-box-container" className="ai-chat-box">
-                {aiMessages.map((msg, idx) => (
-                  <div key={idx} className={`ai-msg ${msg.sender}`}>
-                    {msg.text}
-                  </div>
-                ))}
-              </div>
-              <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
-                <input 
-                  className="ai-input" 
-                  placeholder="Ask about design, trophies, or events..." 
-                  value={aiInput}
-                  onChange={(e) => setAiInput(e.target.value)}
-                />
-                <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
-              </form>
-            </div>
-          </div>
-
-          <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
-            <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Crown size={14}/> Council Contacts</span>
-            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '450px', overflowY: 'auto', paddingRight: '10px' }}>
-              {councilMembers.length === 0 && <div className="text-sm text-white/50">No council members found.</div>}
-              {councilMembers.map(m => (
-                <div key={m.id} className="sidebar-card" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span className="status-pill" style={{ color: 'var(--neon-gold)', borderColor: 'rgba(255, 190, 11, 0.3)' }}>
-                      {m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '600', marginBottom: '16px', fontFamily: 'var(--font-heading)', fontStyle:'italic' }}>{m.name}</div>
-                  <button className="btn-primary btn-secondary" style={{ width: '100%' }} onClick={() => setViewingCrew(m)}>
-                    <Eye size={14}/> View Details
-                  </button>
+        <div className="bento-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
+          <span className="text-subtitle" style={{color: '#fff'}}><BrainCircuit size={14}/> Chat with RSA AI</span>
+          <div className="ai-terminal" style={{ marginTop: '16px' }}>
+            <div id="ai-chat-box-container" className="ai-chat-box">
+              {aiMessages.map((msg, idx) => (
+                <div key={idx} className={`ai-msg ${msg.sender}`}>
+                  {msg.text}
                 </div>
               ))}
             </div>
+            <form onSubmit={handleAiSubmit} className="ai-input-wrapper">
+              <input 
+                className="ai-input" 
+                placeholder="Ask complex architecture queries or request live NASA updates..." 
+                value={aiInput}
+                onChange={(e) => setAiInput(e.target.value)}
+              />
+              <button type="submit" className="btn-primary" style={{ padding: '12px', borderRadius: '12px' }}><Send size={18}/></button>
+            </form>
           </div>
-
         </div>
       </div>
     );
@@ -609,8 +684,14 @@ export default function App() {
         <div className="plasma-orb orb-p"></div>
       </div>
 
+      {/* 🌟 NEW COMPLEX CIRCLE FLOW SPLASH SCREEN 🌟 */}
       <div className={`boot-splash ${!isBooting ? 'hidden' : ''}`}>
-        <div className="splash-brand">RSA<span style={{color:'var(--neon-cyan)'}}>.</span>CORE</div>
+        <div className="splash-container">
+          <div className="circle-flow-1"></div>
+          <div className="circle-flow-2"></div>
+          <div className="circle-flow-3"></div>
+          <div className="splash-brand">RSA<span style={{color:'var(--neon-cyan)'}}>.</span></div>
+        </div>
       </div>
 
       <nav className="top-bar">
@@ -680,6 +761,20 @@ export default function App() {
         <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`}>{renderUnitCouncil()}</section>
         <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`}>{renderRSAIntel()}</section>
       </div>
+
+      {/* FULL NEWS READER MODAL */}
+      {viewingNews && (
+        <div className="modal-overlay pointer-events-auto">
+          <div className="modal-window">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{viewingNews.tag || 'UPDATE'}</span>
+              <button className="btn-icon" onClick={() => setViewingNews(null)}><X size={24}/></button>
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '600', marginBottom: '24px', fontFamily: "var(--font-heading)", fontStyle: 'italic', lineHeight: '1.2' }}>{viewingNews.title}</div>
+            <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.1rem', color: 'rgba(255,255,255,0.85)', lineHeight: '1.8' }}>{viewingNews.content}</div>
+          </div>
+        </div>
+      )}
 
       {/* MEMBER DETAILS MODAL */}
       {viewingCrew && (
@@ -774,7 +869,18 @@ export default function App() {
                 </>
               )}
 
-              {['vault', 'gallery', 'news'].includes(modalMode) && (
+              {modalMode === 'vault' && (
+                <>
+                  <span className="text-subtitle">Category</span>
+                  <select className="mb-4" value={formPayload.category||'Programs'} onChange={e=>setFormPayload({...formPayload, category:e.target.value})}>
+                    {vaultCategories.filter(c=>c!=='All').map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
+                  <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />
+                </>
+              )}
+
+              {['gallery', 'news'].includes(modalMode) && (
                 <>
                   <input required placeholder="Title" className="mb-4" value={formPayload.title||''} onChange={e=>setFormPayload({...formPayload, title:e.target.value})} />
                   {modalMode !== 'news' && <input placeholder="Link / URL" className="mb-4" value={formPayload.link||''} onChange={e=>setFormPayload({...formPayload, link:e.target.value})} />}
