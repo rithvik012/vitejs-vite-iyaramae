@@ -43,7 +43,11 @@ const ARCH_QUOTES = [
   "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light.\" – Le Corbusier",
   "\"Form ever follows function.\" – Louis Sullivan",
   "\"Less is more.\" – Ludwig Mies van der Rohe",
-  "\"There are 360 degrees, so why stick to one?\" – Zaha Hadid"
+  "\"There are 360 degrees, so why stick to one?\" – Zaha Hadid",
+  "\"Architecture should speak of its time and place, but yearn for timelessness.\" – Frank Gehry",
+  "\"To create, one must first question everything.\" – Eileen Gray",
+  "\"A room is not a room without natural light.\" – Louis Kahn",
+  "\"Recognizing the need is the primary condition for design.\" – Charles Eames"
 ];
 
 // ==========================================
@@ -70,6 +74,14 @@ const GLOBAL_STYLES = `
     --neon-gold: #ffbe0b;
     --neon-pink: #ff0055;
 
+    --accent-dash: #60a5fa;
+    --accent-crew: #34d399;
+    --accent-finance: #fbbf24;
+    --accent-vault: #a78bfa;
+    --accent-gallery: #f472b6;
+    --accent-news: #fb923c;
+    --accent-hq: #94a3b8;
+
     --font-heading: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -82,6 +94,7 @@ const GLOBAL_STYLES = `
   body, html { background-color: var(--color-void); color: var(--text-100); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
   ::-webkit-scrollbar { display: none; width: 0px; }
 
+  /* 🌟 TYPOGRAPHY 🌟 */
   .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1.1; }
   .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
   .type-h2 { font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem; line-height: 1.2; }
@@ -91,7 +104,7 @@ const GLOBAL_STYLES = `
   .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
   .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
 
-  /* 3D ARCHITECTURAL HOUSE ENGINE */
+  /* 🌟 3D ARCHITECTURAL HOUSE ENGINE 🌟 */
   .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1200px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate var(--ease-smooth); transition: background 2s ease; }
   .orb-c { width: 60vw; height: 60vw; top: -20vh; left: -15vw; }
@@ -183,7 +196,7 @@ const GLOBAL_STYLES = `
   /* SIDEBAR */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.4s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
-  .nasa-sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw; background: var(--color-obsidian); border-left: 1px solid var(--color-chrome); z-index: 110; padding: 100px 24px 30px 24px; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .nasa-sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw; background: var(--color-obsidian); border-left: 1px solid var(--color-chrome); z-index: 110; padding: 100px 24px 30px 24px; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring); }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
   
@@ -316,7 +329,7 @@ export default function App() {
   const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
   
-  // Databases
+  // Core Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
   const [financialLog, setFinancialLog] = useState([]);
@@ -331,16 +344,18 @@ export default function App() {
   const [viewingCrew, setViewingCrew] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
   const [formPayload, setFormPayload] = useState({});
+  const [vaultFilter, setVaultFilter] = useState('All');
 
-  // AI State Contextualized
+  // AI State
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'Hello! I am the RSA Advanced AI, fully synchronized with the Rajalakshmi School of Architecture and Zone 6 telemetry. How can I assist your design logic today?' }
+    { sender: 'bot', text: 'RSA Advanced AI initialized. Connected to Unit Z649 archives and NASA India telemetry. Awaiting directive.' }
   ]);
 
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
+  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
@@ -382,10 +397,12 @@ export default function App() {
 
   // AI Auto-Scroll
   useEffect(() => {
-    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [aiMessages]);
 
-  // Intersection Observer
+  // Intersection Observer for Scrolling Sync
   useEffect(() => {
     const options = { root: scrollEngineRef.current, rootMargin: '-20% 0px -40% 0px', threshold: 0 };
     const observer = new IntersectionObserver((entries) => {
@@ -399,6 +416,7 @@ export default function App() {
         }
       });
     }, options);
+
     const sections = document.querySelectorAll('.scrolling-section');
     sections.forEach(sec => observer.observe(sec));
     return () => observer.disconnect();
@@ -406,7 +424,9 @@ export default function App() {
 
   const navTo = (idx) => {
     const sections = document.querySelectorAll('.scrolling-section');
-    if (sections[idx]) sections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (sections[idx]) {
+      sections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleSecurityToggle = () => {
@@ -441,7 +461,9 @@ export default function App() {
         setModalMode(null);
         setViewingCrew(null);
         setViewingNews(null);
-      } catch (e) { alert("Error deleting record."); }
+      } catch (e) {
+        alert("Error deleting record.");
+      }
     }
   };
 
@@ -450,13 +472,23 @@ export default function App() {
     try {
       const currentYear = new Date().getFullYear(); 
       await addDoc(collection(db, 'gallery'), {
-         title: item.title, category: item.category || 'Archived Work',
+         title: item.title,
+         category: item.category || 'Archived Work',
          description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '', fileType: 'Archive', archivedYear: currentYear, timestamp: Date.now()
+         link: item.link || '',
+         fileType: 'Archive',
+         archivedYear: currentYear,
+         timestamp: Date.now()
       });
       await deleteDoc(doc(db, 'vault', item.id));
       alert("Successfully moved to Archive.");
-    } catch(e) { alert("Failed to archive item."); }
+    } catch(e) {
+      alert("Failed to archive item.");
+    }
+  };
+
+  const getCameraTransform = () => {
+    return ROOM_CONFIGS[activeSectionIdx]?.transform || ROOM_CONFIGS[0].transform;
   };
 
   const handleAiSubmit = (e) => {
@@ -468,10 +500,11 @@ export default function App() {
 
     setTimeout(() => {
       const tokens = textRaw.toLowerCase();
-      let botResponse = "Processing directive... Zone 6 systems are nominal.";
-      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented accurately for the RSA submission.";
+      let botResponse = "Processing directive... Unit systems nominal.";
+      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
       else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "For the MSL Trophy, our focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
       else if (tokens.includes("news") || tokens.includes("live")) botResponse = `Checking live NASA feed... 68th ANC Workshop Details and Louis I. Kahn Trophy deadlines are active.`;
+      else if (tokens.includes("hello") || tokens.includes("hi")) botResponse = "Hello! I am your advanced architectural co-pilot. How can I assist your design logic today?";
       else if (tokens.includes("money") || tokens.includes("balance")) {
         const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
         botResponse = `Unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
@@ -480,6 +513,9 @@ export default function App() {
     }, 1000);
   };
 
+  // ==========================================
+  // DASHBOARD SECTIONS
+  // ==========================================
   const getSectionStyle = (idx) => ({
     '--reveal-dir': scrollDir === 'down' ? '40px' : '-40px',
     '--section-accent': SECTIONS[idx]?.accent || 'var(--neon-cyan)'
@@ -611,14 +647,20 @@ export default function App() {
   };
 
   const renderVault = () => {
+    const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
     return (
       <div className="bento-container" style={getSectionStyle(3)}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
-        <div className="bento-grid-3 mt-4">
-          {vaultData.map((v, i) => (
+        <div className="stagger-item stagger-2" style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
+          {['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'].map(cat => (
+            <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
+          ))}
+        </div>
+        <div className="bento-grid-3">
+          {filteredVault.map((v, i) => (
             <div key={v.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill" style={{ color: 'var(--accent-vault)', background: 'rgba(167, 139, 250, 0.1)' }}><HardDrive size={12}/> {v.category || 'File'}</span>
@@ -697,15 +739,20 @@ export default function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
+                    {/* 🌟 BROADCAST EMAIL BUTTON 🌟 */}
                     {isLeadershipMode && (
-                      <button className="btn-icon" title="Broadcast via Email" onClick={(e) => { 
+                      <button 
+                        className="btn-icon" 
+                        title="Broadcast via Email"
+                        onClick={(e) => { 
                           e.stopPropagation(); 
                           const emails = crewData.map(c => c.email).filter(Boolean).join(',');
                           if(!emails) return alert('No emails found in directory.');
                           const subject = encodeURIComponent(`[RSA Unit ${leadership.unitCode} UPDATE] ${n.title}`);
                           const body = encodeURIComponent(`${n.content}\n\n--\nSent via RSA Command Center`);
                           window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
-                        }}>
+                        }}
+                      >
                         <Mail size={14}/>
                       </button>
                     )}
@@ -892,8 +939,9 @@ export default function App() {
         </div>
       </div>
 
+      {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock">
+        <div className="floating-dock" ref={dockRef}>
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
@@ -963,6 +1011,7 @@ export default function App() {
         </div>
       )}
 
+      {/* EDIT/ADD MODAL */}
       {modalMode && (
         <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
