@@ -2,13 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 
-// ALL ICONS VERIFIED - NO CRASHES
+// ALL ICONS ALPHABETIZED AND 100% MATCHED TO PREVENT CRASHES
 import { 
-  Shield, ShieldAlert, Plus, Trash2, Users, DollarSign, 
-  Server, Aperture, Settings, X, ArrowUpRight, Mail, Phone,
-  Globe, Activity, Crown, Cpu, Send, Calendar,
-  Hexagon, Zap, Lock, Unlock, Pencil, Eye, Archive,
-  HardDrive, Radio, BookOpen, Check
+  Activity, Aperture, Archive, ArrowUpRight, BookOpen, Calendar, Cpu, Crown, DollarSign, 
+  Eye, Globe, HardDrive, Hexagon, Lock, Mail, Pencil, Phone, Plus, Radio, Send, Server, 
+  Settings, Shield, Trash2, Unlock, Users, X, Zap 
 } from 'lucide-react';
 
 // ==========================================
@@ -96,7 +94,7 @@ const GLOBAL_STYLES = `
   .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1.1; }
   .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
   .type-h2 { font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem; line-height: 1.2; }
-  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
+  .type-metric { font-family: var(--font-mono); font-weight: 400; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.02em; }
   .type-label { font-family: var(--font-body); font-weight: 600; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
   .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.6; color: var(--text-200); }
   .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
@@ -242,7 +240,6 @@ const GLOBAL_STYLES = `
     .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom, 0px); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; position: relative; }
     .floating-dock::-webkit-scrollbar { display: none; }
-    /* Gradient Fade for 8-item overflow hint */
     .floating-dock-wrapper::after { content: ''; position: absolute; right: 0; top: 0; bottom: env(safe-area-inset-bottom, 0px); width: 40px; background: linear-gradient(to right, transparent, rgba(10,10,10,0.9)); border-radius: 0 24px 24px 0; pointer-events: none; }
     .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
     .dock-item.active { background: #fff; color: #000; transform: translateY(-4px); box-shadow: 0 8px 16px rgba(255,255,255,0.2); }
@@ -296,7 +293,6 @@ const GLOBAL_STYLES = `
   .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); transform: scale(1.02); }
   .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--neon-cyan); font-weight: 600; letter-spacing: 0.05em; }
 
-  /* Generic Utils */
   .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; transition: transform 0.3s var(--ease-spring); }
   .bento-card:hover .avatar { transform: scale(1.1) rotate(5deg); }
   
@@ -374,7 +370,7 @@ export default function App() {
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
-  const lastScrollY = useRef(0);
+  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
@@ -393,7 +389,7 @@ export default function App() {
     setTimeout(() => setIsBooting(false), 2400);
   }, []);
 
-  // Firebase Listeners (Functional Updates)
+  // Firebase Listeners
   useEffect(() => {
     const unsubs = [
       onSnapshot(doc(db, "unit", "hq"), d => { if(d.exists()) setLeadership(prev => ({ ...prev, ...d.data() })); }),
@@ -413,7 +409,7 @@ export default function App() {
     }
   }, [aiMessages]);
 
-  // Direction-Aware Intersection Observer
+  // Intersection Observer for Scrolling
   useEffect(() => {
     const options = { root: scrollEngineRef.current, rootMargin: '-20% 0px -40% 0px', threshold: 0 };
     const observer = new IntersectionObserver((entries) => {
@@ -475,6 +471,26 @@ export default function App() {
       } catch (e) {
         alert("Error deleting record.");
       }
+    }
+  };
+
+  const handleArchiveVaultItem = async (item) => {
+    if (!window.confirm("Move this work to the Archive Gallery? It will be permanently removed from the active vault.")) return;
+    try {
+      const currentYear = new Date().getFullYear(); 
+      await addDoc(collection(db, 'gallery'), {
+         title: item.title,
+         category: item.category || 'Archived Work',
+         description: `Archived File (${currentYear}). ${item.description || ''}`,
+         link: item.link || '',
+         fileType: 'Archive',
+         archivedYear: currentYear,
+         timestamp: Date.now()
+      });
+      await deleteDoc(doc(db, 'vault', item.id));
+      alert("Successfully moved to Archive.");
+    } catch(e) {
+      alert("Failed to archive item.");
     }
   };
 
@@ -648,6 +664,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill" style={{ color: 'var(--accent-vault)', background: 'rgba(167, 139, 250, 0.1)' }}><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
+                  {isLeadershipMode && <button className="btn-icon" title="Archive Work" onClick={(e) => { e.stopPropagation(); handleArchiveVaultItem(v); }}><Archive size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon" onClick={(e) => { e.stopPropagation(); setFormPayload(v); setModalMode('vault'); }}><Pencil size={14}/></button>}
                   {isLeadershipMode && <button className="btn-icon danger" onClick={(e) => { e.stopPropagation(); handleDelete('vault', v.id); }}><Trash2 size={14}/></button>}
                 </div>
@@ -722,14 +739,18 @@ export default function App() {
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
                     {isLeadershipMode && (
-                      <button className="btn-icon" title="Broadcast via Email" onClick={(e) => { 
+                      <button 
+                        className="btn-icon" 
+                        title="Broadcast via Email"
+                        onClick={(e) => { 
                           e.stopPropagation(); 
                           const emails = crewData.map(c => c.email).filter(Boolean).join(',');
                           if(!emails) return alert('No emails found in directory.');
                           const subject = encodeURIComponent(`[RSA Unit ${leadership.unitCode} UPDATE] ${n.title}`);
                           const body = encodeURIComponent(`${n.content}\n\n--\nSent via RSA Command Center`);
                           window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
-                        }}>
+                        }}
+                      >
                         <Mail size={14}/>
                       </button>
                     )}
@@ -830,7 +851,7 @@ export default function App() {
       <div className="arch-environment" style={{ 
         '--wall-color': ROOM_CONFIGS[activeSectionIdx]?.color || 'rgba(0,240,255,0.05)', 
         '--wall-grid': ROOM_CONFIGS[activeSectionIdx]?.grid || '80px 80px',
-        '--wall-border': ROOM_CONFIGS[activeSectionIdx]?.color.replace(/[\d.]+\)$/, '0.12)') || 'rgba(0,240,255,0.12)'
+        '--wall-border': (ROOM_CONFIGS[activeSectionIdx]?.color || 'rgba(0,240,255,0.05)').replace(/[\d.]+\)$/, '0.12)')
       }}>
         <div className="plasma-orb orb-c"></div>
         <div className="plasma-orb orb-p"></div>
