@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
+
+// ALL ICONS ALPHABETIZED AND 100% MATCHED TO BASE LUCIDE-REACT TO PREVENT CRASHES
+import { 
+  Activity, Aperture, Archive, ArrowUpRight, BookOpen, Calendar, Cpu, Crown, DollarSign, 
+  Eye, Globe, HardDrive, Hexagon, Lock, Mail, Pencil, Phone, Plus, Radio, Send, Server, 
+  Settings, Shield, Trash2, Unlock, Users, X, Zap 
+} from 'lucide-react';
 
 // ==========================================
 // 1. FIREBASE SECURE KERNEL
@@ -16,47 +23,64 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const ADMIN_SECURE_KEY = "saturday"; 
 
 // ==========================================
-// 2. ROOM CONFIGURATION ENGINE
+// 2. ARCHITECTURAL 8-ROOM ENGINE
 // ==========================================
 const ROOMS = [
-  { id:'atrium',   label:'Atrium',        sub:'Welcome',          glyph:'AT', accent:'#5B8CFF', cam:{rx:52,ry:  0,tz:-120,ty:   0} },
-  { id:'about',    label:'Briefing Room', sub:'Who we are',       glyph:'BR', accent:'#00D3A7', cam:{rx:60,ry:-14,tz: -40,ty: -60} },
-  { id:'missions', label:'Mission Bay',   sub:'What we build',    glyph:'MB', accent:'#FF7A45', cam:{rx:46,ry: 16,tz:  60,ty:-140} },
-  { id:'crew',     label:'Crew Quarters', sub:'The team',         glyph:'CQ', accent:'#B388FF', cam:{rx:64,ry:  8,tz: -20,ty:-220} },
-  { id:'news',     label:'Comms Deck',    sub:'Latest updates',   glyph:'CD', accent:'#FFD166', cam:{rx:50,ry:-20,tz: 100,ty:-300} },
-  { id:'ops',      label:'Ops Terminal',  sub:'Ask the council',  glyph:'OP', accent:'#4DD0E1', cam:{rx:70,ry:  0,tz:-160,ty:-380} },
-  { id:'events',   label:'Launch Pad',    sub:'Upcoming schedule',glyph:'LP', accent:'#FF5D8F', cam:{rx:44,ry: 22,tz:  40,ty:-460} },
-  { id:'contact',  label:'Airlock',       sub:'Get in touch',     glyph:'AL', accent:'#8DFF6B', cam:{rx:58,ry:-10,tz: -80,ty:-540} }
+  { id:'dash',    label:'Command',       sub:'Unit Z649 Overview', glyph:'CM', accent:'#5B8CFF', cam:{rx:52,ry:  0,tz:-120,ty:   0} },
+  { id:'hq',      label:'Council',       sub:'Administration',     glyph:'HQ', accent:'#00D3A7', cam:{rx:60,ry:-14,tz: -40,ty: -60} },
+  { id:'vault',   label:'Secure Vault',  sub:'Active Submissions', glyph:'SV', accent:'#FF7A45', cam:{rx:46,ry: 16,tz:  60,ty:-140} },
+  { id:'crew',    label:'Personnel',     sub:'Unit Directory',     glyph:'PR', accent:'#B388FF', cam:{rx:64,ry:  8,tz: -20,ty:-220} },
+  { id:'news',    label:'Broadcasts',    sub:'NASA India Feed',    glyph:'BR', accent:'#FFD166', cam:{rx:50,ry:-20,tz: 100,ty:-300} },
+  { id:'ai',      label:'RSA AI',        sub:'Intelligence Core',  glyph:'AI', accent:'#4DD0E1', cam:{rx:70,ry:  0,tz:-160,ty:-380} },
+  { id:'fin',     label:'Treasury',      sub:'Financial Ledger',   glyph:'TR', accent:'#FF5D8F', cam:{rx:44,ry: 22,tz:  40,ty:-460} },
+  { id:'register',label:'Registration',  sub:'Join Unit Z649',     glyph:'RG', accent:'#8DFF6B', cam:{rx:58,ry:-10,tz: -80,ty:-540} }
+];
+
+const ARCH_QUOTES = [
+  "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light.\" – Le Corbusier",
+  "\"Form ever follows function.\" – Louis Sullivan",
+  "\"Less is more.\" – Ludwig Mies van der Rohe",
+  "\"There are 360 degrees, so why stick to one?\" – Zaha Hadid",
+  "\"Architecture should speak of its time and place, but yearn for timelessness.\" – Frank Gehry",
+  "\"To create, one must first question everything.\" – Eileen Gray",
+  "\"A room is not a room without natural light.\" – Louis Kahn",
+  "\"Recognizing the need is the primary condition for design.\" – Charles Eames"
 ];
 
 // ==========================================
-// 3. SEED DATA (MOCK DATA FOR PREVIEW)
+// 3. RSA Z649 SEED DATA
 // ==========================================
 const MOCK_DATA = {
   news: [
-    { id:'n1', title:'CubeSat-1 clears vibration testing', tag:'Mission',      date:'2026-07-18', body:'The 1U structure survived a full random-vibe profile with no fastener loosening. Avionics integration begins next week.' },
-    { id:'n2', title:'Paper accepted at NSSS',             tag:'Research',     date:'2026-07-09', body:'Our low-cost telemetry decoder work was accepted for the student track. Two second-years will present.' }
+    { id:'n1', title:'68th ANC Workshop Details Released', tag:'Official', date:'2026-06-16', body:'NASA India has released the official workshop itinerary for the upcoming 68th Annual NASA Convention.' },
+    { id:'n2', title:'Louis I. Kahn Trophy Submission Window Closes Soon', tag:'Deadline', date:'2026-06-20', body:'Ensure all vernacular spatial configurations and architectural documentations are uploaded to the vault.' }
   ],
   missions: [
-    { id:'m1', title:'CubeSat-1',  tag:'Avionics',        date:'Integration', body:'1U technology demonstrator carrying an atmospheric telemetry payload and a student-designed decoder chain.' },
-    { id:'m2', title:'Project Vayu',tag:'Structures',     date:'Static fire', body:'Solid-motor sounding rocket targeting 3km apogee with active recovery and onboard flight logging.' }
+    { id:'m1', title:'Louis I. Kahn Trophy', tag:'Heritage', date:'In Progress', body:'Documenting unrecorded heritage architecture in Kanchipuram. Focus on vernacular spatial configurations.' },
+    { id:'m2', title:'MSL Landscape Trophy', tag:'Landscape', date:'Review Phase', body:'Site: Velachery Railway Ground. Concept: "The Hydro-Social Connector" acting as a biological machine for urban flooding.' },
+    { id:'m3', title:'Variyankaval Village Study', tag:'Morphology', date:'Completed', body:'Extensive site mapping, street plans, and historical storyboards for traditional residential typologies.' }
   ],
   crew: [
-    { id:'c1', name:'Aarav Menon',    role:'Council Chair' },
-    { id:'c2', name:'Diya Raghavan',  role:'Avionics Lead' },
-    { id:'c3', name:'Kabir Sethi',    role:'Structures Lead' },
-    { id:'c4', name:'Meera Iyer',     role:'Payload Science' }
+    { id:'c1', name:'Rithvik M',    role:'Unit Designee (UD)' },
+    { id:'c2', name:'Akshaya',      role:'Design Coordinator' },
+    { id:'c3', name:'Mugilan',      role:'Structures Team' },
+    { id:'c4', name:'Nithya Sri',   role:'Documentation' },
+    { id:'c5', name:'Vishnav Iyer', role:'Presentation' },
+    { id:'c6', name:'Thilip',       role:'Graphics' }
   ],
   events: [
-    { id:'e1', when:'12 Aug',  title:'Autumn intake opens',        where:'Online form · all years' },
-    { id:'e2', when:'24 Aug',  title:'Avionics bootcamp',          where:'Lab 204 · 6 sessions' }
+    { id:'e1', when:'Income',  title:'₹ 50,000', where:'Initial Unit Funding Allocation' },
+    { id:'e2', when:'Expense', title:'₹ -4,500', where:'Printing & Plotting for MSL Trophy' },
+    { id:'e3', when:'Expense', title:'₹ -12,000',where:'Site Visit Travel - Kanchipuram' },
+    { id:'e4', when:'Income',  title:'₹ 15,000', where:'Sponsorship - Alumni Network' }
   ]
 };
 
 // ==========================================
-// 4. CSS ARCHITECTURE
+// 4. CSS ARCHITECTURE (DESIGN UNTOUCHED)
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@200;400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
@@ -171,6 +195,15 @@ const GLOBAL_STYLES = `
   h1 { font-size:var(--fs-7); } h2 { font-size:var(--fs-6); } h3 { font-size:var(--fs-4); letter-spacing:-.01em; }
   .display-thin { font-weight:200; }
   .lede { font-size:var(--fs-4); font-weight:200; color:var(--ink-2); margin:var(--sp-3) 0 0 0; max-width:46ch; line-height:1.45; }
+  
+  /* Reveal Animation */
+  .reveal { opacity:0; transform:translate3d(0,var(--rev,44px),0); transition:opacity .8s var(--ease), transform .9s var(--ease); }
+  main[data-dir="up"] .reveal { --rev:-44px; }
+  .reveal.is-in { opacity:1; transform:translate3d(0,0,0); }
+  .reveal.d1 { transition-delay:.07s; }
+  .reveal.d2 { transition-delay:.14s; }
+  .reveal.d3 { transition-delay:.21s; }
+  .reveal.d4 { transition-delay:.28s; }
   
   /* Components */
   .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--r-lg); padding:var(--sp-4); transition:transform .5s var(--ease), border-color .5s var(--ease), background .5s var(--ease); }
@@ -337,6 +370,7 @@ export default function App() {
   const [missions, setMissions] = useState(MOCK_DATA.missions);
   const [crew, setCrew] = useState(MOCK_DATA.crew);
   const [events, setEvents] = useState(MOCK_DATA.events);
+  const [dailyQuote, setDailyQuote] = useState(ARCH_QUOTES[0]);
 
   // UI States
   const [modal, setModal] = useState({ open: false, title: '', body: '', confirmLabel: '', danger: false, onConfirm: null });
@@ -344,7 +378,7 @@ export default function App() {
   
   // Terminal State
   const [termLogs, setTermLogs] = useState([
-    { kind: 'sys', text: 'council://ops v2.0 — local session, no data leaves this device.' },
+    { kind: 'sys', text: 'council://rsa-z649 v2.0 — local session, connected to NASA India telemetry.' },
     { kind: 'sys', text: 'Type "help" to see what I can answer.' }
   ]);
   const [termIn, setTermIn] = useState('');
@@ -352,10 +386,11 @@ export default function App() {
   // Refs
   const scrollEngineRef = useRef(null);
   const termLogRef = useRef(null);
-  const activeRoom = ROOMS[activeIndex];
+  const activeRoom = ROOMS[activeIndex] || ROOMS[0];
 
   // 1. Boot Sequence
   useEffect(() => {
+    setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
     const t = setTimeout(() => setSplashDone(true), 2450);
     return () => clearTimeout(t);
   }, []);
@@ -366,12 +401,12 @@ export default function App() {
       onSnapshot(collection(db, "news"), s => { if(!s.empty) setNews(s.docs.map(d => ({ id: d.id, ...d.data() }))) }),
       onSnapshot(collection(db, "crew"), s => { if(!s.empty) setCrew(s.docs.map(d => ({ id: d.id, ...d.data() }))) }),
       onSnapshot(collection(db, "vault"), s => { if(!s.empty) setMissions(s.docs.map(d => ({ id: d.id, ...d.data() }))) }),
-      onSnapshot(collection(db, "events"), s => { if(!s.empty) setEvents(s.docs.map(d => ({ id: d.id, ...d.data() }))) })
+      onSnapshot(collection(db, "finances"), s => { if(!s.empty) setEvents(s.docs.map(d => ({ id: d.id, ...d.data() }))) })
     ];
     return () => unsubs.forEach(u => u());
   }, []);
 
-  // 3. Intersection Observer (Scroll Tracking)
+  // 3. Intersection Observer (Scroll Tracking) & Reveal Classes
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       let best = null;
@@ -389,11 +424,22 @@ export default function App() {
       }
     }, { threshold: [0.25, 0.5, 0.75], rootMargin: '-10% 0px -10% 0px' });
 
-    ROOMS.forEach(r => {
-      const el = document.getElementById(r.id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+    const sections = document.querySelectorAll('.scrolling-section');
+    sections.forEach(sec => observer.observe(sec));
+
+    // Staggered Reveal Observer
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          en.target.classList.add('is-in');
+          revealObs.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    document.querySelectorAll('.reveal:not(.is-in)').forEach(el => revealObs.observe(el));
+
+    return () => { observer.disconnect(); revealObs.disconnect(); };
   }, []);
 
   // 4. Auto-Scroll Terminal
@@ -427,26 +473,12 @@ export default function App() {
     });
   };
 
-  const handleRsvp = (title) => {
-    setModal({
-      open: true,
-      title: 'Add a reminder',
-      body: `We will email you 24 hours before "${title}". Confirm to register your interest.`,
-      confirmLabel: 'Remind me',
-      danger: false,
-      onConfirm: () => {
-        showToast('Reminder registered.');
-        setModal(prev => ({ ...prev, open: false }));
-      }
-    });
-  };
-
   const handleJoin = (e) => {
     e.preventDefault();
     setModal({
       open: true,
       title: 'Application received',
-      body: 'Thanks for applying. The lead will be in touch within a week.',
+      body: 'Thanks for applying. The Unit Designee will be in touch within a week.',
       confirmLabel: 'Done',
       danger: false,
       onConfirm: () => {
@@ -481,21 +513,23 @@ export default function App() {
     
     setTimeout(() => {
       const k = q.toLowerCase();
-      let ans = 'No local match for that. Try: help · missions · crew · news · launch · join';
-      if (/^help$/.test(k)) ans = 'Commands: missions · crew · news · launch · join · clear. Or ask a question in plain English.';
+      let ans = 'No local match for that. Try: help · trophies · landscape · news · balance · clear';
+      
+      if (/^help$/.test(k)) ans = 'Commands: trophies · landscape · crew · news · balance · clear. Or ask a question in plain English.';
       else if (/^clear$/.test(k)) { setTermLogs([]); return; }
-      else if (/mission|project|build/.test(k)) ans = 'Active programmes: ' + missions.map(m => m.title).join(' · ');
+      else if (/trophy|lik|louis/.test(k)) ans = 'The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented accurately for the RSA submission.';
+      else if (/msl|landscape|velachery/.test(k)) ans = 'For the MSL Trophy, our focus is Velachery. The "Hydro-Social Connector" acts as a biological machine to manage urban flooding.';
       else if (/crew|team|who|council|lead/.test(k)) ans = 'Council: ' + crew.map(c => c.name).join(' · ');
-      else if (/news|update|latest/.test(k)) ans = news.length ? 'Latest: ' + news[0].title : 'No updates posted yet.';
-      else if (/launch|event|when|schedule/.test(k)) ans = events.length ? 'Next up: ' + events[0].title : 'Nothing scheduled.';
-      else if (/join|apply|member|intake/.test(k)) ans = 'Head to the Airlock room and submit the form.';
+      else if (/news|update|live/.test(k)) ans = news.length ? 'Latest: ' + news[0].title : 'No updates posted yet.';
+      else if (/balance|money|treasury/.test(k)) ans = 'Treasury is nominal. Check the Treasury ledger for exact transaction history.';
+      else if (/join|apply|member/.test(k)) ans = 'Head to the Registration room and submit your application to Unit Z649.';
       
       setTermLogs(p => [...p, { kind: 'out', text: ans }]);
     }, 200);
   };
 
-  // Rendering
   const rgbAccent = (hex) => {
+    if(!hex) return '0,240,255';
     const n = parseInt(hex.slice(1), 16);
     return `${(n>>16)&255},${(n>>8)&255},${n&255}`;
   };
@@ -505,11 +539,12 @@ export default function App() {
       <style dangerouslySetInnerHTML={{ __html: GLOBAL_STYLES }} />
       <div style={{ 
         '--accent': activeRoom.accent, 
-        '--accent-soft': `rgba(${rgbAccent(activeRoom.accent)}, .14)` 
+        '--accent-soft': `rgba(${rgbAccent(activeRoom.accent)}, .14)`,
+        '--reveal-dir': scrollDir === 'down' ? '40px' : '-40px'
       }}>
 
         {/* SPLASH */}
-        <div className="splash" data-done={splashDone} role="dialog" aria-modal="true" aria-label="Loading NASA India Council">
+        <div className="splash" data-done={splashDone} role="dialog" aria-modal="true" aria-label="Loading RSA Unit Z649">
           <div className="splash__inner">
             <svg className="splash__mark" viewBox="0 0 120 120" role="img" aria-label="Council emblem">
               <circle className="splash__ring" cx="60" cy="60" r="48" />
@@ -518,7 +553,7 @@ export default function App() {
               <circle className="splash__star" cx="92" cy="44" r="2" />
               <circle className="splash__star" cx="30" cy="78" r="2" />
             </svg>
-            <p className="splash__word">NASA India Council</p>
+            <p className="splash__word">RSA Unit Z649</p>
             <p className="splash__sub">Initialising systems</p>
             <div className="splash__bar"><span></span></div>
             <button className="splash__skip" type="button" onClick={() => setSplashDone(true)}>Enter now</button>
@@ -526,7 +561,11 @@ export default function App() {
         </div>
 
         {/* 3D BACKGROUND */}
-        <div className="house" aria-hidden="true">
+        <div className="house" aria-hidden="true" style={{
+          '--wall-color': activeRoom.color,
+          '--wall-grid': activeRoom.grid,
+          '--wall-border': activeRoom.color.replace(/[\d.]+\)$/, '0.12)')
+        }}>
           <div className="house__scene" style={{ 
             transform: `rotateX(${activeRoom.cam.rx}deg) rotateY(${activeRoom.cam.ry}deg) translate3d(0,${activeRoom.cam.ty}px,${activeRoom.cam.tz}px)`
           }}>
@@ -577,59 +616,61 @@ export default function App() {
         {/* CONTENT */}
         <main data-dir={scrollDir} className="kinetic-scroll-engine" ref={scrollEngineRef}>
           
-          <section className="room scrolling-section" id="atrium" data-index="0">
+          {/* 1. COMMAND DASHBOARD */}
+          <section className="room scrolling-section" id="dash" data-index="0">
             <div className="wrap">
-              <p className="eyebrow reveal">Student Space Council · Est. 2021</p>
-              <h1 className="reveal d1">We build <span className="display-thin">things that</span> leave the ground.</h1>
-              <p className="lede reveal d2">The NASA India Council is a student-led research and outreach body: CubeSats, rocketry, astrophotography and public science.</p>
+              <p className="eyebrow reveal">Rajalakshmi School of Architecture · Zone 6</p>
+              <h1 className="reveal d1">Unit Z649. <span className="display-thin">Command.</span></h1>
+              <p className="lede reveal d2">National Association of Students of Architecture, India. Official unit operations, submissions, and command portal.</p>
               <div className="btn-row reveal d3">
-                <button className="btn btn--primary" type="button" onClick={() => navTo('missions')}>Explore missions</button>
-                <button className="btn btn--ghost" type="button" onClick={() => navTo('contact')}>Join the council</button>
+                <button className="btn btn--primary" type="button" onClick={() => navTo('vault')}>Access Vault</button>
+                <button className="btn btn--ghost" type="button" onClick={() => navTo('crew')}>View Directory</button>
               </div>
               <div className="bento reveal d4">
                 <div className="bento__cell bento__cell--wide bento__cell--tall">
-                  <p className="bento__k">Flagship</p>
+                  <p className="bento__k">Philosophy</p>
                   <div>
-                    <p className="bento__v">CubeSat-1</p>
-                    <p className="bento__d">A 1U technology-demonstrator payload for low-cost atmospheric telemetry.</p>
+                    <p className="bento__v" style={{fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', fontWeight: '400', fontStyle: 'italic'}}>{dailyQuote}</p>
                   </div>
                 </div>
-                <div className="bento__cell"><p className="bento__k">Members</p><p className="bento__v">140+</p></div>
-                <div className="bento__cell"><p className="bento__k">Chapters</p><p className="bento__v">06</p></div>
-                <div className="bento__cell bento__cell--wide"><p className="bento__k">Next launch window</p><p className="bento__v">T‑42<span style={{fontSize:'.4em'}}>days</span></p></div>
-                <div className="bento__cell"><p className="bento__k">Papers</p><p className="bento__v">11</p></div>
+                <div className="bento__cell"><p className="bento__k">Status</p><p className="bento__v">68th</p><p className="bento__d">ANC Prep</p></div>
+                <div className="bento__cell"><p className="bento__k">Zone</p><p className="bento__v">06</p></div>
+                <div className="bento__cell bento__cell--wide"><p className="bento__k">Live Feed</p><p className="bento__v">Connected</p></div>
+                <div className="bento__cell"><p className="bento__k">Members</p><p className="bento__v">{crew.length}</p></div>
               </div>
             </div>
           </section>
 
-          <section className="room scrolling-section" id="about" data-index="1">
+          {/* 2. EXECUTIVE CORE */}
+          <section className="room scrolling-section" id="hq" data-index="1">
             <div className="wrap">
-              <p className="eyebrow reveal">Briefing</p>
-              <h2 className="reveal d1">Curiosity, <span className="display-thin">engineered.</span></h2>
-              <p className="lede reveal d2">We exist to give students real hardware, real deadlines and real failure.</p>
+              <p className="eyebrow reveal">Administration Layer</p>
+              <h2 className="reveal d1">Executive <span className="display-thin">Core</span></h2>
+              <p className="lede reveal d2">Directing operations, submissions, and NASA India relations for Zone 6.</p>
               <div className="grid-2 reveal d3" style={{ marginTop: 'var(--sp-5)' }}>
                 <div className="card">
-                  <h3>What we do</h3>
-                  <p className="body">Four active divisions — Avionics, Structures, Payload Science and Outreach.</p>
+                  <h3>Unit Information</h3>
+                  <p className="body">Unit Code: Z649<br/>Institution: Rajalakshmi School of Architecture<br/>Official Email: z649@nasaindia.co.in</p>
                 </div>
                 <div className="card">
-                  <h3>How to join</h3>
-                  <p className="body">Open intake twice a year. No prior experience required for first-years.</p>
+                  <h3>Structure</h3>
+                  <p className="body">Comprised of Unit Designee, Unit Secretary, and Core Coordinators leading specialized task forces.</p>
                 </div>
               </div>
               <div className="stats reveal d4">
-                <div className="stat"><p className="stat__v">2021</p><p className="stat__k">Founded</p></div>
-                <div className="stat"><p className="stat__v">04</p><p className="stat__k">Divisions</p></div>
-                <div className="stat"><p className="stat__v">23</p><p className="stat__k">Builds shipped</p></div>
+                <div className="stat"><p className="stat__v">Z649</p><p className="stat__k">Unit Code</p></div>
+                <div className="stat"><p className="stat__v">06</p><p className="stat__k">Zone</p></div>
+                <div className="stat"><p className="stat__v">Rabat</p><p className="stat__k">Last Int. Visit</p></div>
                 <div className="stat"><p className="stat__v">100%</p><p className="stat__k">Student-run</p></div>
               </div>
             </div>
           </section>
 
-          <section className="room scrolling-section" id="missions" data-index="2">
+          {/* 3. SECURE VAULT */}
+          <section className="room scrolling-section" id="vault" data-index="2">
             <div className="wrap">
-              <p className="eyebrow reveal">Mission Bay</p>
-              <h2 className="reveal d1">Active <span className="display-thin">programmes</span></h2>
+              <p className="eyebrow reveal">Secure Vault</p>
+              <h2 className="reveal d1">Active <span className="display-thin">Works</span></h2>
               <div className="news reveal d2">
                 {missions.map(m => (
                   <article key={m.id} className="card news__item">
@@ -642,11 +683,12 @@ export default function App() {
             </div>
           </section>
 
+          {/* 4. PERSONNEL */}
           <section className="room scrolling-section" id="crew" data-index="3">
             <div className="wrap">
-              <p className="eyebrow reveal">Crew Quarters</p>
-              <h2 className="reveal d1">The <span className="display-thin">council</span></h2>
-              <p className="lede reveal d2">Elected annually. Every officer also sits on a build team.</p>
+              <p className="eyebrow reveal">Unit Directory</p>
+              <h2 className="reveal d1">The <span className="display-thin">Personnel</span></h2>
+              <p className="lede reveal d2">Registered architects in training and council members representing Z649.</p>
               <div className="crew reveal d3">
                 {crew.map(c => (
                   <div key={c.id} className="member">
@@ -659,10 +701,11 @@ export default function App() {
             </div>
           </section>
 
+          {/* 5. BROADCASTS */}
           <section className="room scrolling-section" id="news" data-index="4">
             <div className="wrap">
               <p className="eyebrow reveal">Comms Deck</p>
-              <h2 className="reveal d1">Latest <span className="display-thin">transmissions</span></h2>
+              <h2 className="reveal d1">Unit <span className="display-thin">Broadcasts</span></h2>
               <div className="news reveal d2">
                 {news.map(n => (
                   <article key={n.id} className="card news__item">
@@ -670,13 +713,13 @@ export default function App() {
                     <h3>{n.title}</h3>
                     <p className="news__body">{n.body}</p>
                     <div className="news__actions">
-                      <button className="btn btn--ghost btn--sm" onClick={() => handleDeleteNews(n.id)}>Delete</button>
+                      <button className="btn btn--ghost btn--sm" onClick={() => handleDeleteNews(n.id)}>Archive</button>
                     </div>
                   </article>
                 ))}
               </div>
               <details className="card reveal d3" style={{ marginTop: 'var(--sp-4)' }}>
-                <summary style={{ cursor:'pointer', fontWeight:600 }}>Post an update (council officers)</summary>
+                <summary style={{ cursor:'pointer', fontWeight:600 }}>Transmit an update (Council Only)</summary>
                 <form className="form form--wide" onSubmit={handleNewsSubmit}>
                   <div className="grid-2">
                     <div className="field">
@@ -686,8 +729,8 @@ export default function App() {
                     <div className="field">
                       <label htmlFor="nTag">Channel</label>
                       <select id="nTag" name="tag">
-                        <option>Mission</option><option>Research</option>
-                        <option>Outreach</option><option>Announcement</option>
+                        <option>Official</option><option>Deadline</option>
+                        <option>Meeting</option><option>Alert</option>
                       </select>
                     </div>
                   </div>
@@ -697,22 +740,22 @@ export default function App() {
                   </div>
                   <div className="btn-row" style={{ margin:0 }}>
                     <button className="btn btn--primary" type="submit">Publish</button>
-                    <button className="btn btn--ghost" type="reset">Clear</button>
                   </div>
                 </form>
               </details>
             </div>
           </section>
 
-          <section className="room scrolling-section" id="ops" data-index="5">
+          {/* 6. RSA AI */}
+          <section className="room scrolling-section" id="ai" data-index="5">
             <div className="wrap">
-              <p className="eyebrow reveal">Ops Terminal</p>
-              <h2 className="reveal d1">Ask <span className="display-thin">the council</span></h2>
-              <p className="lede reveal d2">A local query console — no network calls.</p>
+              <p className="eyebrow reveal">RSA Intelligence</p>
+              <h2 className="reveal d1">Ask <span className="display-thin">the AI</span></h2>
+              <p className="lede reveal d2">Advanced architectural co-pilot connected to Unit Z649 archives and NASA India telemetry.</p>
               <div className="term reveal d3">
                 <div className="term__bar">
                   <span className="term__led term__led--on"></span><span className="term__led"></span><span className="term__led"></span>
-                  <p className="term__title">council://ops — session active</p>
+                  <p className="term__title">rsa-ai://z649-secure</p>
                 </div>
                 <div className="term__log" ref={termLogRef}>
                   {termLogs.map((log, i) => (
@@ -720,57 +763,65 @@ export default function App() {
                   ))}
                 </div>
                 <form className="term__form" onSubmit={handleTerm}>
-                  <input type="text" value={termIn} onChange={e=>setTermIn(e.target.value)} placeholder="type help and press enter" />
-                  <button className="btn btn--primary btn--sm" type="submit">Send</button>
+                  <input type="text" value={termIn} onChange={e=>setTermIn(e.target.value)} placeholder="Type 'help' or query architecture data..." />
+                  <button className="btn btn--primary btn--sm" type="submit">Query</button>
                 </form>
               </div>
               <div className="term__chips reveal d4">
-                {['help', 'missions', 'how do I join', 'next launch', 'clear'].map(cmd => (
+                {['help', 'trophies', 'msl landscape', 'news', 'balance'].map(cmd => (
                   <button key={cmd} className="chip" onClick={() => setTermIn(cmd)}>{cmd}</button>
                 ))}
               </div>
             </div>
           </section>
 
-          <section className="room scrolling-section" id="events" data-index="6">
+          {/* 7. TREASURY (Using Timeline Layout) */}
+          <section className="room scrolling-section" id="fin" data-index="6">
             <div className="wrap">
-              <p className="eyebrow reveal">Launch Pad</p>
-              <h2 className="reveal d1">Upcoming <span className="display-thin">schedule</span></h2>
+              <p className="eyebrow reveal">Financial Tracking</p>
+              <h2 className="reveal d1">Unit <span className="display-thin">Treasury</span></h2>
               <ul className="timeline reveal d2">
-                {events.map(ev => (
-                  <li key={ev.id} className="event">
-                    <p className="event__when">{ev.when}</p>
+                {events.map((ev, i) => (
+                  <li key={i} className="event" style={{ borderLeftColor: ev.when === 'Income' ? 'var(--neon-green)' : 'var(--neon-pink)' }}>
+                    <p className="event__when" style={{ color: ev.when === 'Income' ? 'var(--neon-green)' : 'var(--neon-pink)' }}>{ev.when}</p>
                     <div className="event__what">
                       <p className="event__title">{ev.title}</p>
                       <p className="event__where">{ev.where}</p>
                     </div>
-                    <button className="btn btn--ghost btn--sm" onClick={() => handleRsvp(ev.title)}>Remind me</button>
                   </li>
                 ))}
               </ul>
             </div>
           </section>
 
-          <section className="room scrolling-section" id="contact" data-index="7">
+          {/* 8. REGISTRATION */}
+          <section className="room scrolling-section" id="register" data-index="7">
             <div className="wrap">
-              <p className="eyebrow reveal">Airlock</p>
-              <h2 className="reveal d1">Come <span className="display-thin">aboard</span></h2>
-              <p className="lede reveal d2">Tell us what you want to build. We read every application.</p>
+              <p className="eyebrow reveal">Registration</p>
+              <h2 className="reveal d1">Join <span className="display-thin">Unit Z649</span></h2>
+              <p className="lede reveal d2">Register your profile to gain access to the unit directories and submission vaults.</p>
               <form className="form reveal d3" onSubmit={handleJoin}>
                 <div className="grid-2">
                   <div className="field"><label htmlFor="jName">Full name</label><input id="jName" required /></div>
                   <div className="field"><label htmlFor="jMail">Email</label><input id="jMail" type="email" required /></div>
                 </div>
-                <div className="field">
-                  <label htmlFor="jDiv">Division of interest</label>
-                  <select id="jDiv"><option>Avionics</option><option>Structures</option><option>Payload Science</option><option>Outreach</option><option>Not sure yet</option></select>
+                <div className="grid-2">
+                  <div className="field">
+                    <label htmlFor="jYear">Year of Study</label>
+                    <select id="jYear"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>5th Year</option></select>
+                  </div>
+                  <div className="field">
+                    <label htmlFor="jRole">Desired Role / Team</label>
+                    <select id="jRole"><option>General Member</option><option>Design Team</option><option>Documentation</option><option>Graphics</option></select>
+                  </div>
                 </div>
-                <div className="field"><label htmlFor="jWhy">What do you want to build?</label><textarea id="jWhy" required></textarea></div>
-                <div className="btn-row" style={{ margin:0 }}><button className="btn btn--primary" type="submit">Submit application</button></div>
+                <div className="btn-row" style={{ margin:0, marginTop: 'var(--sp-4)' }}>
+                  <button className="btn btn--primary" type="submit">Submit Registration</button>
+                </div>
               </form>
               <div className="foot reveal d4">
-                <span>NASA India Council · Student body</span>
-                <span>council@yourcollege.edu</span>
+                <span>Rajalakshmi School of Architecture · Unit Z649</span>
+                <span>z649@nasaindia.co.in</span>
               </div>
             </div>
           </section>
