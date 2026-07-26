@@ -51,7 +51,7 @@ const ARCH_QUOTES = [
 ];
 
 // ==========================================
-// 3. DESIGN SYSTEM & MOTION LANGUAGE
+// 3. DESIGN SYSTEM & STYLES
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..500;1,9..40,300..500&family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700&display=swap');
@@ -59,7 +59,6 @@ const GLOBAL_STYLES = `
   :root {
     --color-void: #000000;
     --color-obsidian: #0a0a0a;
-    --color-carbon: #111111;
     --color-iron: #1a1a1a;
     --color-steel: #252525;
     --color-chrome: rgba(255,255,255,0.06);
@@ -85,9 +84,6 @@ const GLOBAL_STYLES = `
     --font-heading: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
-
-    --ease-spring: cubic-bezier(0.34, 1.56, 1, 1);
-    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -102,14 +98,12 @@ const GLOBAL_STYLES = `
   .type-label { font-family: var(--font-body); font-weight: 600; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
   .type-body { font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; line-height: 1.6; color: var(--text-200); }
   .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
-  .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
 
   /* 🌟 3D ARCHITECTURAL HOUSE ENGINE 🌟 */
   .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1200px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate var(--ease-smooth); transition: background 2s ease; }
+  .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; transition: background 2s ease; }
   .orb-c { width: 60vw; height: 60vw; top: -20vh; left: -15vw; }
-  .orb-p { width: 50vw; height: 50vw; bottom: -15vh; right: -15vw; animation-delay: -5s; }
-  @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
+  .orb-p { width: 50vw; height: 50vw; bottom: -15vh; right: -15vw; }
 
   .arch-scene { position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
   .arch-wall { position: absolute; border: 1px solid var(--wall-border); background-image: linear-gradient(var(--wall-color) 1px, transparent 1px), linear-gradient(90deg, var(--wall-color) 1px, transparent 1px); background-size: var(--wall-grid); backface-visibility: visible; transition: background-image 1.5s ease, border-color 1.5s ease, background-size 1.5s ease; }
@@ -119,49 +113,46 @@ const GLOBAL_STYLES = `
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* ROOM HUD */
+  /* 🌟 HUD 🌟 */
   .room-hud { position: fixed; right: 24px; font-family: var(--font-mono); pointer-events: none; opacity: 0.6; transition: all 0.5s ease; text-align: right; z-index: 50; }
   @media (max-width: 768px) { .room-hud { bottom: calc(90px + env(safe-area-inset-bottom)); } }
   @media (min-width: 769px) { .room-hud { bottom: 40px; } }
 
-  /* SPLASH SCREEN */
-  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: var(--color-void); display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out, visibility 0.8s; }
+  /* 🌟 CLEAN, ELEGANT SPLASH SCREEN 🌟 */
+  .boot-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.8s ease-in-out, visibility 0.8s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .circle-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .circle-flow-1 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); animation: flowRotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-  .circle-flow-2 { position: absolute; inset: 25px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--neon-gold); border-right-color: var(--neon-purple); animation: flowRotate 3s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; opacity: 0.8; }
-  .circle-flow-3 { position: absolute; inset: 50px; border-radius: 50%; border: 2px dotted rgba(255,255,255,0.3); animation: flowRotate 8s linear infinite; }
-  .splash-brand { font-family: var(--font-heading); font-size: 4rem; font-style: italic; letter-spacing: 0.05em; color: #fff; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(0,240,255,0.4); animation: pulseBrand 2s infinite alternate; }
-  @keyframes flowRotate { 100% { transform: rotate(360deg); } }
-  @keyframes pulseBrand { 0% { opacity: 0.8; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
+  .splash-brand { font-family: var(--font-heading); font-size: 3.5rem; letter-spacing: 0.3em; font-weight: 700; color: #fff; animation: pulseGlow 2s infinite alternate; }
+  .splash-sub { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-400); letter-spacing: 0.2em; margin-top: 10px; text-transform: uppercase; }
+  @keyframes pulseGlow { 0% { text-shadow: 0 0 10px rgba(0,240,255,0); transform: scale(0.98); } 100% { text-shadow: 0 0 30px rgba(0,240,255,0.6); transform: scale(1.02); } }
 
-  /* HYBRID SCROLL ENGINE */
-  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
+  /* 🌟 NATIVE SCROLL ENGINE (No lagging transforms, No missing text) 🌟 */
+  .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   
+  /* Desktop Layout */
   @media (min-width: 769px) {
+    .kinetic-scroll-engine { scroll-snap-type: y mandatory; }
     .scrolling-section { height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; padding: 100px 40px 80px 100px; position: relative; }
     .bento-container { width: 100%; max-width: 1100px; max-height: calc(100vh - 200px); overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 10px 10px 40px 10px; margin: 0 auto; scrollbar-width: none; }
     .bento-container::-webkit-scrollbar { display: none; }
   }
 
+  /* Mobile Layout */
   @media (max-width: 768px) {
-    .scrolling-section { height: auto; min-height: 100dvh; width: 100vw; scroll-snap-align: start; display: flex; flex-direction: column; padding: 100px 16px calc(120px + env(safe-area-inset-bottom)) 16px; position: relative; }
+    .scrolling-section { height: auto; min-height: 100dvh; width: 100vw; display: flex; flex-direction: column; padding: 100px 16px calc(120px + env(safe-area-inset-bottom)) 16px; position: relative; }
     .bento-container { width: 100%; max-width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 0; overflow-y: visible; max-height: none; }
   }
 
-  .stagger-item { opacity: 0; transform: var(--reveal-dir, translateY(40px)); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
-  .view-active .stagger-item { opacity: 1; transform: translateY(0); }
-  .stagger-1 { transition-delay: 0ms; }
-  .stagger-2 { transition-delay: 80ms; }
-  .stagger-3 { transition-delay: 160ms; }
-  .stagger-4 { transition-delay: 240ms; }
+  /* Entrance Animation (Replaces the broken view-active hiding) */
+  .bento-container > * { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+  .bento-container > *:nth-child(1) { animation-delay: 0s; }
+  .bento-container > *:nth-child(2) { animation-delay: 0.1s; }
+  .bento-container > *:nth-child(3) { animation-delay: 0.2s; }
+  .bento-container > *:nth-child(4) { animation-delay: 0.3s; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* BENTO CARDS */
-  .bento-card { background: rgba(10,10,10,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); border-top: 1px solid rgba(255,255,255,0.12); position: relative; overflow: hidden; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth); }
-  .bento-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 70%); opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-spring); pointer-events: none; z-index: 0; }
-  .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-4px); }
-  .bento-card:hover::before { opacity: 1; transform: scale(1.5); }
-  .bento-card > * { position: relative; z-index: 1; }
+  /* 🌟 BENTO CARDS 🌟 */
+  .bento-card { background: rgba(10,10,10,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); border-top: 1px solid rgba(255,255,255,0.12); position: relative; overflow: hidden; border-radius: 20px; transition: all 0.3s ease; }
+  .bento-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
   
   .bento-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
   .bento-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
@@ -169,88 +160,84 @@ const GLOBAL_STYLES = `
   @media (min-width: 769px) { .bento-card { padding: 32px; } }
   @media (max-width: 768px) { .bento-card { padding: 20px; border-radius: 16px; } .bento-grid-2, .bento-grid-3 { gap: 16px; } }
 
-  /* TOP BAR */
+  /* 🌟 TOP BAR 🌟 */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
   .security-hud { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); padding: 6px 16px 6px 6px; border-radius: 100px; cursor: pointer; transition: all 0.3s; }
-  .security-hud:hover { border-color: var(--neon-cyan); transform: scale(1.05); }
+  .security-hud:hover { border-color: var(--neon-cyan); }
   .hud-icon-box { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; background: rgba(255,255,255,0.1); color: #fff; }
-  .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); animation: iconPop 0.4s var(--ease-spring); }
+  .hud-unlocked .hud-icon-box { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
   .hud-text { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
   
   .section-counter { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-400); margin-left: auto; margin-right: 24px; letter-spacing: 0.1em; }
 
-  /* COMPLEX ANIMATRONIC SIDEBAR LOGO */
-  .complex-sidebar-btn { position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.6s var(--ease-spring); color: #fff; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--color-chrome); border-radius: 12px; backdrop-filter: blur(10px); }
-  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.1); }
-  .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
-  .complex-sidebar-btn .hex-outer, .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s var(--ease-spring); }
-  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s var(--ease-spring); }
+  /* 🌟 ANIMATRONIC SIDEBAR LOGO 🌟 */
+  .complex-sidebar-btn { position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.6s ease; color: #fff; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--color-chrome); border-radius: 12px; backdrop-filter: blur(10px); }
+  .complex-sidebar-btn:hover { border-color: var(--neon-cyan); }
+  .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); color: var(--neon-pink); }
+  
+  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.6s ease; }
+  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s ease; }
+  .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s ease; }
+  
   .complex-sidebar-btn.spin .hex-outer { transform: scale(0); opacity: 0; }
   .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.5); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
 
   @media (max-width: 768px) { .top-bar { padding: 16px 20px; } .complex-sidebar-btn { width: 44px; height: 44px; } }
 
-  /* SIDEBAR */
+  /* SIDEBAR OVERLAY */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.4s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
-  .nasa-sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw; background: var(--color-obsidian); border-left: 1px solid var(--color-chrome); z-index: 110; padding: 100px 24px 30px 24px; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring); }
+
+  /* SIDEBAR */
+  .nasa-sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw; background: var(--color-obsidian); border-left: 1px solid var(--color-chrome); z-index: 110; padding: 100px 24px 30px 24px; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s ease; }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
   
   .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
   .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
-  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
   .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
   .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
 
-  /* 🌟 HYBRID DOCK 🌟 */
+  /* 🌟 HORIZONTAL RESPONSIVE DOCK 🌟 */
   .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
   .floating-dock { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto; }
-  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s var(--ease-spring); overflow: hidden; }
-  .dock-item::before { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0; border-radius: inherit; transform: scale(0.5); transition: transform 0.4s var(--ease-spring), opacity 0.4s; z-index: -1; }
-  .dock-item:active::before { opacity: 0.2; transform: scale(1.5); transition: 0s; }
+  .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s ease; overflow: hidden; }
   
   @media (min-width: 769px) {
     .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
     .dock-item { width: 48px; height: 48px; border-radius: 50%; }
-    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); animation: popActive 0.4s var(--ease-spring); }
-    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px) scale(1.05); }
+    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); }
+    .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px); }
     .dock-tooltip { position: absolute; left: 100%; top: 50%; margin-left: 16px; transform: translateY(-50%) translateX(-10px); background: var(--color-steel); border: 1px solid var(--color-chrome); color: #fff; padding: 6px 12px; border-radius: 8px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; opacity: 0; transition: all 0.2s; white-space: nowrap; pointer-events: none; display: flex; align-items: center; gap: 6px; }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .dock-label-mobile { display: none; }
-    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(12px) scale(1.1); } }
   }
 
   @media (max-width: 768px) {
     .floating-dock-wrapper { bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; padding-bottom: env(safe-area-inset-bottom, 0px); }
     .floating-dock { width: 100%; flex-direction: row; padding: 8px; border-radius: 24px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; position: relative; }
     .floating-dock::-webkit-scrollbar { display: none; }
-    .floating-dock-wrapper::after { content: ''; position: absolute; right: 0; top: 0; bottom: env(safe-area-inset-bottom, 0px); width: 40px; background: linear-gradient(to right, transparent, rgba(10,10,10,0.9)); border-radius: 0 24px 24px 0; pointer-events: none; }
     .dock-item { min-width: max-content; height: 44px; padding: 0 16px; border-radius: 12px; gap: 8px; scroll-snap-align: center; }
-    .dock-item.active { background: #fff; color: #000; transform: translateY(-4px); box-shadow: 0 8px 16px rgba(255,255,255,0.2); }
+    .dock-item.active { background: #fff; color: #000; }
     .dock-label-mobile { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; }
     .dock-tooltip { display: none; }
   }
 
   /* BUTTONS & PILLS */
-  @keyframes iconPop { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
-  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; transition: all 0.3s var(--ease-spring); z-index: 1; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,255,255,0.3); letter-spacing: 0.05em; }
-  .btn-primary::after { content: ''; position: absolute; top: 50%; left: 50%; width: 150%; height: 150%; background: rgba(0, 0, 0, 0.1); transform: translate(-50%, -50%) scale(0); border-radius: 50%; transition: transform 0.4s var(--ease-spring), opacity 0.4s; opacity: 0; z-index: -1; }
-  .btn-primary:active::after { transform: translate(-50%, -50%) scale(1); opacity: 1; transition: 0s; }
+  .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .btn-primary:active { transform: scale(0.95); }
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--color-chrome); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
-  .btn-icon:hover svg { animation: iconPop 0.4s var(--ease-spring); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
+  
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-family: var(--font-body); font-weight: 600; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; white-space: nowrap; transition: all 0.3s; }
-  .status-pill:hover { transform: scale(1.05); }
 
   .finance-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--color-chrome); transition: background 0.2s; }
   .finance-row:hover { background: rgba(255,255,255,0.02); }
@@ -259,25 +246,26 @@ const GLOBAL_STYLES = `
 
   /* 🌟 BOTTOM SHEET MODALS 🌟 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
-  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.4s 0.1s forwards var(--ease-spring); }
+  .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.3s 0.1s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
+  
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
-    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
+    .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.3s forwards ease-out; }
     input, textarea, select { font-size: 16px !important; }
   }
+
   @keyframes fadeIn { to { opacity: 1; } }
   @keyframes popIn { to { opacity: 1; transform: scale(1); } }
   @keyframes slideUpMobile { to { opacity: 1; transform: translateY(0); } }
   
-  /* Input Floating Labels */
+  /* Input Fields */
   .input-group { position: relative; width: 100%; }
-  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 12px; padding: 24px 16px 8px; color: var(--text-100) !important; transition: all 0.3s var(--ease-spring); }
-  .input-label { position: absolute; left: 16px; top: 18px; font-size: 0.95rem; color: var(--text-400); transition: all 0.3s var(--ease-spring); pointer-events: none; }
-  .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); transform: scale(1.02); }
+  .input-field { width: 100%; background: var(--color-iron) !important; border: 1px solid var(--color-chrome); border-radius: 12px; padding: 24px 16px 8px; color: var(--text-100) !important; transition: all 0.3s ease; }
+  .input-label { position: absolute; left: 16px; top: 18px; font-size: 0.95rem; color: var(--text-400); transition: all 0.3s ease; pointer-events: none; }
+  .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(0,240,255,0.1); }
   .input-field:focus ~ .input-label, .input-field:not(:placeholder-shown) ~ .input-label { top: 6px; font-size: 0.65rem; color: var(--neon-cyan); font-weight: 600; letter-spacing: 0.05em; }
 
-  .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; transition: transform 0.3s var(--ease-spring); }
-  .bento-card:hover .avatar { transform: scale(1.1) rotate(5deg); }
+  .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1rem; flex-shrink: 0; transition: transform 0.3s ease; }
   
   .animate-count { animation: countUpAnim 0.8s ease-out forwards; }
   @keyframes countUpAnim { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -324,9 +312,7 @@ const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
 // ==========================================
 export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
-  const [scrollDir, setScrollDir] = useState('down');
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
-  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
   
   // Core Databases
@@ -354,8 +340,6 @@ export default function App() {
 
   // Refs
   const scrollEngineRef = useRef(null);
-  const chatEndRef = useRef(null);
-  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
@@ -371,15 +355,7 @@ export default function App() {
   // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
-    const seq = [
-      { time: 100, state: 1 }, 
-      { time: 550, state: 2 }, 
-      { time: 1000, state: 3 }, 
-      { time: 2000, state: 4 }  
-    ];
-    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
     setTimeout(() => setIsBooting(false), 2400);
-    return () => timers.forEach(clearTimeout);
   }, []);
 
   // Firebase Listeners
@@ -395,11 +371,10 @@ export default function App() {
     return () => unsubs.forEach(unsub => unsub());
   }, []);
 
-  // AI Auto-Scroll
+  // AI Auto-Scroll (FIXED: Targets specific div, not whole window)
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    const chatContainer = document.getElementById('ai-chat-box-container');
+    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
   }, [aiMessages]);
 
   // Intersection Observer for Scrolling Sync
@@ -409,10 +384,7 @@ export default function App() {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const idx = Number(entry.target.getAttribute('data-index'));
-          setActiveSectionIdx(prevIdx => {
-            setScrollDir(idx > prevIdx ? 'down' : 'up');
-            return idx;
-          });
+          setActiveSectionIdx(idx);
         }
       });
     }, options);
@@ -461,9 +433,7 @@ export default function App() {
         setModalMode(null);
         setViewingCrew(null);
         setViewingNews(null);
-      } catch (e) {
-        alert("Error deleting record.");
-      }
+      } catch (e) { alert("Error deleting record."); }
     }
   };
 
@@ -472,19 +442,13 @@ export default function App() {
     try {
       const currentYear = new Date().getFullYear(); 
       await addDoc(collection(db, 'gallery'), {
-         title: item.title,
-         category: item.category || 'Archived Work',
+         title: item.title, category: item.category || 'Archived Work',
          description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '',
-         fileType: 'Archive',
-         archivedYear: currentYear,
-         timestamp: Date.now()
+         link: item.link || '', fileType: 'Archive', archivedYear: currentYear, timestamp: Date.now()
       });
       await deleteDoc(doc(db, 'vault', item.id));
       alert("Successfully moved to Archive.");
-    } catch(e) {
-      alert("Failed to archive item.");
-    }
+    } catch(e) { alert("Failed to archive item."); }
   };
 
   const getCameraTransform = () => {
@@ -513,32 +477,24 @@ export default function App() {
     }, 1000);
   };
 
-  // ==========================================
-  // DASHBOARD SECTIONS
-  // ==========================================
-  const getSectionStyle = (idx) => ({
-    '--reveal-dir': scrollDir === 'down' ? '40px' : '-40px',
-    '--section-accent': SECTIONS[idx]?.accent || 'var(--neon-cyan)'
-  });
-
   const renderDashboard = () => (
-    <div className="bento-container" style={getSectionStyle(0)}>
+    <div className="bento-container">
       <div style={{ padding: '0 16px' }}><span className="text-subtitle">Overview</span><h1 className="text-title">Dashboard</h1></div>
       <div className="bento-grid-2" style={{ marginBottom: '24px' }}>
-        <div className="bento-card stagger-item stagger-2" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
+        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(0,240,255,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-cyan)'}}><Globe size={14}/> Architectural Philosophy</span>
           <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', fontWeight: '500', fontFamily: 'var(--font-heading)', marginTop: '16px', lineHeight: '1.4', fontStyle: 'italic' }}>{dailyQuote}</div>
         </div>
-        <div className="bento-card stagger-item stagger-3" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
+        <div className="bento-card" style={{ background: 'linear-gradient(135deg, rgba(255,190,11,0.05), rgba(0,0,0,0.8))', borderColor: 'rgba(255,190,11,0.2)' }}>
           <span className="text-subtitle" style={{color: 'var(--neon-gold)'}}><Activity size={14}/> System Status</span>
           <div style={{ fontSize: '1.6rem', fontWeight: '600', fontFamily: 'var(--font-heading)', marginTop: '8px' }}>NASA 68th Convention</div>
           <p className="type-body mt-2">Preparation is active. Live feed connected.</p>
         </div>
       </div>
       <div className="bento-grid-3">
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Users size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
-        <div className="bento-card stagger-item stagger-4"><span className="text-subtitle text-white"><Radio size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
+        <div className="bento-card"><span className="text-subtitle text-white"><Users size={14}/> Members</span><div className="text-metric"><AnimatedCounter value={crewData.length} /></div></div>
+        <div className="bento-card"><span className="text-subtitle text-white"><HardDrive size={14}/> Files</span><div className="text-metric"><AnimatedCounter value={vaultData.length} /></div></div>
+        <div className="bento-card"><span className="text-subtitle text-white"><Radio size={14}/> News</span><div className="text-metric"><AnimatedCounter value={newsData.length} /></div></div>
       </div>
     </div>
   );
@@ -550,15 +506,15 @@ export default function App() {
     crewData.forEach(u => { const y = u.year || 'Unassigned'; if (allocation[y]) allocation[y].push(u); else allocation['Unassigned'].push(u); });
     
     return (
-      <div className="bento-container" style={getSectionStyle(1)}>
-        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Member List</span><h1 className="text-title">Unit Members</h1></div>
           <button className="btn-primary" onClick={() => { setFormPayload({ role: 'Member', year: '1' }); setModalMode('crew'); }}><Plus size={16}/> Register Profile</button>
         </div>
         {orderedYears.map((year, idx) => {
           if (allocation[year].length === 0) return null;
           return (
-            <div key={year} className={`stagger-item stagger-${Math.min((idx%3)+2, 4)}`} style={{ marginTop: '16px' }}>
+            <div key={year} style={{ marginTop: '16px' }}>
               <span className="text-subtitle" style={{ padding: '0 16px', color: '#fff' }}>{year === 'Alumni' || year === 'Unassigned' ? year : `YEAR ${year}`}</span>
               <div className="bento-grid-2" style={{ marginTop: '16px' }}>
                 {allocation[year].map(m => {
@@ -596,20 +552,20 @@ export default function App() {
     const goal = Number(leadership.financialGoal) || 1; 
 
     return (
-      <div className="bento-container" style={getSectionStyle(2)}>
-        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Financial Tracking</span><h1 className="text-title">Treasury</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'income' }); setModalMode('finances'); }}><Plus size={16}/> Add Record</button>}
         </div>
         <div className="bento-grid-2">
-          <div className="bento-card stagger-item stagger-2" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle" style={{color:'var(--neon-green)'}}>Gross Financial Position</span>
             <div style={{display:'flex', gap:'32px', marginTop:'10px'}}>
               <div><span className="type-mono-sm">INCOME</span><div className="type-metric text-[var(--neon-green)]">₹<AnimatedCounter value={income} /></div></div>
               <div><span className="type-mono-sm">EXPENSES</span><div className="type-metric text-[var(--neon-pink)]">₹<AnimatedCounter value={expense} /></div></div>
             </div>
           </div>
-          <div className="bento-card stagger-item stagger-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="bento-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="text-subtitle text-white"><Zap size={14}/> Current Funds</span>
             <div className="type-metric">₹<AnimatedCounter value={net} /></div>
             <div style={{ width: '100%', height: '4px', background: 'var(--color-chrome)', borderRadius: '2px', overflow: 'hidden', marginTop: '16px' }}>
@@ -617,7 +573,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="bento-card stagger-item stagger-4" style={{ padding: '0' }}>
+        <div className="bento-card" style={{ padding: '0' }}>
           {financialLog.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-300)' }}>No financial records found.</div>
           ) : (
@@ -649,19 +605,19 @@ export default function App() {
   const renderVault = () => {
     const filteredVault = vaultFilter === 'All' ? vaultData : vaultData.filter(v => v.category === vaultFilter);
     return (
-      <div className="bento-container" style={getSectionStyle(3)}>
-        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Active Works</span><h1 className="text-title">Secure Vault</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ type: 'Document', category: 'Programs' }); setModalMode('vault'); }}><Plus size={16}/> Add File</button>}
         </div>
-        <div className="stagger-item stagger-2" style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
+        <div style={{ display: 'flex', gap: '8px', padding: '0 16px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
           {['All', 'Trophies', 'Programs', 'Events', 'Meetings', 'Other'].map(cat => (
             <button key={cat} className={`filter-tab ${vaultFilter === cat ? 'active' : ''}`} onClick={() => setVaultFilter(cat)}>{cat}</button>
           ))}
         </div>
         <div className="bento-grid-3">
           {filteredVault.map((v, i) => (
-            <div key={v.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`}>
+            <div key={v.id} className="bento-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <span className="status-pill" style={{ color: 'var(--accent-vault)', background: 'rgba(167, 139, 250, 0.1)' }}><HardDrive size={12}/> {v.category || 'File'}</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
@@ -681,14 +637,14 @@ export default function App() {
 
   const renderGallery = () => {
     return (
-      <div className="bento-container" style={getSectionStyle(4)}>
-        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container">
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Past Works</span><h1 className="text-title">Archive Gallery</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({ fileType: 'Image' }); setModalMode('gallery'); }}><Plus size={16}/> Add Direct Image</button>}
         </div>
         <div className="bento-grid-2">
           {galleryData.map((g, i) => (
-            <div key={g.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ padding: 0 }}>
+            <div key={g.id} className="bento-card" style={{ padding: 0 }}>
               {g.fileType === 'Archive' ? (
                 <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -726,16 +682,16 @@ export default function App() {
 
   const renderNews = () => {
     return (
-      <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(5) }}>
-        <div className="stagger-item stagger-1" style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bento-container" style={{ maxWidth: '1400px' }}>
+        <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div><span className="text-subtitle">Announcements</span><h1 className="text-title">News</h1></div>
           {isLeadershipMode && <button className="btn-primary" onClick={() => { setFormPayload({}); setModalMode('news'); }}><Plus size={16}/> Add Unit News</button>}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '24px', marginTop: '16px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <span className="text-subtitle text-white stagger-item stagger-2"><Activity size={14}/> Unit Updates</span>
+            <span className="text-subtitle text-white"><Activity size={14}/> Unit Updates</span>
             {[...newsData].sort((a,b)=>b.timestamp-a.timestamp).map((n, i) => (
-              <div key={n.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ padding: '24px' }}>
+              <div key={n.id} className="bento-card" style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
@@ -767,8 +723,8 @@ export default function App() {
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <span className="text-subtitle text-[var(--neon-gold)] stagger-item stagger-2"><Globe size={14}/> Live NASA India Feed</span>
-            <div className="bento-card stagger-item stagger-3" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', padding: '24px' }}>
+            <span className="text-subtitle text-[var(--neon-gold)]"><Globe size={14}/> Live NASA India Feed</span>
+            <div className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)', padding: '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[{ id: 'l1', tag: 'OFFICIAL UPDATE', title: '68th ANC Workshop Details Released', date: 'June 16, 2026', link: 'https://nasaindia.co' }, { id: 'l2', tag: 'DEADLINE', title: 'Louis I. Kahn Trophy Submission Window Closes Soon', date: 'June 20, 2026', link: 'https://nasaindia.co' }].map(live => (
                   <div key={live.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px' }}>
@@ -811,7 +767,7 @@ export default function App() {
         <span className="text-subtitle text-[var(--neon-gold)] px-4 mt-4 stagger-item stagger-3"><Crown size={14}/> High Command Directory</span>
         <div className="bento-grid-2">
           {councilMembers.map((m, i) => (
-            <div key={m.id} className={`bento-card stagger-item stagger-${Math.min((i%3)+2, 4)}`} style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
+            <div key={m.id} className="bento-card" style={{ border: '1px solid rgba(255, 190, 11, 0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span className="status-pill" style={{ color: 'var(--neon-gold)' }}>{m.role === 'Coordinator' && m.coordinatorType ? `${m.coordinatorType} Coord.` : m.role}</span>
               </div>
@@ -828,7 +784,7 @@ export default function App() {
     return (
       <div className="bento-container" style={{ maxWidth: '1400px', ...getSectionStyle(7) }}>
         <div className="stagger-item stagger-1" style={{ padding: '0 16px' }}><span className="text-subtitle">AI Assistant</span><h1 className="text-title">RSA AI</h1></div>
-        <div className="bento-card stagger-item stagger-2 mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+        <div className="bento-card mt-4" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
           <span className="text-subtitle text-white"><Cpu size={14}/> Chat with RSA AI</span>
           <div className="ai-terminal">
             <div id="ai-chat-box-container" className="ai-chat-box">
@@ -849,7 +805,7 @@ export default function App() {
     <>
       <style>{GLOBAL_STYLES}</style>
       
-      {/* 3D BACKGROUND */}
+      {/* 3D BACKGROUND DYNAMIC INJECTION */}
       <div className="arch-environment" style={{ 
         '--wall-color': ROOM_CONFIGS[activeSectionIdx]?.color || 'rgba(0,240,255,0.05)', 
         '--wall-grid': ROOM_CONFIGS[activeSectionIdx]?.grid || '80px 80px',
@@ -939,9 +895,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock" ref={dockRef}>
+        <div className="floating-dock">
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
@@ -952,14 +907,14 @@ export default function App() {
       </div>
 
       <div className="kinetic-scroll-engine" ref={scrollEngineRef}>
-        <section className={`scrolling-section ${activeSectionIdx === 0 ? 'view-active' : ''}`} data-index="0">{renderDashboard()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 1 ? 'view-active' : ''}`} data-index="1">{renderCrew()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 2 ? 'view-active' : ''}`} data-index="2">{renderFunds()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 3 ? 'view-active' : ''}`} data-index="3">{renderVault()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 4 ? 'view-active' : ''}`} data-index="4">{renderGallery()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 5 ? 'view-active' : ''}`} data-index="5">{renderNews()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 6 ? 'view-active' : ''}`} data-index="6">{renderUnitCouncil()}</section>
-        <section className={`scrolling-section ${activeSectionIdx === 7 ? 'view-active' : ''}`} data-index="7">{renderRSAIntel()}</section>
+        <section className="scrolling-section" data-index="0">{renderDashboard()}</section>
+        <section className="scrolling-section" data-index="1">{renderCrew()}</section>
+        <section className="scrolling-section" data-index="2">{renderFunds()}</section>
+        <section className="scrolling-section" data-index="3">{renderVault()}</section>
+        <section className="scrolling-section" data-index="4">{renderGallery()}</section>
+        <section className="scrolling-section" data-index="5">{renderNews()}</section>
+        <section className="scrolling-section" data-index="6">{renderUnitCouncil()}</section>
+        <section className="scrolling-section" data-index="7">{renderRSAIntel()}</section>
       </div>
 
       {/* MODALS */}
