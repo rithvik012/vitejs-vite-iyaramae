@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 
-// ALL ICONS ALPHABETIZED AND 100% MATCHED TO PREVENT CRASHES
+// ALL ICONS ALPHABETIZED AND 100% MATCHED TO BASE LUCIDE-REACT TO PREVENT CRASHES
 import { 
   Activity, Aperture, Archive, ArrowUpRight, BookOpen, Calendar, Cpu, Crown, DollarSign, 
   Eye, Globe, HardDrive, Hexagon, Lock, Mail, Pencil, Phone, Plus, Radio, Send, Server, 
@@ -70,14 +70,6 @@ const GLOBAL_STYLES = `
     --neon-gold: #ffbe0b;
     --neon-pink: #ff0055;
 
-    --accent-dash: #60a5fa;
-    --accent-crew: #34d399;
-    --accent-finance: #fbbf24;
-    --accent-vault: #a78bfa;
-    --accent-gallery: #f472b6;
-    --accent-news: #fb923c;
-    --accent-hq: #94a3b8;
-
     --font-heading: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -90,7 +82,6 @@ const GLOBAL_STYLES = `
   body, html { background-color: var(--color-void); color: var(--text-100); font-family: var(--font-body); overflow: hidden; height: 100dvh; width: 100vw; -webkit-font-smoothing: antialiased; }
   ::-webkit-scrollbar { display: none; width: 0px; }
 
-  /* 🌟 TYPOGRAPHY 🌟 */
   .type-hero { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.04em; line-height: 1.1; }
   .type-h1 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
   .type-h2 { font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem; line-height: 1.2; }
@@ -100,7 +91,7 @@ const GLOBAL_STYLES = `
   .type-mono-sm { font-family: var(--font-mono); font-weight: 400; font-size: 0.75rem; color: var(--text-300); }
   .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
 
-  /* 🌟 3D ARCHITECTURAL HOUSE ENGINE 🌟 */
+  /* 3D ARCHITECTURAL HOUSE ENGINE */
   .arch-environment { position: fixed; inset: 0; z-index: -5; background: var(--color-void); overflow: hidden; perspective: 1200px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .plasma-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.15; animation: plasmaDrift 30s infinite alternate var(--ease-smooth); transition: background 2s ease; }
   .orb-c { width: 60vw; height: 60vw; top: -20vh; left: -15vw; }
@@ -108,25 +99,19 @@ const GLOBAL_STYLES = `
   @keyframes plasmaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw, 8vh) scale(1.1); } }
 
   .arch-scene { position: absolute; width: 100vw; height: 100vh; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
-  .arch-wall {
-    position: absolute; 
-    border: 1px solid var(--wall-border);
-    background-image: linear-gradient(var(--wall-color) 1px, transparent 1px), linear-gradient(90deg, var(--wall-color) 1px, transparent 1px);
-    background-size: var(--wall-grid); backface-visibility: visible;
-    transition: background-image 1.5s ease, border-color 1.5s ease, background-size 1.5s ease;
-  }
+  .arch-wall { position: absolute; border: 1px solid var(--wall-border); background-image: linear-gradient(var(--wall-color) 1px, transparent 1px), linear-gradient(90deg, var(--wall-color) 1px, transparent 1px); background-size: var(--wall-grid); backface-visibility: visible; transition: background-image 1.5s ease, border-color 1.5s ease, background-size 1.5s ease; }
   .wall-floor { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(90deg) translateZ(40vh); }
   .wall-ceil { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateX(-90deg) translateZ(40vh); }
   .wall-left { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(90deg) translateZ(40vw); }
   .wall-right { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: rotateY(-90deg) translateZ(40vw); }
   .wall-back { width: 300vw; height: 300vh; left: -100vw; top: -100vh; transform: translateZ(-80vw); }
 
-  /* 🌟 HUD 🌟 */
+  /* ROOM HUD */
   .room-hud { position: fixed; right: 24px; font-family: var(--font-mono); pointer-events: none; opacity: 0.6; transition: all 0.5s ease; text-align: right; z-index: 50; }
   @media (max-width: 768px) { .room-hud { bottom: calc(90px + env(safe-area-inset-bottom)); } }
   @media (min-width: 769px) { .room-hud { bottom: 40px; } }
 
-  /* 🌟 SPLASH SCREEN (Restored Circular) 🌟 */
+  /* SPLASH SCREEN */
   .boot-splash { position: fixed; inset: 0; z-index: 99999; background: var(--color-void); display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out, visibility 0.8s; }
   .boot-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   .circle-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
@@ -137,7 +122,7 @@ const GLOBAL_STYLES = `
   @keyframes flowRotate { 100% { transform: rotate(360deg); } }
   @keyframes pulseBrand { 0% { opacity: 0.8; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
 
-  /* 🌟 HYBRID SCROLL ENGINE (Direction Aware) 🌟 */
+  /* HYBRID SCROLL ENGINE */
   .kinetic-scroll-engine { height: 100dvh; width: 100vw; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; }
   
   @media (min-width: 769px) {
@@ -151,7 +136,6 @@ const GLOBAL_STYLES = `
     .bento-container { width: 100%; max-width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 0; overflow-y: visible; max-height: none; }
   }
 
-  /* Direction Aware Stagger */
   .stagger-item { opacity: 0; transform: var(--reveal-dir, translateY(40px)); transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth); will-change: transform, opacity; }
   .view-active .stagger-item { opacity: 1; transform: translateY(0); }
   .stagger-1 { transition-delay: 0ms; }
@@ -159,14 +143,8 @@ const GLOBAL_STYLES = `
   .stagger-3 { transition-delay: 160ms; }
   .stagger-4 { transition-delay: 240ms; }
 
-  /* 🌟 BENTO CARDS 🌟 */
-  .bento-card { 
-    background: rgba(10,10,10,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--color-chrome); border-top: 1px solid rgba(255,255,255,0.12);
-    position: relative; overflow: hidden; border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth);
-  }
-  
+  /* BENTO CARDS */
+  .bento-card { background: rgba(10,10,10,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); border-top: 1px solid rgba(255,255,255,0.12); position: relative; overflow: hidden; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s var(--ease-smooth); }
   .bento-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 70%); opacity: 0; transform: scale(0.5); transition: all 0.4s var(--ease-spring); pointer-events: none; z-index: 0; }
   .bento-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: translateY(-4px); }
   .bento-card:hover::before { opacity: 1; transform: scale(1.5); }
@@ -178,7 +156,7 @@ const GLOBAL_STYLES = `
   @media (min-width: 769px) { .bento-card { padding: 32px; } }
   @media (max-width: 768px) { .bento-card { padding: 20px; border-radius: 16px; } .bento-grid-2, .bento-grid-3 { gap: 16px; } }
 
-  /* 🌟 TOP BAR 🌟 */
+  /* TOP BAR */
   .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 90; pointer-events: none;}
   .top-bar > * { pointer-events: auto; }
   
@@ -190,20 +168,12 @@ const GLOBAL_STYLES = `
   
   .section-counter { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-400); margin-left: auto; margin-right: 24px; letter-spacing: 0.1em; }
 
-  /* 🌟 ANIMATRONIC SIDEBAR LOGO 🌟 */
-  .complex-sidebar-btn { 
-    position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
-    transition: transform 0.6s var(--ease-spring); color: #fff; cursor: pointer;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--color-chrome); border-radius: 12px;
-    backdrop-filter: blur(10px);
-  }
+  /* COMPLEX ANIMATRONIC SIDEBAR LOGO */
+  .complex-sidebar-btn { position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.6s var(--ease-spring); color: #fff; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--color-chrome); border-radius: 12px; backdrop-filter: blur(10px); }
   .complex-sidebar-btn:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: scale(1.1); }
   .complex-sidebar-btn.spin { transform: rotate(90deg) scale(1.1); border-radius: 50%; border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,0,85,0.3); color: var(--neon-pink); }
-  
-  .complex-sidebar-btn .hex-outer { position: absolute; transition: all 0.6s var(--ease-spring); }
-  .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s var(--ease-spring); }
+  .complex-sidebar-btn .hex-outer, .complex-sidebar-btn .aperture-inner { position: absolute; transition: all 0.6s var(--ease-spring); }
   .complex-sidebar-btn .close-x { position: absolute; color: var(--neon-pink); opacity: 0; transform: scale(0) rotate(-90deg); transition: all 0.6s var(--ease-spring); }
-  
   .complex-sidebar-btn.spin .hex-outer { transform: scale(0); opacity: 0; }
   .complex-sidebar-btn.spin .aperture-inner { transform: rotate(-180deg) scale(1.5); opacity: 0; }
   .complex-sidebar-btn.spin .close-x { opacity: 1; transform: scale(1) rotate(0deg); }
@@ -213,15 +183,21 @@ const GLOBAL_STYLES = `
   /* SIDEBAR */
   .sidebar-overlay { position: fixed; inset: 0; z-index: 105; background: transparent; pointer-events: none; transition: background 0.4s; }
   .sidebar-overlay.active { pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
-  .nasa-sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw; background: var(--color-obsidian); border-left: 1px solid var(--color-chrome); z-index: 110; padding: 100px 24px 30px 24px; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s var(--ease-spring); }
+  .nasa-sidebar { position: fixed; right: -400px; top: 0; bottom: 0; width: 400px; max-width: 100vw; background: var(--color-obsidian); border-left: 1px solid var(--color-chrome); z-index: 110; padding: 100px 24px 30px 24px; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9); transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .nasa-sidebar.open { right: 0; }
   @media (max-width: 768px) { .nasa-sidebar { width: 100%; right: -100%; padding-top: env(safe-area-inset-top, 60px); } }
+  
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sidebar-logo { font-family: var(--font-heading); font-size: 2rem; font-style: italic; font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: transparent; border: none; color: #fff; cursor: pointer; transition: transform 0.3s; }
+  .sidebar-close:hover { transform: rotate(90deg) scale(1.1); color: var(--neon-pink); }
+  .sidebar-section-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; }
+  .sidebar-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; }
 
-  /* 🌟 HYBRID DOCK (Responsive Overflow) 🌟 */
+  /* 🌟 HYBRID DOCK 🌟 */
   .floating-dock-wrapper { position: fixed; z-index: 100; pointer-events: none; }
   .floating-dock { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--color-chrome); display: flex; box-shadow: 0 20px 40px rgba(0,0,0,0.8); pointer-events: auto; }
   .dock-item { display: flex; align-items: center; justify-content: center; color: var(--text-300); cursor: pointer; position: relative; transition: all 0.3s var(--ease-spring); overflow: hidden; }
-  
   .dock-item::before { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0; border-radius: inherit; transform: scale(0.5); transition: transform 0.4s var(--ease-spring), opacity 0.4s; z-index: -1; }
   .dock-item:active::before { opacity: 0.2; transform: scale(1.5); transition: 0s; }
   
@@ -229,11 +205,12 @@ const GLOBAL_STYLES = `
     .floating-dock-wrapper { top: 50%; left: 32px; transform: translateY(-50%); }
     .floating-dock { flex-direction: column; padding: 16px 10px; border-radius: 100px; gap: 12px; }
     .dock-item { width: 48px; height: 48px; border-radius: 50%; }
-    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); }
+    .dock-item.active { background: #fff; color: #000; transform: translateX(12px) scale(1.1); box-shadow: -8px 8px 20px rgba(255,255,255,0.15); animation: popActive 0.4s var(--ease-spring); }
     .dock-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(6px) scale(1.05); }
     .dock-tooltip { position: absolute; left: 100%; top: 50%; margin-left: 16px; transform: translateY(-50%) translateX(-10px); background: var(--color-steel); border: 1px solid var(--color-chrome); color: #fff; padding: 6px 12px; border-radius: 8px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; opacity: 0; transition: all 0.2s; white-space: nowrap; pointer-events: none; display: flex; align-items: center; gap: 6px; }
     .dock-item:hover .dock-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .dock-label-mobile { display: none; }
+    @keyframes popActive { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(14px) scale(1.15); } 100% { transform: translateX(12px) scale(1.1); } }
   }
 
   @media (max-width: 768px) {
@@ -247,23 +224,18 @@ const GLOBAL_STYLES = `
     .dock-tooltip { display: none; }
   }
 
-  /* 🌟 BUTTONS & PILLS 🌟 */
+  /* BUTTONS & PILLS */
   @keyframes iconPop { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
-
   .btn-primary { background: #fff; color: #000; border: none; padding: 14px 24px; border-radius: 12px; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; transition: all 0.3s var(--ease-spring); z-index: 1; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,255,255,0.3); letter-spacing: 0.05em; }
   .btn-primary::after { content: ''; position: absolute; top: 50%; left: 50%; width: 150%; height: 150%; background: rgba(0, 0, 0, 0.1); transform: translate(-50%, -50%) scale(0); border-radius: 50%; transition: transform 0.4s var(--ease-spring), opacity 0.4s; opacity: 0; z-index: -1; }
   .btn-primary:active::after { transform: translate(-50%, -50%) scale(1); opacity: 1; transition: 0s; }
-
   .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--color-chrome); }
   .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  .btn-secondary::after { background: rgba(255,255,255,0.2); }
-
   .btn-icon { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
   .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.1); }
   .btn-icon:hover svg { animation: iconPop 0.4s var(--ease-spring); }
   .btn-icon.danger:hover { color: var(--neon-pink); background: rgba(255, 0, 85, 0.15); }
-  
   .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-family: var(--font-body); font-weight: 600; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-chrome); border: 1px solid transparent; white-space: nowrap; transition: all 0.3s; }
   .status-pill:hover { transform: scale(1.05); }
 
@@ -275,13 +247,11 @@ const GLOBAL_STYLES = `
   /* 🌟 BOTTOM SHEET MODALS 🌟 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeIn 0.2s forwards; }
   .modal-window { background: var(--color-obsidian); border: 1px solid var(--color-steel); width: 100%; max-width: 550px; border-radius: 24px; padding: 32px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; position: relative; opacity: 0; transform: scale(0.95); animation: popIn 0.4s 0.1s forwards var(--ease-spring); }
-  
   @media (max-width: 768px) {
     .modal-overlay { align-items: flex-end; padding: 0; }
     .modal-window { border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; transform: translateY(100%); animation: slideUpMobile 0.4s forwards var(--ease-spring); }
     input, textarea, select { font-size: 16px !important; }
   }
-
   @keyframes fadeIn { to { opacity: 1; } }
   @keyframes popIn { to { opacity: 1; transform: scale(1); } }
   @keyframes slideUpMobile { to { opacity: 1; transform: translateY(0); } }
@@ -343,9 +313,10 @@ export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [scrollDir, setScrollDir] = useState('down');
   const [isLeadershipMode, setIsLeadershipMode] = useState(false);
+  const [splashState, setSplashState] = useState(0); 
   const [isBooting, setIsBooting] = useState(true);
   
-  // Core Databases
+  // Databases
   const [leadership, setLeadership] = useState({ unitCode: "Z649", officialEmail: "z649@nasaindia.co.in", financialGoal: "50000" });
   const [crewData, setCrewData] = useState([]);
   const [financialLog, setFinancialLog] = useState([]);
@@ -361,16 +332,15 @@ export default function App() {
   const [viewingNews, setViewingNews] = useState(null);
   const [formPayload, setFormPayload] = useState({});
 
-  // AI State
+  // AI State Contextualized
   const [aiInput, setAiInput] = useState("");
   const [aiMessages, setAiMessages] = useState([
-    { sender: 'bot', text: 'RSA Advanced AI initialized. Connected to Unit Z649 archives and NASA India telemetry. Awaiting directive.' }
+    { sender: 'bot', text: 'Hello! I am the RSA Advanced AI, fully synchronized with the Rajalakshmi School of Architecture and Zone 6 telemetry. How can I assist your design logic today?' }
   ]);
 
   // Refs
   const scrollEngineRef = useRef(null);
   const chatEndRef = useRef(null);
-  const dockRef = useRef(null); 
 
   const SECTIONS = [
     { id: 'dash', label: 'Command', icon: <Hexagon size={20}/>, accent: 'var(--accent-dash)' },
@@ -386,7 +356,15 @@ export default function App() {
   // Boot Sequence
   useEffect(() => {
     setDailyQuote(ARCH_QUOTES[Math.floor(Math.random() * ARCH_QUOTES.length)]);
+    const seq = [
+      { time: 100, state: 1 }, 
+      { time: 550, state: 2 }, 
+      { time: 1000, state: 3 }, 
+      { time: 2000, state: 4 }  
+    ];
+    const timers = seq.map(step => setTimeout(() => setSplashState(step.state), step.time));
     setTimeout(() => setIsBooting(false), 2400);
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   // Firebase Listeners
@@ -404,12 +382,10 @@ export default function App() {
 
   // AI Auto-Scroll
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [aiMessages]);
 
-  // Intersection Observer for Scrolling
+  // Intersection Observer
   useEffect(() => {
     const options = { root: scrollEngineRef.current, rootMargin: '-20% 0px -40% 0px', threshold: 0 };
     const observer = new IntersectionObserver((entries) => {
@@ -423,7 +399,6 @@ export default function App() {
         }
       });
     }, options);
-
     const sections = document.querySelectorAll('.scrolling-section');
     sections.forEach(sec => observer.observe(sec));
     return () => observer.disconnect();
@@ -431,9 +406,7 @@ export default function App() {
 
   const navTo = (idx) => {
     const sections = document.querySelectorAll('.scrolling-section');
-    if (sections[idx]) {
-      sections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (sections[idx]) sections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleSecurityToggle = () => {
@@ -468,9 +441,7 @@ export default function App() {
         setModalMode(null);
         setViewingCrew(null);
         setViewingNews(null);
-      } catch (e) {
-        alert("Error deleting record.");
-      }
+      } catch (e) { alert("Error deleting record."); }
     }
   };
 
@@ -479,19 +450,13 @@ export default function App() {
     try {
       const currentYear = new Date().getFullYear(); 
       await addDoc(collection(db, 'gallery'), {
-         title: item.title,
-         category: item.category || 'Archived Work',
+         title: item.title, category: item.category || 'Archived Work',
          description: `Archived File (${currentYear}). ${item.description || ''}`,
-         link: item.link || '',
-         fileType: 'Archive',
-         archivedYear: currentYear,
-         timestamp: Date.now()
+         link: item.link || '', fileType: 'Archive', archivedYear: currentYear, timestamp: Date.now()
       });
       await deleteDoc(doc(db, 'vault', item.id));
       alert("Successfully moved to Archive.");
-    } catch(e) {
-      alert("Failed to archive item.");
-    }
+    } catch(e) { alert("Failed to archive item."); }
   };
 
   const handleAiSubmit = (e) => {
@@ -503,11 +468,10 @@ export default function App() {
 
     setTimeout(() => {
       const tokens = textRaw.toLowerCase();
-      let botResponse = "Processing directive... Unit systems nominal.";
-      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented.";
+      let botResponse = "Processing directive... Zone 6 systems are nominal.";
+      if (tokens.includes("troph") || tokens.includes("lik")) botResponse = "The Louis I. Kahn (LIK) Trophy focuses on unrecorded heritage architecture. Ensure vernacular spatial configurations are documented accurately for the RSA submission.";
       else if (tokens.includes("msl") || tokens.includes("landscape")) botResponse = "For the MSL Trophy, our focus is Velachery. The 'Hydro-Social Connector' acts as a biological machine to manage urban flooding.";
       else if (tokens.includes("news") || tokens.includes("live")) botResponse = `Checking live NASA feed... 68th ANC Workshop Details and Louis I. Kahn Trophy deadlines are active.`;
-      else if (tokens.includes("hello") || tokens.includes("hi")) botResponse = "Hello! I am your advanced architectural co-pilot. How can I assist your design logic today?";
       else if (tokens.includes("money") || tokens.includes("balance")) {
         const net = financialLog.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0) - financialLog.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
         botResponse = `Unit treasury balance stands at exactly ₹${net.toLocaleString()}.`;
@@ -516,15 +480,10 @@ export default function App() {
     }, 1000);
   };
 
-  // ==========================================
-  // DASHBOARD SECTIONS
-  // ==========================================
-  const getSectionStyle = (idx) => {
-    return {
-      '--reveal-dir': scrollDir === 'down' ? '40px' : '-40px',
-      '--section-accent': SECTIONS[idx]?.accent || 'var(--neon-cyan)'
-    };
-  };
+  const getSectionStyle = (idx) => ({
+    '--reveal-dir': scrollDir === 'down' ? '40px' : '-40px',
+    '--section-accent': SECTIONS[idx]?.accent || 'var(--neon-cyan)'
+  });
 
   const renderDashboard = () => (
     <div className="bento-container" style={getSectionStyle(0)}>
@@ -739,18 +698,14 @@ export default function App() {
                   <span className="status-pill" style={{ color: 'var(--neon-cyan)', borderColor: 'rgba(0,240,255,0.3)' }}>{n.tag || 'UPDATE'}</span>
                   <div style={{ display: 'flex', gap: '4px' }}>
                     {isLeadershipMode && (
-                      <button 
-                        className="btn-icon" 
-                        title="Broadcast via Email"
-                        onClick={(e) => { 
+                      <button className="btn-icon" title="Broadcast via Email" onClick={(e) => { 
                           e.stopPropagation(); 
                           const emails = crewData.map(c => c.email).filter(Boolean).join(',');
                           if(!emails) return alert('No emails found in directory.');
                           const subject = encodeURIComponent(`[RSA Unit ${leadership.unitCode} UPDATE] ${n.title}`);
                           const body = encodeURIComponent(`${n.content}\n\n--\nSent via RSA Command Center`);
                           window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
-                        }}
-                      >
+                        }}>
                         <Mail size={14}/>
                       </button>
                     )}
@@ -937,9 +892,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* DOCK */}
       <div className="floating-dock-wrapper">
-        <div className="floating-dock" ref={dockRef}>
+        <div className="floating-dock">
           {SECTIONS.map((sec, i) => (
             <div key={sec.id} className={`dock-item ${activeSectionIdx === i ? 'active' : ''}`} onClick={() => navTo(i)} style={activeSectionIdx===i ? { '--item-accent': sec.accent, color: sec.accent } : {}}>
               {sec.icon}
@@ -1009,7 +963,6 @@ export default function App() {
         </div>
       )}
 
-      {/* EDIT/ADD MODAL */}
       {modalMode && (
         <div className="modal-overlay pointer-events-auto" onClick={() => setModalMode(null)}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
