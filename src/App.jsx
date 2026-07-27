@@ -61,7 +61,8 @@ const MOCK_DATA = {
   missions: [
     { id:'m1', title:'Louis I. Kahn Trophy', tag:'Heritage', date:'In Progress', body:'Documenting unrecorded heritage architecture in Kanchipuram. Focus on vernacular spatial configurations.' },
     { id:'m2', title:'MSL Landscape Trophy', tag:'Landscape', date:'Review Phase', body:'Site: Velachery Railway Ground. Concept: "The Hydro-Social Connector" acting as a biological machine for urban flooding.' },
-    { id:'m3', title:'Variyankaval Village Study', tag:'Morphology', date:'Completed', body:'Extensive site mapping, street plans, and historical storyboards for traditional residential typologies.' }
+    { id:'m3', title:'Variyankaval Village Study', tag:'Morphology', date:'Completed', body:'Extensive site mapping, street plans, and historical storyboards for traditional residential typologies.' },
+    { id:'m4', title:'Student Center Campus Project', tag:'Design', date:'Drafting', body:'Floor plans, concept sheets, and structural mechanisms proposed.' }
   ],
   crew: [
     { id:'c1', name:'Rithvik M',    role:'Unit Designee (UD)' },
@@ -69,7 +70,8 @@ const MOCK_DATA = {
     { id:'c3', name:'Mugilan',      role:'Structures Team' },
     { id:'c4', name:'Nithya Sri',   role:'Documentation' },
     { id:'c5', name:'Vishnav Iyer', role:'Presentation' },
-    { id:'c6', name:'Thilip',       role:'Graphics' }
+    { id:'c6', name:'Thilip',       role:'Graphics' },
+    { id:'c7', name:'Rithick',      role:'General Member' } 
   ],
   events: [
     { id:'e1', when:'Income',  title:'₹ 50,000', where:'Initial Unit Funding Allocation' },
@@ -80,7 +82,7 @@ const MOCK_DATA = {
 };
 
 // ==========================================
-// 4. CSS ARCHITECTURE (DESIGN UNTOUCHED)
+// 4. CSS ARCHITECTURE
 // ==========================================
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@200;400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
@@ -364,6 +366,7 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [splashDone, setSplashDone] = useState(false);
   const [scrollDir, setScrollDir] = useState('down');
+  const [isLeadershipMode, setIsLeadershipMode] = useState(false);
   
   // Real Data States (Falls back to MOCK_DATA if Firebase is empty/loading)
   const [news, setNews] = useState(MOCK_DATA.news);
@@ -378,7 +381,7 @@ export default function App() {
   
   // Terminal State
   const [termLogs, setTermLogs] = useState([
-    { kind: 'sys', text: 'council://rsa-z649 v2.0 — local session, connected to NASA India telemetry.' },
+    { kind: 'sys', text: 'rsa-ai://z649-secure — local session connected to NASA India telemetry.' },
     { kind: 'sys', text: 'Type "help" to see what I can answer.' }
   ]);
   const [termIn, setTermIn] = useState('');
@@ -458,6 +461,15 @@ export default function App() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const handleSecurityToggle = () => {
+    if (isLeadershipMode) setIsLeadershipMode(false);
+    else {
+      const pass = prompt("Enter Access Key:");
+      if (pass === ADMIN_SECURE_KEY) setIsLeadershipMode(true);
+      else if (pass) alert("Incorrect Password.");
+    }
+  };
+
   const handleDeleteNews = (id) => {
     setModal({
       open: true,
@@ -477,12 +489,12 @@ export default function App() {
     e.preventDefault();
     setModal({
       open: true,
-      title: 'Application received',
-      body: 'Thanks for applying. The Unit Designee will be in touch within a week.',
+      title: 'Registration received',
+      body: 'Thanks for registering. The Unit Designee will be in touch within a week.',
       confirmLabel: 'Done',
       danger: false,
       onConfirm: () => {
-        showToast('Application submitted.');
+        showToast('Registration submitted.');
         setModal(prev => ({ ...prev, open: false }));
         e.target.reset();
       }
@@ -562,9 +574,9 @@ export default function App() {
 
         {/* 3D BACKGROUND */}
         <div className="house" aria-hidden="true" style={{
-          '--wall-color': activeRoom.color,
-          '--wall-grid': activeRoom.grid,
-          '--wall-border': activeRoom.color.replace(/[\d.]+\)$/, '0.12)')
+          '--wall-color': activeRoom.color || 'rgba(0,240,255,0.05)',
+          '--wall-grid': activeRoom.grid || '80px 80px',
+          '--wall-border': (activeRoom.color || 'rgba(0,240,255,0.05)').replace(/[\d.]+\)$/, '0.12)')
         }}>
           <div className="house__scene" style={{ 
             transform: `rotateX(${activeRoom.cam.rx}deg) rotateY(${activeRoom.cam.ry}deg) translate3d(0,${activeRoom.cam.ty}px,${activeRoom.cam.tz}px)`
@@ -713,36 +725,48 @@ export default function App() {
                     <h3>{n.title}</h3>
                     <p className="news__body">{n.body}</p>
                     <div className="news__actions">
-                      <button className="btn btn--ghost btn--sm" onClick={() => handleDeleteNews(n.id)}>Archive</button>
+                      {isLeadershipMode && <button className="btn btn--ghost btn--sm" onClick={() => handleDeleteNews(n.id)}>Archive</button>}
+                      {isLeadershipMode && (
+                        <button className="btn btn--ghost btn--sm" onClick={() => { 
+                          const emails = crew.map(c => c.email).filter(Boolean).join(',');
+                          if(!emails) return showToast('No emails found.');
+                          const subject = encodeURIComponent(`[RSA Unit Z649 UPDATE] ${n.title}`);
+                          const body = encodeURIComponent(`${n.body}\n\n--\nSent via RSA Command Center`);
+                          window.location.href = `mailto:?bcc=${emails}&subject=${subject}&body=${body}`;
+                        }}>Broadcast</button>
+                      )}
                     </div>
                   </article>
                 ))}
               </div>
-              <details className="card reveal d3" style={{ marginTop: 'var(--sp-4)' }}>
-                <summary style={{ cursor:'pointer', fontWeight:600 }}>Transmit an update (Council Only)</summary>
-                <form className="form form--wide" onSubmit={handleNewsSubmit}>
-                  <div className="grid-2">
-                    <div className="field">
-                      <label htmlFor="nTitle">Headline</label>
-                      <input id="nTitle" name="title" type="text" required />
+              
+              {isLeadershipMode && (
+                <details className="card reveal d3" style={{ marginTop: 'var(--sp-4)' }}>
+                  <summary style={{ cursor:'pointer', fontWeight:600 }}>Transmit an update (Council Only)</summary>
+                  <form className="form form--wide" onSubmit={handleNewsSubmit}>
+                    <div className="grid-2">
+                      <div className="field">
+                        <label htmlFor="nTitle">Headline</label>
+                        <input id="nTitle" name="title" type="text" required />
+                      </div>
+                      <div className="field">
+                        <label htmlFor="nTag">Channel</label>
+                        <select id="nTag" name="tag">
+                          <option>Official</option><option>Deadline</option>
+                          <option>Meeting</option><option>Alert</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="field">
-                      <label htmlFor="nTag">Channel</label>
-                      <select id="nTag" name="tag">
-                        <option>Official</option><option>Deadline</option>
-                        <option>Meeting</option><option>Alert</option>
-                      </select>
+                      <label htmlFor="nBody">Body</label>
+                      <textarea id="nBody" name="body" required></textarea>
                     </div>
-                  </div>
-                  <div className="field">
-                    <label htmlFor="nBody">Body</label>
-                    <textarea id="nBody" name="body" required></textarea>
-                  </div>
-                  <div className="btn-row" style={{ margin:0 }}>
-                    <button className="btn btn--primary" type="submit">Publish</button>
-                  </div>
-                </form>
-              </details>
+                    <div className="btn-row" style={{ margin:0 }}>
+                      <button className="btn btn--primary" type="submit">Publish</button>
+                    </div>
+                  </form>
+                </details>
+              )}
             </div>
           </section>
 
@@ -817,6 +841,9 @@ export default function App() {
                 </div>
                 <div className="btn-row" style={{ margin:0, marginTop: 'var(--sp-4)' }}>
                   <button className="btn btn--primary" type="submit">Submit Registration</button>
+                  <button className="btn btn--ghost" type="button" onClick={handleSecurityToggle}>
+                    {isLeadershipMode ? <Unlock size={16}/> : <Lock size={16}/>} Admin Login
+                  </button>
                 </div>
               </form>
               <div className="foot reveal d4">
