@@ -1,21 +1,12 @@
-bash
-
-cat > /mnt/user-data/outputs/App.jsx << 'ENDOFFILE'
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore, collection, onSnapshot, addDoc, updateDoc,
-  deleteDoc, doc, setDoc, getDocs, getDoc
-} from "firebase/firestore";
-import {
-  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  onAuthStateChanged, signOut
-} from "firebase/auth";
-import {
-  Activity, Aperture, Archive, ArrowUpRight, BookOpen, Crown,
-  Eye, Globe, HardDrive, Hexagon, Lock, Mail, Pencil, Phone,
-  Plus, Send, Settings, Trash2, Unlock, Users, X, Zap, Target,
-  TrendingUp, LogOut, LogIn, UserPlus, ChevronDown, ChevronUp,
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, getDocs, getDoc } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { 
+  Activity, Aperture, Archive, ArrowUpRight, BookOpen, Crown, 
+  Eye, Globe, HardDrive, Hexagon, Lock, Mail, Pencil, Phone, 
+  Plus, Send, Settings, Trash2, Unlock, Users, X, Zap, Target, 
+  TrendingUp, LogOut, LogIn, UserPlus, ChevronDown, ChevronUp, 
   CheckCircle, AlertCircle, DollarSign, Radio
 } from 'lucide-react';
 
@@ -28,6 +19,7 @@ const firebaseConfig = {
   messagingSenderId: "672346485743",
   appId: "1:672346485743:web:55f86c5ccc65b59930bc1a"
 };
+
 const app  = initializeApp(firebaseConfig);
 const db   = getFirestore(app);
 const auth = getAuth(app);
@@ -61,31 +53,17 @@ const QUOTES = [
 // ─── COMPREHENSIVE AI KNOWLEDGE BASE ──────────────────────────────────────────
 const AI_KB = [
   { p:[/^help$/,/what can you do/,/commands/], a:'I can answer questions about NASA India, all trophies and competitions, architecture theory, our unit treasury, crew, vault, and more. Ask freely — try: "What is the LIK Trophy?", "explain vernacular architecture", "what is ANC?", "who is Le Corbusier", "treasury balance".' },
-
-  // NASA India — Organization
   { p:[/nasa india.*what|what.*nasa india|about nasa india|nasa india overview/], a:'NASA India (National Association of Students of Architecture) is the largest and most prestigious student body of architecture students in Asia. Founded in 1956, it represents over 40,000 students from 400+ architecture colleges across India, organized into 6 geographic zones. Each college has a registered Unit (e.g., Unit Z649 from RSA Chennai, Zone 6). NASA India operates under the guidance of the Council of Architecture (COA) and conducts the Annual NASA Convention (ANC) every year, which is the largest student architecture event in Asia.' },
   { p:[/nasa india zone|zone system|zone 6/], a:'NASA India divides India into 6 geographic zones:\n• Zone 1 — North (Delhi, UP, Punjab, Haryana, J&K, Himachal)\n• Zone 2 — East (West Bengal, Odisha, Bihar, Jharkhand, North-East)\n• Zone 3 — West (Maharashtra, Goa, Gujarat)\n• Zone 4 — Central (Madhya Pradesh, Chhattisgarh, Rajasthan)\n• Zone 5 — South (Karnataka, Andhra Pradesh, Telangana, Kerala)\n• Zone 6 — Tamil Nadu (Tamil Nadu units including RSA Unit Z649)\nEach zone conducts its own zonal convention before the national ANC.' },
   { p:[/unit designee|ud role|what.*ud/], a:'The Unit Designee (UD) is the official representative and head of a NASA India unit. The UD:\n• Represents the unit at all NASA India functions including ANC\n• Signs official documents and correspondence\n• Manages the unit\'s NASA registration and dues\n• Leads the team at workshops, trophies, and competitions\n• Maintains coordination with the zonal secretary and national council\nThe UD must be an enrolled student at the institution. Unit Z649\'s UD heads the RSA Chennai chapter.' },
   { p:[/usec|unit secretary|what.*usec/], a:'The Unit Secretary (USEC) is the second-in-command of a NASA India unit, handling administration and documentation. Responsibilities include:\n• Maintaining official records and correspondence\n• Managing member registrations and databases\n• Coordinating with the UD for event participation\n• Documenting all unit activities for the annual report\n• Handling internal communications\nThe USEC works closely with the UD and coordinators to ensure smooth unit operations.' },
-
-  // ANC — Annual NASA Convention
   { p:[/anc|annual nasa convention|nasa convention|68th/], a:'The Annual NASA Convention (ANC) is the flagship event of NASA India, held every year at a different host institution across India. The 68th ANC is currently in preparation phase.\n\nAt ANC, participating units compete in:\n• Architecture trophies (LIK, MSL, Khosla, etc.)\n• Workshop programs on various design themes\n• Cultural and creative events\n• Debates, quizzes, and academic discussions\n\nDelegates (students) are selected from each unit. Registration involves:\n1. Online abstract submission on the NASA portal\n2. Payment of delegate fees\n3. Workshop pre-selection\n4. Final participation at the host city\n\nANC typically runs for 5–7 days and is attended by thousands of students nationally.' },
   { p:[/workshop.*anc|anc.*workshop|workshop selection|how.*select workshop/], a:'Workshops at ANC cover diverse themes in architecture and allied fields. Workshop selection process:\n1. Study all available workshops listed on the NASA India portal (nasaindia.co)\n2. Identify workshops relevant to your design interests and skill set\n3. Prepare your portfolio and abstract as per the workshop requirements\n4. Submit during the online registration window\n5. Workshop allocation is subject to availability and shortlisting\n\nTips:\n• Apply early — popular workshops fill quickly\n• Align your workshop with your unit\'s trophy focus (e.g., if competing in LIK, choose a heritage workshop)\n• Prepare a strong statement of purpose for design workshops\n• Check prerequisites — some workshops require CAD/model skills' },
   { p:[/delegate|who.*delegate|delegate.*selection/], a:'Delegates are student members selected by the UD to represent the unit at ANC. Selection is typically based on:\n• Academic performance and design portfolio\n• Participation in unit activities and trophies\n• Ability to represent RSA and NASA India professionally\n• Financial commitment (delegate fees)\n\nEach unit typically sends 3–10 delegates. All delegates must carry:\n• Valid NASA registration card\n• Institute ID\n• Workshop confirmation letter\n• Travel and accommodation details as per ANC host guidelines' },
-
-  // LIK Trophy
   { p:[/lik|louis.*kahn|kahn trophy|heritage.*trophy|unrecorded heritage/], a:'The Louis I. Kahn (LIK) Trophy is NASA India\'s most prestigious competition, focused on documenting UNRECORDED HERITAGE architecture — buildings and spaces that are architecturally, historically, or culturally significant but have never been formally documented.\n\nKey requirements:\n• Site: An unrecorded vernacular or historical structure\n• Documentation: Architectural drawings (plans, sections, elevations), site analysis, historical research\n• Drawings: Must include measured drawings, axonometrics, and details\n• Report: Written documentation of history, significance, structural system\n• Scale: Typically 1:50 to 1:200 depending on structure size\n\nFocus areas for strong LIK entries:\n• Vernacular spatial configurations (courtyards, thinnai, agraharam typologies)\n• Indigenous materials and construction (lime mortar, laterite, timber joinery)\n• Climate-responsive design (cross-ventilation, thermal mass, shading devices)\n• Community significance and current use\n• Risk assessment and conservation recommendations\n\nSubmission format: Physical panels (typically A0 size) + digital files uploaded to the NASA portal.' },
-
-  // MSL Trophy
   { p:[/msl|landscape.*trophy|shaheer|mohammad shaheer|velachery/], a:'The Mohammad Shaheer Landscape (MSL) Trophy focuses on landscape architecture and urban open space design. It honors the legacy of Prof. Mohammad Shaheer, a pioneer of landscape architecture in India.\n\nCompetition requirements:\n• Site: An urban public space, park, waterfront, or landscape zone\n• Design: Full landscape design proposal with master plan\n• Drawings: Site plan, sections, planting plan, circulation plan, detail drawings\n• Analysis: Topography, hydrology, ecology, social use patterns\n• Concept: A clear landscape narrative linking ecology with human experience\n\nFor our Unit Z649 submission (Velachery site):\n• Concept: "The Hydro-Social Connector" — treating urban flooding as a resource\n• Bio-swales and rain gardens to manage stormwater\n• Topographical grading for water channeling\n• Social infrastructure: community spaces, food gardens, walking trails\n• Ecological zones: native planting, bird habitats, butterfly gardens\n\nKey landscape design principles:\n• Biophilic design — connecting humans to nature\n• Ecological systems thinking — biodiversity, hydrology, soil health\n• Social equity — accessible design for all user groups\n• Climate resilience — urban heat island mitigation' },
-
-  // Khosla Award
   { p:[/khosla|khosla award|khosla trophy/], a:'The Khosla Award is a NASA India competition focused on housing design — specifically addressing the need for affordable, dignified, and contextually appropriate housing for underserved communities in India.\n\nThe competition typically involves:\n• Designing housing for a specific marginalized community (fishermen, weavers, slum dwellers)\n• Integrating traditional building techniques with modern requirements\n• Achieving cost-efficient design without sacrificing spatial quality\n• Community participation in the design process\n\nKey evaluation criteria:\n• Cultural sensitivity and community context\n• Structural ingenuity and material efficiency\n• Spatial quality per square foot\n• Environmental performance\n• Economic viability for the target income group' },
-
-  // Dorabji Tata
   { p:[/dorabji|tata award|sir dorabji|tata trophy/], a:'The Sir Dorabji Tata Award is a NASA India competition focusing on urban design and city-scale interventions. It typically involves:\n• Redesigning or reimagining a significant urban fragment\n• Addressing issues of mobility, density, public space, and infrastructure\n• Integration of mixed uses and social programming\n• Context-sensitive urban form and character\n\nThe competition requires strategic master planning skills, urban analysis, and the ability to design at multiple scales simultaneously — from the city to the street to the building.' },
-
-  // Architecture Theory
   { p:[/le corbusier|corbusier|five points/], a:'Le Corbusier (1887–1965), born Charles-Édouard Jeanneret, was the father of modern architecture. His Five Points of New Architecture defined Modernism:\n1. Pilotis — columns lifting the building off the ground, freeing the ground plane\n2. Free plan — flexible floor layouts enabled by structural columns\n3. Free façade — non-load-bearing exterior walls, enabling ribbon windows\n4. Horizontal window — maximizing natural light and views\n5. Roof garden — reclaiming nature at roof level\n\nKey works: Villa Savoye, Chandigarh Capitol Complex, Unité d\'Habitation\nKey quotes: "A house is a machine for living in." "Architecture is the masterly, correct, and magnificent play of masses brought together in light."' },
   { p:[/mies van der rohe|mies|less is more/], a:'Ludwig Mies van der Rohe (1886–1969) was the master of minimalist, steel-and-glass architecture. His philosophy:\n• "Less is more" — pure, unornamented architecture expressing structure honestly\n• "God is in the details" — perfection in construction and material joints\n• The universal space — flexible, open floor plans adaptable to any use\n• Materiality — truth to materials: exposed steel, plate glass, travertine marble\n\nKey works: Barcelona Pavilion, Farnsworth House, Seagram Building, Illinois Institute of Technology\nHis legacy: the glass curtain wall became the defining image of 20th-century corporate architecture.' },
   { p:[/zaha hadid|zaha|parametric|deconstructivism/], a:'Zaha Hadid (1950–2016) was the first woman to win the Pritzker Prize (2004). Her work pioneered parametric and deconstructivist architecture:\n• Fluid, non-linear forms inspired by natural processes\n• Parametric design — using computational algorithms to generate complex geometries\n• Rejection of the 90-degree angle — architecture as landscape\n• Material innovation — complex concrete formwork, aluminum cladding, ETFE membranes\n\nKey works: MAXXI Museum Rome, Guangzhou Opera House, Heydar Aliyev Center, BMW Central Building\nQuote: "There are 360 degrees, so why stick to one?"' },
@@ -99,24 +77,22 @@ const AI_KB = [
   { p:[/construction.*system|structure.*building|rcc|steel structure|load bearing/], a:'Major building structural systems:\n\nRCC (Reinforced Cement Concrete):\n• Most common in India — columns, beams, slabs\n• Advantages: moldable to any form, fire-resistant, durable\n• Components: Footing → Column → Beam → Slab (bottom-up sequence)\n\nLoad-Bearing Masonry:\n• Walls carry loads directly — no separate column-beam frame\n• Material: brick, stone, concrete block\n• Limited to low-rise (typically < 4 floors)\n• Better thermal performance than RCC framing\n\nSteel Frame:\n• Advantages: fast construction, long spans, demountable\n• Used for industrial buildings, high-rises, large-span roofs\n• Requires fire protection cladding\n\nPre-stressed Concrete:\n• Steel tendons pre-tensioned or post-tensioned to allow longer spans\n• Used in bridges, parking structures, flat plate floors\n\nTiber Frame / Timber:\n• Traditional and resurgent modern technique\n• Cross-Laminated Timber (CLT) for multi-storey sustainable construction\n• India: heritage timber buildings in Kerala, Himachal, Gujarat' },
   { p:[/urban planning|urban design|master plan|zoning|fsi|far/], a:'Urban Planning & Design key concepts:\n\nFSI/FAR (Floor Space Index / Floor Area Ratio):\n• Ratio of total built-up area to plot area\n• Higher FSI = more density allowed\n• Example: FSI 2.5 on a 1000 sqm plot allows 2500 sqm total floor area\n• Chennai FSI: varies by zone — OMR/IT corridor has higher FSI than residential areas\n\nZoning:\n• Residential, Commercial, Industrial, Institutional, Agricultural, Green/Open Space\n• Setbacks required from plot boundaries and roads\n• Ground coverage limits (% of plot that can be built on)\n\nMaster Plan:\n• Long-term framework (typically 20 years) for city growth\n• Includes transportation, land use, water, green space, heritage zones\n• Chennai Master Plan 2026 governs development in our region\n\nUrban Design Principles:\n• Legibility (Kevin Lynch) — paths, edges, districts, nodes, landmarks\n• Eyes on the street (Jane Jacobs) — active frontages for safety\n• Transit-Oriented Development (TOD) — density around transit nodes\n• Complete streets — designed for pedestrians, cyclists, and vehicles equally' },
   { p:[/passive design|passive cooling|climate.*design|thermal.*comfort/], a:'Passive climate design strategies for Indian context:\n\nFor Hot-Dry Climate (Rajasthan, Gujarat, interior Deccan):\n• Thick masonry walls (thermal mass)\n• Small windows on west and south, larger on north\n• Courtyards with vegetation and water features\n• Evaporative cooling (jali screens, fountains)\n• Jalis (perforated screens) for filtered ventilation\n\nFor Hot-Humid Climate (Chennai, Kerala, coastal India):\n• Elevated structures (pilotis) for ground breeze\n• Large openings on north and south for cross-ventilation\n• Verandahs and deep overhangs for solar shading\n• Light materials (tiles, timber) to minimize thermal mass\n• East-west elongated building form to minimize east/west sun exposure\n\nFor Composite Climate (Delhi, Bangalore):\n• Combination strategies for summer and winter\n• Operable windows for seasonal adjustment\n• Green roofs and cool roofs to reduce heat gain\n\nTools for climate analysis: Climate Consultant software, Weather Tool (Autodesk), Ecotect, Ladybug/Honeybee in Grasshopper' },
-  { p:[/heritage conservation|conservation.*architecture|restoration|adaptive reuse/], a:'Heritage Conservation in India:\n\nLegislative Framework:\n• Ancient Monuments and Archaeological Sites and Remains Act, 1958 — ASI jurisdiction\n• State heritage acts (Tamil Nadu has THANMACHI for state-listed heritage)\n• UNESCO World Heritage Conventions — India has 40+ World Heritage Sites\n\nGrades of Heritage (INTACH classification):\n• Grade I: National monuments — no alterations, ASI controls\n• Grade II-A: Heritage precincts — limited alterations with permission\n• Grade II-B: Heritage buildings — alterations possible with sensitivity\n• Grade III: Locally significant — encouraged for preservation\n\nConservation Approaches:\n• Preservation: Maintaining existing fabric without alteration\n• Restoration: Returning a structure to its original state using original materials/methods\n• Rehabilitation: Enabling continued use through modification\n• Adaptive Reuse: Converting heritage building to new use (mill to museum, warehouse to gallery)\n• Reconstruction: Rebuilding a lost structure using documented evidence\n\nKey principle: Reversibility — all conservation interventions should be reversible without damaging original fabric.' },
+  { p:[/heritage conservation|conservation.*architecture|restoration|adaptive reuse/], a:'Heritage Conservation in India:\n\nLegislative Framework:\n• Ancient Monuments and Archaeological Sites and Remains Act, 1958 — ASI jurisdiction\n• State heritage acts (Tamil Nadu has THANMACHI for state-listed heritage)\n• UNESCO World Heritage Conventions — India has 40+ World Heritage Sites\n\nGrades of Heritage (INTACH classification):\n• Grade I: National monuments — no alterations, ASI controls\n• Grade II-A: Heritage precincts — limited alterations with permission\n• Grade II-B: Heritage buildings — alterations possible with sensitivity\n• Grade III: Locally significant — encouraged for preservation\n\nConservation Approaches:\n• Preservation: Maintaining existing fabric without alteration\n• Restoration: Returning a structure to original state using original materials/methods\n• Rehabilitation: Enabling continued use through modification\n• Adaptive Reuse: Converting heritage building to new use (mill to museum, warehouse to gallery)\n• Reconstruction: Rebuilding a lost structure using documented evidence\n\nKey principle: Reversibility — all conservation interventions should be reversible without damaging original fabric.' },
   { p:[/autocad|cad drawing|drafter|drafting/], a:'AutoCAD tips for architecture students:\n\nEssential commands:\n• LINE, PLINE, ARC, CIRCLE, RECTANGLE\n• TRIM, EXTEND, OFFSET, MIRROR, ARRAY\n• HATCH (for section patterns), BHATCH for boundary hatching\n• DIMENSION (DIMLINEAR, DIMALIGNED, DIMANGULAR)\n• BLOCK / INSERT for reusable elements (doors, windows, furniture)\n• XREF (external reference) for large projects split across files\n• LAYER management — separate layers for walls, windows, furniture, dimensions, hatch\n\nDrawing standards:\n• 0 layer for construction lines (white/black)\n• Walls: lineweight 0.5–0.7mm, color 1 (red)\n• Furniture: lineweight 0.25mm\n• Dimensions: separate layer, color 5 (blue)\n• Always draw at 1:1 scale — use PLOT/PRINT to set drawing scale\n\nFor LIK/MSL submissions:\n• Set up a title block with project name, scale bar, north arrow\n• Use LTSCALE to manage line type scales for different plot scales' },
   { p:[/sketchup|3d model|revit|bim/], a:'3D Modeling tools for architecture:\n\nSketchUp:\n• Best for: Quick 3D massing, conceptual design, client presentations\n• Strengths: Intuitive push-pull modeling, large 3D Warehouse library\n• Plugins: V-Ray for photorealistic rendering, Enscape for real-time visualization\n• Learning curve: Low — can be productive in 2–3 days\n\nRevit (BIM):\n• Best for: Detailed design development, construction documentation, coordination\n• Strengths: Parametric families, automatic schedules, clash detection with MEP\n• BIM = Building Information Modeling — every element has data attributes\n• Industry standard for professional practice\n• Learning curve: High — 2–3 months for proficiency\n\nRhino 3D:\n• Best for: Complex curved forms, parametric design with Grasshopper\n• Strengths: NURBS modeling, unlimited geometric freedom\n• Combined with Grasshopper for computational design\n• Standard for Zaha Hadid-style architecture\n\nBlender:\n• Free and open-source\n• Powerful for visualization, animation, organic modeling\n• Increasingly used for architectural visualization' },
-
-  // General / Unit queries
-  { p:[/balance|treasury.*balance|how much money|net.*balance/], a:null }, // handled dynamically
-  { p:[/crew.*how many|how many.*member|member count/], a:null }, // handled dynamically
-  { p:[/vault.*how many|how many.*file/], a:null }, // handled dynamically
+  { p:[/balance|treasury.*balance|how much money|net.*balance/], a:null },
+  { p:[/crew.*how many|how many.*member|member count/], a:null },
+  { p:[/vault.*how many|how many.*file/], a:null },
   { p:[/hello|hi there|hey|good morning|good afternoon|greetings/], a:'Hello! I\'m the RSA AI for Unit Z649 — your architectural co-pilot. I can answer questions about NASA India competitions (LIK, MSL, Khosla), architecture theory, design methodologies, unit management, and more. What would you like to explore?' },
   { p:[/thank you|thanks|cheers/], a:'You\'re welcome! If you have more questions about architecture or the unit, just ask. That\'s what I\'m here for.' },
-  { p:[/nasa india website|nasa portal|nasaindia.co/], a:'The official NASA India website is nasaindia.co — it contains:\n• Competition registration and abstract submissions\n• Trophy briefs and judging criteria\n• ANC registration and workshop listings\n• Unit registration and renewal\n• Official circulars and announcements from the national council\n\nBookmark it and check regularly during ANC registration season.' },
+  { p:[/nasa india website|nasa portal|nasaindia.co/], a:'The official NASA India website is nasaindia.co — it contains:\n• Competition registration and abstract submissions\n• Trophy briefs and judging criteria\n• ANC registration and workshop listings\n• Unit registration and renewal\n• Official circulars and announcements from the national council\n\nBookmark it and check regularly during ANC registration season.' }
 ];
 
 const findAI = (q, crew, vault, finances, news) => {
   const query = q.toLowerCase().trim();
   const income  = finances.filter(f=>f.type==='income').reduce((a,b)=>a+Number(b.amount),0);
   const expense = finances.filter(f=>f.type==='expense').reduce((a,b)=>a+Number(b.amount),0);
-
+  
   if (/balance|treasury.*balance|how much money|net.*balance/.test(query))
     return `Treasury status:\n• Total Income: ₹${income.toLocaleString('en-IN')}\n• Total Expenses: ₹${expense.toLocaleString('en-IN')}\n• Net Balance: ₹${(income-expense).toLocaleString('en-IN')}\n\n${income-expense >= 0 ? 'The unit is financially healthy.' : 'Expenses exceed income — review treasury.'}`;
   if (/how many.*member|member.*count|crew.*size/.test(query))
@@ -125,7 +101,7 @@ const findAI = (q, crew, vault, finances, news) => {
     return `The secure vault holds ${vault.length} active files across categories: ${[...new Set(vault.map(v=>v.category))].join(', ')}.`;
   if (/latest news|recent news|recent.*broadcast|latest.*broadcast/.test(query))
     return news.length ? `Latest broadcast: "${news[0]?.title}" — ${news[0]?.body?.slice(0,150)}${news[0]?.body?.length>150?'…':''}` : 'No unit broadcasts yet.';
-
+  
   for (const kb of AI_KB) {
     if (!kb.a) continue;
     for (const p of kb.p) {
@@ -186,8 +162,7 @@ const sendEmail = async (toEmails, subject, message) => {
     await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ service_id:EJS.svc, template_id:EJS.tpl, user_id:EJS.key,
-        template_params:{ to_email:toEmails.slice(0,50).join(','), subject, message,
-          email: 'z649@nasaindia.co.in' }
+        template_params:{ to_email:toEmails.slice(0,50).join(','), subject, message, email: 'z649@nasaindia.co.in' }
       })
     });
     return true;
@@ -215,11 +190,12 @@ const CSS = `
   --sp1:.375rem;--sp2:.75rem;--sp3:1.125rem;--sp4:1.75rem;--sp5:2.5rem;--sp6:4rem;
   --rsm:8px;--rmd:14px;--rlg:20px;--rxl:28px;
 }
-*,*::before,*::after{box-sizing:border-box;}html{-webkit-text-size-adjust:100%;}html,body{margin:0;padding:0;}
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+html,body{margin:0;padding:0;}
 body{background:var(--bg);color:var(--ink);font-family:'Sora',system-ui,sans-serif;font-size:var(--fs3);line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 button,input,textarea,select{font:inherit;color:inherit;}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;}
-
 /* ── KEYFRAMES ─────────────────────────────────────────── */
 @keyframes pulse     {50%{transform:scale(1.5);}}
 @keyframes pulse-sm  {0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.15);opacity:.75;}}
@@ -234,7 +210,6 @@ button,input,textarea,select{font:inherit;color:inherit;}
 @keyframes slideUp   {from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:none;}}
 @keyframes gradient-drift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
 @keyframes float-ring{0%,100%{transform:rotateX(74deg) translateZ(-20vmax) scale(1);}50%{transform:rotateX(74deg) translateZ(-20vmax) scale(1.06);}}
-
 /* ── BACKGROUND ────────────────────────────────────────── */
 .house{position:fixed;inset:0;z-index:0;overflow:hidden;perspective:1100px;perspective-origin:50% 42%;background:radial-gradient(120% 80% at 50% -10%,rgba(255,255,255,.04),transparent 60%),linear-gradient(180deg,var(--bg2),var(--bg));pointer-events:none;contain:strict;}
 .house::after{content:'';position:absolute;inset:0;background:radial-gradient(130% 100% at 50% 50%,transparent 30%,rgba(4,6,11,.9) 100%);pointer-events:none;}
@@ -242,22 +217,21 @@ button,input,textarea,select{font:inherit;color:inherit;}
 .plane{position:absolute;inset:0;transform-style:preserve-3d;}
 .floor{background-image:linear-gradient(rgba(91,140,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(91,140,255,.06) 1px,transparent 1px);background-size:7vmax 7vmax;transform:rotateX(90deg) translateZ(-26vmax);opacity:.8;transition:background-image 1.2s var(--ease);}
 .wall{border:1px solid rgba(255,255,255,.06);background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);}
-.wall--back{transform:translateZ(-60vmax);}.wall--left{transform:rotateY(90deg) translateZ(-60vmax);}.wall--right{transform:rotateY(-90deg) translateZ(-60vmax);}
+.wall--back{transform:translateZ(-60vmax);}
+.wall--left{transform:rotateY(90deg) translateZ(-60vmax);}
+.wall--right{transform:rotateY(-90deg) translateZ(-60vmax);}
 .shaft{position:absolute;left:50%;top:-10%;width:34vmax;height:150%;margin-left:-17vmax;background:linear-gradient(180deg,var(--accent),transparent 72%);opacity:.13;transform:rotateX(74deg) translateZ(-20vmax);animation:float-ring 6s ease-in-out infinite;transition:background 1.2s var(--ease);pointer-events:none;}
-
 /* ── HUD ───────────────────────────────────────────────── */
 .hud{position:fixed;z-index:40;top:calc(var(--sat)+1.125rem);left:calc(var(--sal)+1.125rem);display:flex;align-items:center;gap:.7rem;padding:.55rem .9rem;background:rgba(7,9,15,.82);border:1px solid var(--line);border-radius:999px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);max-width:min(62vw,310px);transition:border-color .4s var(--ease);}
 .hud__dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--accent);box-shadow:0 0 0 4px var(--soft);animation:pulse 2.6s ease-in-out infinite;}
 .hud__room{font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;}
 .hud__sub{font-size:var(--fs1);color:var(--ink3);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
 /* ── TOP RIGHT CONTROLS ────────────────────────────────── */
 .topright{position:fixed;z-index:40;top:calc(var(--sat)+1.125rem);right:calc(var(--sar)+1.125rem);display:flex;align-items:center;gap:.5rem;}
 .tr-btn{display:flex;align-items:center;gap:.45rem;padding:.45rem .85rem;background:rgba(7,9,15,.82);border:1px solid var(--line);border-radius:999px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--ink2);transition:all .3s var(--ease);}
 .tr-btn:hover{border-color:var(--accent);color:var(--ink);}
 .tr-btn.on{background:rgba(0,211,167,.1);border-color:rgba(0,211,167,.35);color:var(--green);}
 .tr-btn.auth{background:rgba(91,140,255,.1);border-color:rgba(91,140,255,.3);color:var(--accent);}
-
 /* ── COUNTER ───────────────────────────────────────────── */
 .counter{position:fixed;z-index:40;bottom:calc(var(--sab)+6.5rem);right:calc(var(--sar)+1.125rem);text-align:right;font-family:'IBM Plex Mono',monospace;pointer-events:none;}
 @media(min-width:860px){.counter{bottom:calc(var(--sab)+1.75rem);}}
@@ -265,7 +239,6 @@ button,input,textarea,select{font:inherit;color:inherit;}
 .counter__n span{color:var(--ink3);font-size:var(--fs2);}
 .counter__bar{width:72px;height:2px;margin:.4rem 0 0 auto;background:var(--line2);border-radius:2px;overflow:hidden;}
 .counter__fill{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .7s var(--ease),background .7s var(--ease);}
-
 /* ── RAIL ──────────────────────────────────────────────── */
 .rail{position:fixed;z-index:50;right:calc(var(--sar)+1.125rem);top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:.4rem;padding:.55rem;background:rgba(7,9,15,.6);border:1px solid var(--line);border-radius:999px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
 @media(min-width:860px){.rail{display:flex;}}
@@ -276,7 +249,6 @@ button,input,textarea,select{font:inherit;color:inherit;}
 .pill:hover,.pill:focus-visible{color:var(--ink);background:var(--panel);}
 .pill[aria-current=true]{color:var(--ink);background:var(--panel2);}
 .pill[aria-current=true] .pill__dot{opacity:1;transform:scale(1.3);animation:pulse-sm 1.8s ease-in-out infinite;animation:icon-ping 1.5s ease-in-out infinite;}
-
 /* ── DOCK ──────────────────────────────────────────────── */
 .dock{position:fixed;z-index:60;left:0;right:0;bottom:0;padding:.4rem calc(var(--sal)+.4rem) calc(var(--sab)+.4rem) calc(var(--sar)+.4rem);background:linear-gradient(180deg,rgba(7,9,15,0),rgba(7,9,15,.96) 38%);}
 @media(min-width:860px){.dock{display:none;}}
@@ -288,39 +260,39 @@ button,input,textarea,select{font:inherit;color:inherit;}
 .dock__btn[aria-current=true]{background:var(--panel2);color:var(--ink);}
 .dock__btn[aria-current=true] .dock__glyph{background:var(--pa);color:#06080E;animation:glow-bounce 2s ease-in-out infinite;}
 .dock__btn:not([aria-current=true]):active .dock__glyph{transform:scale(.88);}
-
 /* ── SCROLL ROOT ───────────────────────────────────────── */
 .scroll-root{height:100svh;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;position:relative;z-index:10;}
 .room{height:100svh;display:flex;flex-direction:column;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
 .room-content{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(var(--sat)+5.5rem) calc(var(--sar)+1.125rem) calc(var(--sab)+6.5rem) calc(var(--sal)+1.125rem);-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
 @media(min-width:860px){.room-content{padding:calc(var(--sat)+4rem) calc(var(--sar)+6rem) calc(var(--sab)+4rem) calc(var(--sal)+2.5rem);}}
 .wrap{width:100%;max-width:1100px;margin:0 auto;}
-
 /* ── TYPOGRAPHY ────────────────────────────────────────── */
 .eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 1.125rem 0;}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--accent);}
 h1,h2,h3,h4{font-weight:800;letter-spacing:-.02em;line-height:1.06;margin:0;}
-h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter-spacing:-.01em;}
+h1{font-size:var(--fs7);}
+h2{font-size:var(--fs6);}
+h3{font-size:var(--fs4);letter-spacing:-.01em;}
 .thin{font-weight:200;}
 .gradient-text{background:linear-gradient(135deg,var(--ink) 0%,var(--accent) 60%,var(--ink) 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite;}
 .lede{font-size:var(--fs4);font-weight:200;color:var(--ink2);margin:1.125rem 0 0 0;max-width:46ch;line-height:1.45;}
-
 /* ── REVEAL ────────────────────────────────────────────── */
 .reveal{opacity:0;transform:translate3d(0,34px,0);transition:opacity .75s var(--ease),transform .8s var(--ease);}
 .scroll-root[data-dir=up] .reveal{transform:translate3d(0,-34px,0);}
 .reveal.in{opacity:1;transform:translate3d(0,0,0);}
-.reveal.d1{transition-delay:.06s;}.reveal.d2{transition-delay:.12s;}
-.reveal.d3{transition-delay:.18s;}.reveal.d4{transition-delay:.24s;}.reveal.d5{transition-delay:.3s;}
-
+.reveal.d1{transition-delay:.06s;}
+.reveal.d2{transition-delay:.12s;}
+.reveal.d3{transition-delay:.18s;}
+.reveal.d4{transition-delay:.24s;}
+.reveal.d5{transition-delay:.3s;}
 /* ── CARDS ─────────────────────────────────────────────── */
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--rlg);padding:1.75rem;transition:border-color .35s var(--ease),background .35s var(--ease);}
 .card:hover{border-color:var(--line2);background:var(--panel2);}
 .card-accent{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,transparent),transparent);border-color:color-mix(in srgb,var(--accent) 25%,transparent);}
-
 /* ── SECTION HEADER ────────────────────────────────────── */
 .sec-hdr{display:flex;flex-wrap:wrap;gap:1.125rem;align-items:flex-end;justify-content:space-between;margin:0 0 2.5rem 0;}
-.sec-hdr .left{min-width:0;}.sec-hdr .right{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;flex-shrink:0;}
-
+.sec-hdr .left{min-width:0;}
+.sec-hdr .right{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;flex-shrink:0;}
 /* ── BUTTONS ───────────────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:.7rem 1.35rem;border-radius:999px;border:1px solid transparent;font-size:var(--fs2);font-weight:600;cursor:pointer;text-decoration:none;line-height:1;transition:transform .2s var(--ease),background .2s var(--ease),border-color .2s var(--ease),box-shadow .2s var(--ease);}
 .btn:active{transform:scale(.97);}
@@ -336,7 +308,6 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .btn-ico:hover{color:var(--ink);border-color:var(--line2);background:var(--panel2);transform:scale(1.08);}
 .btn-ico-d:hover{color:var(--danger);border-color:rgba(255,92,92,.35);background:rgba(255,92,92,.1);}
 .btn-row{display:flex;flex-wrap:wrap;gap:.75rem;margin:1.75rem 0 0 0;}
-
 /* ── BENTO ─────────────────────────────────────────────── */
 .bento{display:grid;grid-template-columns:1fr;grid-auto-rows:minmax(90px,auto);gap:.75rem;margin:2.5rem 0 0 0;}
 @media(min-width:640px){.bento{grid-template-columns:repeat(2,1fr);}}
@@ -350,7 +321,6 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .stat{border-left:2px solid var(--accent);padding:0 0 0 1.125rem;}
 .stat__v{font-size:var(--fs5);font-weight:800;letter-spacing:-.03em;margin:0;line-height:1;}
 .stat__k{font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:.35rem 0 0 0;}
-
 /* ── CREW ──────────────────────────────────────────────── */
 .crew-group{margin:2rem 0 0 0;}
 .crew-group-label{font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin:0 0 1.125rem 0;display:flex;align-items:center;gap:.6rem;}
@@ -358,7 +328,8 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:1.125rem;}
 .mc{display:flex;flex-direction:column;gap:.75rem;padding:1.125rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--rmd);transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--esp);cursor:pointer;}
 .mc:hover{border-color:var(--line2);background:var(--panel2);transform:translateY(-3px);}
-.mc.council{border-color:rgba(255,209,102,.22);}.mc.council:hover{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.04);}
+.mc.council{border-color:rgba(255,209,102,.22);}
+.mc.council:hover{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.04);}
 .mc__top{display:flex;justify-content:space-between;align-items:flex-start;gap:.4rem;}
 .mc__acts{display:flex;gap:.3rem;flex-shrink:0;}
 .avatar{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;font-family:'IBM Plex Mono',monospace;font-size:1.1rem;font-weight:600;color:#fff;flex-shrink:0;background:linear-gradient(145deg,hsl(var(--h) 70% 50%),hsl(calc(var(--h)+42) 65% 35%));transition:transform .35s var(--esp);}
@@ -371,7 +342,6 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .rbadge.exusec{background:rgba(91,140,255,.12);border-color:rgba(91,140,255,.3);color:#5B8CFF;}
 .rbadge.coord {background:rgba(179,136,255,.12);border-color:rgba(179,136,255,.3);color:#B388FF;}
 .rbadge.member{background:var(--panel);border-color:var(--line);color:var(--ink3);}
-
 /* ── VAULT ─────────────────────────────────────────────── */
 .vault-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:1.125rem;margin:2.5rem 0 0 0;}
 .vc{display:flex;flex-direction:column;gap:.75rem;padding:1.125rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--rmd);transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--esp);}
@@ -382,7 +352,6 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .vc__desc{font-size:var(--fs2);color:var(--ink2);margin:0;flex:1;}
 .vc__foot{margin-top:auto;padding-top:.75rem;border-top:1px solid var(--line);}
 .tag{font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.1em;text-transform:uppercase;padding:.18rem .55rem;border-radius:999px;background:var(--soft);color:var(--accent);}
-
 /* ── NEWS ──────────────────────────────────────────────── */
 .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:1.125rem;margin:1.75rem 0 0 0;}
 .ni{display:flex;flex-direction:column;gap:.75rem;padding:1.125rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--rmd);transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--esp);}
@@ -402,7 +371,6 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .live-title{font-size:var(--fs3);font-weight:600;margin:0;line-height:1.3;}
 .live-date{font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);color:var(--ink3);margin:0;}
 .live-link{display:flex;align-items:center;gap:.3rem;font-size:var(--fs1);color:var(--green);margin-top:auto;}
-
 /* ── TREASURY ──────────────────────────────────────────── */
 .fin-tabs{display:flex;gap:.5rem;margin:0 0 1.75rem 0;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
 .fin-tabs::-webkit-scrollbar{display:none;}
@@ -434,7 +402,8 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .fr__type.expense{background:rgba(255,93,143,.1);border-color:rgba(255,93,143,.25);color:var(--pink);}
 .fr__desc{flex:1;font-size:var(--fs2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .fr__amt{font-family:'IBM Plex Mono',monospace;font-size:var(--fs3);font-weight:600;flex-shrink:0;}
-.fr__amt.income{color:var(--green);}.fr__amt.expense{color:var(--pink);}
+.fr__amt.income{color:var(--green);}
+.fr__amt.expense{color:var(--pink);}
 .fr__acts{display:flex;gap:.3rem;flex-shrink:0;}
 .archive-list{display:flex;flex-direction:column;gap:1rem;}
 .arch-item{padding:1.125rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--rmd);cursor:pointer;transition:border-color .3s var(--ease),background .3s var(--ease);}
@@ -445,7 +414,6 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .arch-contribs{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--line);display:none;flex-direction:column;gap:.35rem;}
 .arch-contribs.open{display:flex;}
 .arch-cr{display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;font-size:var(--fs2);}
-
 /* ── TERMINAL ──────────────────────────────────────────── */
 .term{display:flex;flex-direction:column;background:rgba(4,7,13,.72);border:1px solid var(--line);border-radius:var(--rlg);overflow:hidden;margin:2.5rem 0 0 0;}
 .term__bar{display:flex;align-items:center;gap:.45rem;padding:.65rem 1rem;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025);}
@@ -453,15 +421,17 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .term__led.on{background:var(--accent);animation:pulse-sm 2s ease-in-out infinite;}
 .term__lbl{font-family:'IBM Plex Mono',monospace;font-size:var(--fs1);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:0 0 0 .5rem;}
 .term__log{height:clamp(200px,35svh,380px);overflow-y:auto;padding:1.125rem;margin:0;font-family:'IBM Plex Mono',monospace;font-size:var(--fs2);line-height:1.75;overflow-wrap:anywhere;scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
-.tl{margin:0 0 .28rem 0;}.tl.in{color:var(--ink);}.tl.in::before{content:'> ';color:var(--accent);}
-.tl.out{color:var(--ink2);}.tl.sys{color:var(--ink3);font-style:italic;}
+.tl{margin:0 0 .28rem 0;}
+.tl.in{color:var(--ink);}
+.tl.in::before{content:'> ';color:var(--accent);}
+.tl.out{color:var(--ink2);}
+.tl.sys{color:var(--ink3);font-style:italic;}
 .term__form{display:flex;gap:.45rem;padding:.75rem;border-top:1px solid var(--line);background:rgba(255,255,255,.02);}
 .term__form input{flex:1;min-width:0;padding:.65rem .85rem;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:var(--rsm);font-family:'IBM Plex Mono',monospace;font-size:var(--fs2);color:var(--ink);transition:border-color .25s var(--ease);}
 .term__form input:focus{border-color:var(--accent);outline:none;}
 .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:1.125rem 0 0 0;}
 .chip{padding:.38rem .82rem;background:var(--panel);border:1px solid var(--line);border-radius:999px;font-size:var(--fs1);color:var(--ink2);cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;transition:border-color .25s var(--ease),color .25s var(--ease),transform .2s var(--esp);}
 .chip:hover{border-color:var(--accent);color:var(--ink);transform:translateY(-2px);}
-
 /* ── FORMS ─────────────────────────────────────────────── */
 .form{display:grid;gap:1.125rem;}
 .field{display:grid;gap:.4rem;}
@@ -470,9 +440,9 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .field textarea{min-height:100px;resize:vertical;}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:rgba(255,255,255,.07);outline:none;}
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(168,178,204,.7)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;background-size:12px;padding-right:2.2rem;}
-.g2{display:grid;gap:1.125rem;}@media(min-width:580px){.g2{grid-template-columns:1fr 1fr;}}
+.g2{display:grid;gap:1.125rem;}
+@media(min-width:580px){.g2{grid-template-columns:1fr 1fr;}}
 .form-err{font-size:var(--fs1);color:var(--danger);margin:0;min-height:1em;}
-
 /* ── MODAL ─────────────────────────────────────────────── */
 .modal{position:fixed;inset:0;z-index:80;display:grid;opacity:0;pointer-events:none;transition:opacity .28s var(--ease);}
 .modal.open{opacity:1;pointer-events:auto;}
@@ -480,25 +450,27 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .modal__panel{position:relative;width:100%;background:#0C1018;border:1px solid var(--line);padding:1.75rem;transition:transform .38s var(--esp);max-height:90svh;overflow-y:auto;overflow-x:hidden;align-self:end;border-radius:var(--rxl) var(--rxl) 0 0;transform:translateY(100%);scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
 .modal.open .modal__panel{transform:translateY(0);}
 .modal__grip{width:40px;height:4px;border-radius:999px;background:var(--line2);margin:0 auto 1.125rem auto;}
-@media(min-width:720px){.modal{align-items:center;justify-items:center;padding:1.75rem;}.modal__panel{max-width:540px;border-radius:var(--rxl);transform:translateY(12px) scale(.96);align-self:center;padding-bottom:1.75rem;}.modal.open .modal__panel{transform:translateY(0) scale(1);}.modal__grip{display:none;}}
+@media(min-width:720px){
+  .modal{align-items:center;justify-items:center;padding:1.75rem;}
+  .modal__panel{max-width:540px;border-radius:var(--rxl);transform:translateY(12px) scale(.96);align-self:center;padding-bottom:1.75rem;}
+  .modal.open .modal__panel{transform:translateY(0) scale(1);}
+  .modal__grip{display:none;}
+}
 .modal__hdr{display:flex;justify-content:space-between;align-items:center;margin:0 0 1.75rem 0;}
 .modal__title{font-size:var(--fs4);margin:0;font-weight:700;}
 .modal__body{color:var(--ink2);font-size:var(--fs2);margin:0 0 1.125rem 0;line-height:1.65;}
 .modal__acts{display:flex;flex-wrap:wrap;gap:.75rem;margin:1.75rem 0 0 0;justify-content:flex-end;}
 .divider{height:1px;background:var(--line);margin:1.125rem 0;}
-
 /* ── AUTH MODAL ────────────────────────────────────────── */
 .auth-tabs{display:flex;gap:0;margin:0 0 1.75rem 0;border:1px solid var(--line);border-radius:var(--rmd);overflow:hidden;}
 .auth-tab{flex:1;padding:.65rem;background:transparent;border:0;color:var(--ink2);cursor:pointer;font-size:var(--fs2);font-weight:600;transition:background .25s var(--ease),color .25s var(--ease);}
 .auth-tab.active{background:var(--accent);color:#06080E;}
 .user-badge{display:flex;align-items:center;gap:.5rem;padding:.35rem .7rem;background:rgba(0,211,167,.08);border:1px solid rgba(0,211,167,.25);border-radius:999px;font-size:var(--fs1);color:var(--green);}
-
 /* ── TOAST ─────────────────────────────────────────────── */
 .toast{position:fixed;z-index:90;left:50%;bottom:calc(var(--sab)+7rem);transform:translate(-50%,160%);display:flex;align-items:center;gap:.55rem;padding:.65rem 1.1rem;background:#0C1018;border:1px solid var(--accent);border-radius:999px;font-size:var(--fs2);transition:transform .38s var(--esp);max-width:calc(100vw - 2rem);white-space:nowrap;pointer-events:none;}
 .toast.show{transform:translate(-50%,0);}
 @media(min-width:860px){.toast{bottom:calc(var(--sab)+1.75rem);}}
 .toast__dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
-
 /* ── SPLASH ────────────────────────────────────────────── */
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);transition:opacity .8s var(--ease),visibility .8s;}
 .splash.done{opacity:0;visibility:hidden;pointer-events:none;}
@@ -515,7 +487,9 @@ h1{font-size:var(--fs7);}h2{font-size:var(--fs6);}h3{font-size:var(--fs4);letter
 .splash__skip:hover{color:var(--ink);border-color:var(--accent);}
 .empty{text-align:center;padding:2.5rem 1.75rem;border:1px dashed var(--line2);border-radius:var(--rlg);color:var(--ink3);font-size:var(--fs2);}
 .foot{border-top:1px solid var(--line);margin:4rem 0 0 0;padding:1.125rem 0 0 0;display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;font-size:var(--fs1);color:var(--ink3);font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;}
-::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px;}
 `;
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
@@ -560,15 +534,18 @@ export default function App() {
   const [termIn, setTermIn] = useState('');
 
   const [quote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+
   const scrollRef  = useRef(null);
   const termLogRef = useRef(null);
   const lastIdx    = useRef(0);
+
   const room = ROOMS[activeIdx] || ROOMS[0];
 
   // ── EFFECTS ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, u => { setUser(u); setAuthLoading(false); });
     const t = setTimeout(() => setSplashDone(true), 2600);
+
     const unsubs = [
       onSnapshot(collection(db,'crew'),     s => { if(!s.empty) setCrew(s.docs.map(d=>({id:d.id,...d.data()}))); }),
       onSnapshot(collection(db,'vault'),    s => { if(!s.empty) setVault(s.docs.map(d=>({id:d.id,...d.data()}))); }),
@@ -577,8 +554,10 @@ export default function App() {
       onSnapshot(collection(db,'contributions'), s => setContribs(s.docs.map(d=>({id:d.id,...d.data()})))),
       onSnapshot(collection(db,'treasury_archive'), s => setTArchive(s.docs.map(d=>({id:d.id,...d.data()})))),
     ];
+
     // Load treasury config
     getDoc(doc(db,'settings','treasury')).then(d => { if(d.exists()) setTConfig(p=>({...p,...d.data()})); }).catch(()=>{});
+
     return () => { unsubAuth(); clearTimeout(t); unsubs.forEach(u=>u()); };
   }, []);
 
@@ -644,6 +623,7 @@ export default function App() {
   };
 
   const handleLogout = async () => { await signOut(auth); setIsAdmin(false); showToast('Signed out.'); };
+
   const toggleAdmin = () => {
     if(isAdmin) { setIsAdmin(false); showToast('Admin mode off.'); return; }
     const p = prompt('Enter admin access key:');
@@ -686,9 +666,11 @@ export default function App() {
       await addDoc(collection(db,'news'), data);
       closeModal();
       showToast('Broadcast posted. Sending emails…');
+      
       // Fetch all member emails
       const snap = await getDocs(collection(db,'members'));
       const emails = snap.docs.map(d=>d.data().email).filter(Boolean);
+      
       if(emails.length) {
         const ok = await sendEmail(emails, `[RSA Z649] ${data.title}`, `${data.body}\n\n—\nRSA Unit Z649 | z649@nasaindia.co.in`);
         showToast(ok ? `Broadcast sent to ${emails.length} members!` : 'Posted. Email delivery pending — check EmailJS config.');
@@ -707,6 +689,7 @@ export default function App() {
   const archiveCampaign = async () => {
     if(!confirm('Close this campaign and archive all contributions?')) return;
     const totalCollected = contribs.filter(c=>c.tenure===tConfig.tenure).reduce((a,b)=>a+Number(b.amount),0);
+    
     await addDoc(collection(db,'treasury_archive'), {
       campaignName: tConfig.campaignName, tenure:tConfig.tenure, target:tConfig.target,
       totalCollected, contributions:[...contribs.filter(c=>c.tenure===tConfig.tenure)],
@@ -723,6 +706,7 @@ export default function App() {
     if(!q) return;
     setLogs(p=>[...p,{k:'in',t:q}]);
     setTermIn('');
+    
     setTimeout(() => {
       const ans = findAI(q, crew, vault, finances, news);
       setLogs(p=>[...p,{k:'out',t:ans}]);
@@ -925,11 +909,13 @@ export default function App() {
       <p className="eyebrow reveal">Rajalakshmi School of Architecture · Zone 6</p>
       <h1 className="reveal d1">Unit Z649. <span className="thin gradient-text">Command.</span></h1>
       <p className="lede reveal d2">National Association of Students of Architecture, India. Official operations, submissions, and command portal for Unit Z649.</p>
+      
       <div className="btn-row reveal d3">
         <button className="btn btn-p" onClick={()=>navTo('vault')}>Access Vault</button>
         <button className="btn btn-g" onClick={()=>navTo('crew')}>View Directory</button>
         {!user&&<button className="btn btn-g" onClick={()=>setAuthModal(true)}><LogIn size={14}/> Sign In</button>}
       </div>
+
       <div className="bento reveal d4">
         <div className="bc bw bt"><p className="bk">Philosophy</p><p style={{fontSize:'clamp(1rem,2.2vw,1.4rem)',fontWeight:200,fontStyle:'italic',lineHeight:1.55,color:'var(--ink2)',margin:0}}>{quote}</p></div>
         <div className="bc"><p className="bk">Members</p><p className="bv">{crew.length}</p></div>
@@ -1084,7 +1070,6 @@ export default function App() {
           <button className="btn btn-p btn-sm" onClick={()=>openModal('add-finance',{type:'income'})}><Plus size={13}/> Entry</button>
         </div>}
       </div>
-
       <div className="fin-tabs reveal d2">
         {['ledger','collection','archive'].map(t=><button key={t} className={`ftab ${finTab===t?'active':''}`} onClick={()=>setFinTab(t)}>
           {t==='ledger'?'Ledger':t==='collection'?'Collection Campaign':'Archive'}
@@ -1182,7 +1167,7 @@ export default function App() {
   return <>
     <style dangerouslySetInnerHTML={{ __html: CSS }}/>
     <div style={{'--accent':room.accent,'--soft':`rgba(${hexToRGB(room.accent)},.15)`}}>
-
+      
       {/* Background */}
       <div className="house" aria-hidden="true">
         <div className="house__scene" style={{transform:room.cam}}>
@@ -1213,7 +1198,7 @@ export default function App() {
 
       {/* HUD */}
       <div className="hud"><span className="hud__dot"/><div><p className="hud__room">{room.label}</p><p className="hud__sub">{room.sub}</p></div></div>
-
+      
       {/* Top Right */}
       <div className="topright">
         {user
@@ -1273,5 +1258,3 @@ export default function App() {
     </div>
   </>;
 }
-ENDOFFILE
-echo "File written successfully"
